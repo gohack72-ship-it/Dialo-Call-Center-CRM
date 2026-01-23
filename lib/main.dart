@@ -1,4 +1,7 @@
-import 'package:dialo/splash%20screen.dart';
+import 'package:dialo/constants/app_colors.dart';
+import 'package:dialo/constants/app_textstyle.dart';
+import 'package:dialo/views/reportpage.dart';
+import 'package:dialo/views/splash%20screen.dart';
 import 'package:flutter/material.dart';
 // 👈 import your page here
 
@@ -13,11 +16,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
-        useMaterial3: true,
-      ),
-      home:AnimatedSplashScreenWidget(), // 👈 this is your home page
+      home: Reportpage(),
       debugShowCheckedModeBanner: false,
     );
   }
