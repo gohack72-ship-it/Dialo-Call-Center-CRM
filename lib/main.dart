@@ -1,4 +1,8 @@
-import 'package:dialo/leads_screen.dart';
+import 'package:dialo/constants/app_colors.dart';
+import 'package:dialo/constants/app_textstyle.dart';
+import 'package:dialo/views/leads_screen.dart';
+import 'package:dialo/views/reportpage.dart';
+
 import 'package:flutter/material.dart';
 
 void main() {
