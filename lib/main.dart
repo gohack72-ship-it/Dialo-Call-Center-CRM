@@ -1,4 +1,4 @@
-import 'package:dialo/addlead.dart';
+import 'package:dialo/views/addlead.dart';
 import 'package:dialo/constants/app_colors.dart';
 import 'package:dialo/constants/app_textstyle.dart';
 import 'package:dialo/views/reportpage.dart';
