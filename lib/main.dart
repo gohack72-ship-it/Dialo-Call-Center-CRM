@@ -1,10 +1,18 @@
+import 'package:dialo/views/addlead.dart';
 import 'package:dialo/constants/app_colors.dart';
 import 'package:dialo/constants/app_textstyle.dart';
 import 'package:dialo/views/bottomnavigationbar.dart';
 import 'package:dialo/views/leaddetails.dart';
+import 'package:dialo/views/leads_screen.dart';
 import 'package:dialo/views/reportpage.dart';
-import 'package:dialo/views/splash%20screen.dart';
+
+
+
 import 'package:flutter/material.dart';
+
+import 'namePage.dart';
+
+
 // 👈 import your page here
 
 void main() {
@@ -20,6 +28,12 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       home: LeadDetails(),
       debugShowCheckedModeBanner: false,
+      title: 'Leads CRM',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        scaffoldBackgroundColor: const Color(0xFFF5F5F5),
+      ),
+      home: LeadProfileScreen(),
     );
   }
 }
