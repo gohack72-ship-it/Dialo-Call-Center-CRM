@@ -1,3 +1,9 @@
+import 'package:dialo/views/addlead.dart';
+import 'package:dialo/constants/app_colors.dart';
+import 'package:dialo/constants/app_textstyle.dart';
+import 'package:dialo/views/leads_screen.dart';
+import 'package:dialo/views/reportpage.dart';
+
 
 
 import 'package:flutter/material.dart';
@@ -18,12 +24,14 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
-        useMaterial3: true,
-      ),
-      home:LeadProfileScreen(), // 👈 this is your home page
+      home: Reportpage(),
       debugShowCheckedModeBanner: false,
+      title: 'Leads CRM',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        scaffoldBackgroundColor: const Color(0xFFF5F5F5),
+      ),
+      home: LeadsScreen(),
     );
   }
 }
