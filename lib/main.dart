@@ -23,15 +23,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      home: Reportpage(),
       debugShowCheckedModeBanner: false,
       title: 'Leads CRM',
       theme: ThemeData(
         primarySwatch: Colors.blue,
         scaffoldBackgroundColor: const Color(0xFFF5F5F5),
       ),
-      home: LeadsScreen(),
+      home: LeadProfileScreen(),
     );
   }
 }
