@@ -1,5 +1,7 @@
 import 'package:dialo/constants/app_colors.dart';
 import 'package:dialo/constants/app_textstyle.dart';
+import 'package:dialo/views/bottomnavigationbar.dart';
+import 'package:dialo/views/leaddetails.dart';
 import 'package:dialo/views/reportpage.dart';
 import 'package:dialo/views/splash%20screen.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +18,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      home: Reportpage(),
+      home: LeadDetails(),
       debugShowCheckedModeBanner: false,
     );
   }

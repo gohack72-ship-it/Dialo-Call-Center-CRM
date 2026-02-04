@@ -4,7 +4,7 @@ import 'app_colors.dart';
 
 class AppTextstyle{
   static const TextStyle Maintitle = TextStyle(
-    fontSize: 40,
+    fontSize: 30,
     fontWeight: FontWeight.bold,
     fontFamily: 'poppins',
     color: AppColors.textColor,
