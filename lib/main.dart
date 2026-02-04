@@ -1,11 +1,10 @@
-import 'package:dialo/constants/app_colors.dart';
-import 'package:dialo/constants/app_textstyle.dart';
-import 'package:dialo/views/reportpage.dart';
-import 'package:dialo/views/splash%20screen.dart';
+
 
 import 'package:flutter/material.dart';
 
-import 'Name_page.dart';
+import 'namePage.dart';
+
+
 // 👈 import your page here
 
 void main() {
@@ -23,7 +22,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         useMaterial3: true,
       ),
-      home:NamePage(), // 👈 this is your home page
+      home:LeadProfileScreen(), // 👈 this is your home page
       debugShowCheckedModeBanner: false,
     );
   }
