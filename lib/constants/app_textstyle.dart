@@ -44,4 +44,19 @@ class AppTextstyle{
     fontWeight: FontWeight.w600,
     color: AppColors.textColor,
   );
+  static const TextStyle dashBoardCard = TextStyle(
+    fontSize: 15,
+    fontWeight: FontWeight.w600,
+    color: AppColors.textColor,
+  );
+  static const TextStyle dashBoardCardNo = TextStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.w600,
+    color: AppColors.textColor,
+  );
+  static const TextStyle normalText= TextStyle(
+    fontSize: 17,
+    fontWeight: FontWeight.normal,
+    color: AppColors.textColor,
+  );
 }
