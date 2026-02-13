@@ -3,6 +3,8 @@ import 'package:dialo/constants/app_textstyle.dart';
 import 'package:dialo/views/reminderpage.dart';
 import 'package:flutter/material.dart';
 
+import 'addlead.dart';
+
 class LeadDetails extends StatefulWidget {
   const LeadDetails({super.key});
 
@@ -64,7 +66,7 @@ class _LeadDetailsState extends State<LeadDetails> {
           ),
           ),
     IconButton(icon:Icon(Icons.edit_note),onPressed:(){
-    Navigator.push(context,MaterialPageRoute(builder: (_)=>ReminderPage(),));
+    Navigator.push(context,MaterialPageRoute(builder: (_)=>NewLeadPage(),));
     }
     ),
     ],

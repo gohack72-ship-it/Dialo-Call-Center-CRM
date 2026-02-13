@@ -15,10 +15,7 @@ class _BottomnavPageState extends State<BottomnavPage> {
   int _currentIndex = 0;
 
   final List<Widget> _pages = [
-    Reportpage(),      // Dashboard
-    LeadDetails(),     // Leads
-    Center(child: Text("Add Lead")), // Add Lead (placeholder)
-    Reportpage(),      // Report
+
   ];
 
   @override
