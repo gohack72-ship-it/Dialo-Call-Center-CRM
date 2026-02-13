@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         scaffoldBackgroundColor: const Color(0xFFF5F5F5),
       ),
-      home: LeadsScreen(),
+      home: NewLeadPage(),
     );
   }
 }
