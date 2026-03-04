@@ -2,6 +2,7 @@
 
 
 
+import 'package:dialo/views/bottomnavigationbar.dart';
 import 'package:dialo/splashScreen.dart';
 import 'package:dialo/views/reportpage.dart';
 import 'package:flutter/material.dart';
