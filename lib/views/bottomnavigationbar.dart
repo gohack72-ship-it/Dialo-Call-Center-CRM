@@ -1,4 +1,5 @@
 import 'package:dialo/views/addlead.dart';
+import 'package:dialo/views/dashboard.dart';
 import 'package:dialo/views/leads_screen.dart';
 import 'package:dialo/views/reportpage.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +17,7 @@ class _BottomnavPageState extends State<BottomnavPage> {
   int _currentIndex = 0;
 
   final List<Widget> _pages = [
+    Dashboard(),
     LeadsScreen(),
     NewLeadPage(),
     Reportpage(),

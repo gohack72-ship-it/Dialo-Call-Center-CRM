@@ -139,7 +139,7 @@ class _DbState extends State<Dashboard> {
               const FollowUpCard(index: 0),
               const FollowUpCard(index: 1),
               const FollowUpCard(index: 1),
-            ],
+             ],
           ),
         ),
       ),
