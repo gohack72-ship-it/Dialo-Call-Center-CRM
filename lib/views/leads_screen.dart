@@ -15,7 +15,7 @@ class _LeadsScreenState extends State<LeadsScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
 
-    
+
       endDrawer: const FilterDrawer(),
 
       body: SafeArea(
@@ -46,7 +46,7 @@ class _LeadsScreenState extends State<LeadsScreen> {
               ),
             ),
 
-            
+
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Builder(
@@ -76,7 +76,7 @@ class _LeadsScreenState extends State<LeadsScreen> {
 
             const SizedBox(height: 10),
 
-           
+
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -93,7 +93,7 @@ class _LeadsScreenState extends State<LeadsScreen> {
 
             const SizedBox(height: 10),
 
-          
+
             Expanded(
               child: ListView(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -110,7 +110,7 @@ class _LeadsScreenState extends State<LeadsScreen> {
         ),
       ),
 
-   
+
       // bottomNavigationBar: BottomNavigationBar(
       //   currentIndex: _currentIndex,
       //   type: BottomNavigationBarType.fixed,
@@ -120,13 +120,13 @@ class _LeadsScreenState extends State<LeadsScreen> {
       //     setState(() => _currentIndex = index);
       //   },
       //   // items: const [
-        //   BottomNavigationBarItem(icon: Icon(Icons.dashboard), label: 'Dashboard'),
-        //   BottomNavigationBarItem(icon: Icon(Icons.people_outline_rounded), label: 'Leads'),
-        //   BottomNavigationBarItem(icon: Icon(Icons.add_outlined), label: 'Add leads'),
-        //   BottomNavigationBarItem(icon: Icon(Icons.bar_chart_rounded), label: 'Reports'),
-        // ],
-      );
-    
+      //   BottomNavigationBarItem(icon: Icon(Icons.dashboard), label: 'Dashboard'),
+      //   BottomNavigationBarItem(icon: Icon(Icons.people_outline_rounded), label: 'Leads'),
+      //   BottomNavigationBarItem(icon: Icon(Icons.add_outlined), label: 'Add leads'),
+      //   BottomNavigationBarItem(icon: Icon(Icons.bar_chart_rounded), label: 'Reports'),
+      // ],
+    );
+
   }
 }
 
@@ -243,7 +243,7 @@ class _FilterDrawerState extends State<FilterDrawer> {
             const Text("Status", style: TextStyle(fontWeight: FontWeight.w500)),
             const SizedBox(height: 6),
             _dropdown(status, ["All Status", "New", "Contacted", "Accepted", "Rejected", "Joined"],
-                (v) => setState(() => status = v!)),
+                    (v) => setState(() => status = v!)),
 
             const SizedBox(height: 20),
             const Text("Course", style: TextStyle(fontWeight: FontWeight.w500)),
@@ -254,7 +254,7 @@ class _FilterDrawerState extends State<FilterDrawer> {
             const Text("City", style: TextStyle(fontWeight: FontWeight.w500)),
             const SizedBox(height: 6),
             _dropdown(city, ["All Cities", "New York", "Los Angeles", "UK", "India"],
-                (v) => setState(() => city = v!)),
+                    (v) => setState(() => city = v!)),
           ],
         ),
       ),
