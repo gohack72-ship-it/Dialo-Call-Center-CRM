@@ -18,6 +18,8 @@ class _DbState extends State<Dashboard> {
     return Scaffold(
       backgroundColor: Color(0xffFFFFFF),
       appBar: AppBar(
+        toolbarHeight:50 ,
+        backgroundColor:Color(0xffFFFFFF) ,
         leading: Builder(
           builder: (context) => IconButton(
             icon: const Icon(Icons.menu, color: Colors.black, size: 30),
@@ -27,17 +29,17 @@ class _DbState extends State<Dashboard> {
           ),
         ),
 
-        // title: Align(
-        //   alignment: Alignment.centerRight,
-        //   child: const Text(
-        //     "HOME PAGE",
-        //     style: TextStyle(
-        //       color: Colors.black,
-        //       fontWeight: FontWeight.w700,
-        //       fontSize: 22,
-        //     ),
-        //   ),
-        // ),
+        title: Align(
+          alignment: Alignment.centerRight,
+          child: const Text(
+            "HOME PAGE",
+            style: TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+            ),
+          ),
+        ),
         actions: [
           PopupMenuButton<String>(
             icon: const Icon(Icons.tune, color: Colors.black, size: 25),

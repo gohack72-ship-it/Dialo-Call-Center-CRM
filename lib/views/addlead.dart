@@ -59,8 +59,8 @@ class _NewLeadPageState extends State<NewLeadPage> {
                       ),
 
                       const SizedBox(height: 20),
-                      _label('Full Name'),
-                      _input('Enter Name'),
+                      _label('Full Name',),
+                      _input('Enter Name',),
                       _label("Place"),
                       _input("Enter Place"),
                       _label("Phone"),
