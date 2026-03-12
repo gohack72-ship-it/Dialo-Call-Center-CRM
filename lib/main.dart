@@ -14,7 +14,6 @@ import 'package:flutter/material.dart';
 
 
 
-// 👈 import your page here
 
 void main() {
   runApp(const MyApp());
@@ -32,7 +31,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         scaffoldBackgroundColor: const Color(0xFFF5F5F5),
       ),
-      home: Splashscreen(),
+      home: LeadsScreen(),
     );
   }
 }
