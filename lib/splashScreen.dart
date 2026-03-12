@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'package:dialo/views/dashboard.dart';
+import 'package:dialo/views/home.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
@@ -12,6 +14,17 @@ class Splashscreen extends StatefulWidget {
 class _SplashscreenState extends State<Splashscreen> {
 
   bool showSecond = false;
+  
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    print("ggggggggggggggg");
+    if (showSecond){
+
+    }
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,22 +33,35 @@ class _SplashscreenState extends State<Splashscreen> {
       body: Center(
 
         child: showSecond
-            ? Image.asset(
-          'assets/WhatsApp Image 2026-01-20 at 11.57.03 AM.jpeg',
 
-          height: 200,
-          width: 200,
-        )
+            ? Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset(
+                          'assets/WhatsApp Image 2026-01-20 at 11.57.03 AM.jpeg',
+
+                          height: 200,
+                          width: 200,
+                        ),
+
+      Text("Welcome To Dialo",
+          style: TextStyle(fontWeight:FontWeight.w900,fontSize: 23 ,color: Colors.blue),)
+
+              ],
+            )
             : Lottie.asset(
           'assets/Loading animation blue.json',
           height: 200,
           width: 200,
           repeat: false,
+          
           onLoaded: (composition) {
             Future.delayed(composition.duration, () {
               setState(() {
                 showSecond = true;
-
+                Future.delayed(Duration(seconds: 1),(){
+                  Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => Dashboard(),));
+                });
               });
             });
           },

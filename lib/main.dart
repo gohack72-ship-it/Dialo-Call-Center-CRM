@@ -7,6 +7,7 @@ import 'package:dialo/views/addlead.dart';
 import 'package:dialo/views/bottomnavigationbar.dart';
 import 'package:dialo/splashScreen.dart';
 import 'package:dialo/views/dashboard.dart';
+import 'package:dialo/views/home.dart';
 import 'package:dialo/views/leads_screen.dart';
 import 'package:dialo/views/reportpage.dart';
 import 'package:dialo/views/reportsum.dart';
