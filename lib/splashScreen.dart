@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:dialo/views/bottomnavigationbar.dart';
 import 'package:dialo/views/dashboard.dart';
 import 'package:dialo/views/home.dart';
 import 'package:flutter/material.dart';
@@ -60,7 +61,7 @@ class _SplashscreenState extends State<Splashscreen> {
               setState(() {
                 showSecond = true;
                 Future.delayed(Duration(seconds: 1),(){
-                  Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => Dashboard(),));
+                  Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => BottomnavPage(),));
                 });
               });
             });
