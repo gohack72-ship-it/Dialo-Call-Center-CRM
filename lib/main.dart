@@ -4,6 +4,7 @@
 
 import 'package:dialo/views/Name_page.dart';
 import 'package:dialo/views/addlead.dart';
+import 'package:dialo/views/assest/Notification.dart';
 import 'package:dialo/views/bottomnavigationbar.dart';
 import 'package:dialo/splashScreen.dart';
 import 'package:dialo/views/dashboard.dart';
@@ -33,7 +34,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         scaffoldBackgroundColor: const Color(0xFFF5F5F5),
       ),
-      home: Splashscreen(),
+      home: NotificationPage(),
     );
   }
 }
