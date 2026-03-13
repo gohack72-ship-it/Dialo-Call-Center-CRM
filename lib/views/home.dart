@@ -15,12 +15,17 @@ class home extends StatelessWidget {
           Center(
             child:AnimatedOpacity(
                 opacity: 1.0,
-              duration: Duration(seconds: 1),
+              duration: Duration(seconds: 2),
               child: Image.asset('assets/WhatsApp Image 2026-01-20 at 11.57.03 AM.jpeg',
                 fit:BoxFit.contain,height: 400,width: 300,),
-      )
-          )
+      ),
+
+          ),
+          SizedBox(height: 20,),
+          Text("Welcome To Dialo",
+          style: TextStyle(fontWeight:FontWeight.w900,fontSize: 40 ,color: Colors.blue),)
         ],
+
       ),
     );
   }
