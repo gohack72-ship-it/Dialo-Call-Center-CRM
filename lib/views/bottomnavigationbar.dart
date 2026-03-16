@@ -1,10 +1,13 @@
-import 'package:dialo/views/leaddetails.dart';
+import 'package:dialo/views/addlead.dart';
+import 'package:dialo/views/dashboard.dart';
+import 'package:dialo/views/leads_screen.dart';
 import 'package:dialo/views/reportpage.dart';
 import 'package:flutter/material.dart';
 import 'package:dialo/constants/app_colors.dart';
 
 class BottomnavPage extends StatefulWidget {
-  const BottomnavPage({super.key});
+  final Function(bool) changeTheme;
+  const BottomnavPage({super.key,required this.changeTheme});
 
   @override
   State<BottomnavPage> createState() => _BottomnavPageState();
@@ -14,9 +17,18 @@ class _BottomnavPageState extends State<BottomnavPage> {
 
   int _currentIndex = 0;
 
-  final List<Widget> _pages = [
+  late final List<Widget>_pages;
+  @override
+  void initState() {
+    super.initState();
+    _pages = [
+      Dashboard(changeTheme: widget.changeTheme),
+      LeadsScreen(),
+      NewLeadPage(),
+      Reportpage(),
+    ];
+  }
 
-  ];
 
   @override
   Widget build(BuildContext context) {

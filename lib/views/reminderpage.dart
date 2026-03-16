@@ -1,7 +1,8 @@
 import 'package:dialo/constants/app_colors.dart';
 import 'package:dialo/constants/app_textstyle.dart';
-import 'package:dialo/views/leaddetails.dart';
 import 'package:flutter/material.dart';
+
+import 'Name_page.dart';
 
 class ReminderPage extends StatefulWidget {
   const ReminderPage({super.key});
@@ -93,7 +94,7 @@ appBar: AppBar(
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => const LeadDetails(),
+                    builder: (_) => const LeadProfileScreen(),
                   ),
                 );
 
