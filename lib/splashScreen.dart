@@ -6,7 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
 class Splashscreen extends StatefulWidget {
-  const Splashscreen({super.key});
+  final Function(bool) changeTheme;
+  const Splashscreen({super.key,required this.changeTheme});
 
   @override
   State<Splashscreen> createState() => _SplashscreenState();
@@ -61,7 +62,7 @@ class _SplashscreenState extends State<Splashscreen> {
               setState(() {
                 showSecond = true;
                 Future.delayed(Duration(seconds: 1),(){
-                  Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => BottomnavPage(),));
+                  Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => BottomnavPage(changeTheme: widget.changeTheme),));
                 });
               });
             });

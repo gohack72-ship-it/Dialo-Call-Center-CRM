@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../constants/app_colors.dart';
+
 
 class LeadProfileScreen extends StatefulWidget {
   const LeadProfileScreen({super.key});
@@ -34,7 +36,7 @@ class _LeadProfileScreenState extends State<LeadProfileScreen> {
             child: ElevatedButton.icon(
               onPressed: () {},
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF3F51B5),
+                backgroundColor: AppColors.themeColor,
                 foregroundColor: Colors.white,
                 elevation: 0,
                 shape: RoundedRectangleBorder(

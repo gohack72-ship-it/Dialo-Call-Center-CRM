@@ -1,3 +1,4 @@
+import 'package:dialo/views/Name_page.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -18,10 +19,10 @@ class _DbState extends State<Dashboard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xffFFFFFF),
+      backgroundColor: Colors.white,
       appBar: AppBar(
         toolbarHeight:50 ,
-        backgroundColor:Color(0xffFFFFFF) ,
+        backgroundColor:Colors.white ,
         leading: Builder(
           builder: (context) => IconButton(
             icon: const Icon(Icons.menu, color: Colors.black, size: 30),
@@ -254,55 +255,66 @@ class FollowUpCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade300),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-
-              children: [
-                const Text(
-                    "Mathew",
-                    style: AppTextstyle.NameText
-                ),
-                const SizedBox(height: 4),
-                const Text("Check on Proposal View"),
-                const SizedBox(height: 4),
-                const Text(
-                    "Jan-16-2026",
-                    style:AppTextstyle.MicroText
-                ),
-              ],
-            ),
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const LeadProfileScreen(),
           ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-            decoration: BoxDecoration(
-              color: index == 0
-                  ? Colors.orange.withOpacity(0.15)
-                  : Colors.green.withOpacity(0.15),
-              borderRadius: BorderRadius.circular(15),
-            ),
-            child: Text(
-              index == 0 ? "Contacted" : "Accepted",
-              style: TextStyle(
-                color: index == 0 ? Colors.orange : Colors.green,
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
+
+        );
+      },
+      child: Container(
+        width: double.infinity,
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.grey.shade300),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+
+                children: [
+                  const Text(
+                      "Mathew",
+                      style: AppTextstyle.NameText
+                  ),
+                  const SizedBox(height: 4),
+                  const Text("Check on Proposal View"),
+                  const SizedBox(height: 4),
+                  const Text(
+                      "Jan-16-2026",
+                      style:AppTextstyle.MicroText
+                  ),
+                ],
               ),
             ),
-          ),
-        ],
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              decoration: BoxDecoration(
+                color: index == 0
+                    ? Colors.orange.withOpacity(0.15)
+                    : Colors.green.withOpacity(0.15),
+                borderRadius: BorderRadius.circular(15),
+              ),
+              child: Text(
+                index == 0 ? "Contacted" : "Accepted",
+                style: TextStyle(
+                  color: index == 0 ? Colors.orange : Colors.green,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

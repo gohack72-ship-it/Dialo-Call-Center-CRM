@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../constants/app_colors.dart';
+
 class NewLeadPage extends StatefulWidget {
   const NewLeadPage({super.key});
 
@@ -113,7 +115,7 @@ class _NewLeadPageState extends State<NewLeadPage> {
                             }
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF3F5FBF),
+                            backgroundColor: AppColors.themeColor,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
