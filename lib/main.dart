@@ -4,6 +4,7 @@
 
 import 'package:dialo/views/Name_page.dart';
 import 'package:dialo/views/addlead.dart';
+import 'package:dialo/views/assest/Notification.dart';
 import 'package:dialo/views/bottomnavigationbar.dart';
 import 'package:dialo/splashScreen.dart';
 import 'package:dialo/views/dashboard.dart';
@@ -12,12 +13,17 @@ import 'package:dialo/views/leads_screen.dart';
 import 'package:dialo/views/reportpage.dart';
 import 'package:dialo/views/reportsum.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
 
 
 // 👈 import your page here
 
-void main() {
+Future<void> main() async {
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 
