@@ -1,4 +1,5 @@
 
+import 'package:dialo/splashScreen.dart';
 import 'package:dialo/views/bottomnavigationbar.dart';
 
 import 'package:flutter/material.dart';
@@ -77,7 +78,7 @@ setState(() {
         ),
       ),
       themeMode: isDarkMode?ThemeMode.dark:ThemeMode.light,
-      home: BottomnavPage(changeTheme: changeTheme,),
+      home: Splashscreen(changeTheme: changeTheme,),
     );
   }
 }

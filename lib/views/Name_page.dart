@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../constants/app_colors.dart';
 
-
 class LeadProfileScreen extends StatefulWidget {
   const LeadProfileScreen({super.key});
 
@@ -24,11 +23,17 @@ class _LeadProfileScreenState extends State<LeadProfileScreen> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () {},
+          onPressed: () {
+            Navigator.pop(context);
+          },
         ),
         title: const Text(
           "Name",
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 22),
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+            fontSize: 22,
+          ),
         ),
         actions: [
           Padding(
@@ -69,11 +74,19 @@ class _LeadProfileScreenState extends State<LeadProfileScreen> {
             Row(
               children: [
                 Expanded(
-                  child: _buildPillButton(Icons.phone_in_talk, "Call Now", Colors.black),
+                  child: _buildPillButton(
+                    Icons.phone_in_talk,
+                    "Call Now",
+                    Colors.black,
+                  ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: _buildPillButton(Icons.chat_bubble, "Whatsapp", Colors.green),
+                  child: _buildPillButton(
+                    Icons.chat_bubble,
+                    "Whatsapp",
+                    Colors.green,
+                  ),
                 ),
               ],
             ),
@@ -138,14 +151,14 @@ class _LeadProfileScreenState extends State<LeadProfileScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 _buildHeader("Interaction History", padding: 0),
-                const Text("view all >", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                const Text(
+                  "view all >",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                ),
               ],
             ),
             const SizedBox(height: 8),
-            Container(
-              height: 80,
-              decoration: _boxDecoration(),
-            ),
+            Container(height: 80, decoration: _boxDecoration()),
             const SizedBox(height: 40),
           ],
         ),
@@ -159,7 +172,9 @@ class _LeadProfileScreenState extends State<LeadProfileScreen> {
   Widget _buildEditableTile(IconData icon, String hintText) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 12), // Removed vertical padding
+      padding: const EdgeInsets.symmetric(
+        horizontal: 12,
+      ), // Removed vertical padding
       decoration: _boxDecoration(),
       child: Row(
         children: [
@@ -171,7 +186,9 @@ class _LeadProfileScreenState extends State<LeadProfileScreen> {
               decoration: InputDecoration(
                 hintText: hintText,
                 border: InputBorder.none, // Removes the line under text
-                contentPadding: const EdgeInsets.symmetric(vertical: 14), // Centers text vertically
+                contentPadding: const EdgeInsets.symmetric(
+                  vertical: 14,
+                ), // Centers text vertically
               ),
               style: const TextStyle(fontSize: 15, color: Colors.black87),
             ),
@@ -193,7 +210,13 @@ class _LeadProfileScreenState extends State<LeadProfileScreen> {
         children: [
           Icon(icon, color: color, size: 20),
           const SizedBox(width: 8),
-          Text(label, style: const TextStyle(fontWeight: FontWeight.w500, color: Colors.black87)),
+          Text(
+            label,
+            style: const TextStyle(
+              fontWeight: FontWeight.w500,
+              color: Colors.black87,
+            ),
+          ),
         ],
       ),
     );
@@ -204,7 +227,11 @@ class _LeadProfileScreenState extends State<LeadProfileScreen> {
       padding: EdgeInsets.only(bottom: padding),
       child: Text(
         title,
-        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
+        style: const TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+          color: Colors.black,
+        ),
       ),
     );
   }

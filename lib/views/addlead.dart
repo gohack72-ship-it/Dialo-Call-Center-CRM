@@ -1,3 +1,4 @@
+import 'package:dialo/views/leads_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -61,8 +62,8 @@ class _NewLeadPageState extends State<NewLeadPage> {
                       ),
 
                       const SizedBox(height: 20),
-                      _label('Full Name',),
-                      _input('Enter Name',),
+                      _label('Full Name'),
+                      _input('Enter Name'),
                       _label("Place"),
                       _input("Enter Place"),
                       _label("Phone"),
@@ -110,6 +111,12 @@ class _NewLeadPageState extends State<NewLeadPage> {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                   content: Text('Lead Created Successfully'),
+                                ),
+                              );
+                              Navigator.pop(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const LeadsScreen(),
                                 ),
                               );
                             }

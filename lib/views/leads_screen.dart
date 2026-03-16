@@ -26,7 +26,12 @@ class _LeadsScreenState extends State<LeadsScreen> {
               padding: const EdgeInsets.all(12),
               child: Row(
                 children: [
-                  const Icon(Icons.arrow_back),
+                  IconButton(
+                  icon:const Icon(Icons.arrow_back),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  ),
                   const SizedBox(width: 12),
                   const Text("Leads",
                       style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
@@ -42,6 +47,7 @@ class _LeadsScreenState extends State<LeadsScreen> {
                     onPressed: () {},
                     child: const Text("Add Lead"),
                   ),
+                  
                 ],
               ),
             ),
