@@ -1,10 +1,19 @@
 import 'package:dialo/views/addlead.dart';
 import 'package:dialo/constants/app_colors.dart';
 import 'package:dialo/constants/app_textstyle.dart';
+import 'package:dialo/views/bottomnavigationbar.dart';
+import 'package:dialo/views/leaddetails.dart';
 import 'package:dialo/views/leads_screen.dart';
 import 'package:dialo/views/reportpage.dart';
 
+
+
 import 'package:flutter/material.dart';
+
+import 'namePage.dart';
+
+
+// 👈 import your page here
 
 void main() {
   runApp(const MyApp());
