@@ -5,7 +5,8 @@ import 'package:flutter/services.dart';
 import '../constants/app_colors.dart';
 
 class NewLeadPage extends StatefulWidget {
-  const NewLeadPage({super.key});
+   final Function(bool) changeTheme;
+  const NewLeadPage({super.key,required this.changeTheme});
 
   @override
   State<NewLeadPage> createState() => _NewLeadPageState();
@@ -116,7 +117,7 @@ class _NewLeadPageState extends State<NewLeadPage> {
                               Navigator.pop(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => const LeadsScreen(),
+                                  builder: (context) =>  LeadsScreen(changeTheme: widget.changeTheme),
                                 ),
                               );
                             }

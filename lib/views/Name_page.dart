@@ -1,3 +1,4 @@
+import 'package:dialo/views/reminderpage.dart';
 import 'package:flutter/material.dart';
 
 import '../constants/app_colors.dart';
@@ -39,7 +40,13 @@ class _LeadProfileScreenState extends State<LeadProfileScreen> {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
             child: ElevatedButton.icon(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const ReminderPage(),
+                  ),
+                );
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.themeColor,
                 foregroundColor: Colors.white,
