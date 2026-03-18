@@ -1,9 +1,9 @@
-import 'package:dialo/views/addlead.dart';
 import 'package:dialo/views/dashboard.dart';
-import 'package:dialo/views/leads_screen.dart';
-import 'package:dialo/views/reportpage.dart';
+import 'package:dialo/views/repots/reportpage.dart';
 import 'package:flutter/material.dart';
 import 'package:dialo/constants/app_colors.dart';
+import 'leads/addlead.dart';
+import 'leads/leads_screen.dart';
 
 class BottomnavPage extends StatefulWidget {
   final Function(bool) changeTheme;

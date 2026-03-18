@@ -1,5 +1,7 @@
+import 'package:dialo/providers/leadProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 
 class NewLeadPage extends StatefulWidget {
   const NewLeadPage({super.key});
@@ -10,18 +12,19 @@ class NewLeadPage extends StatefulWidget {
 
 class _NewLeadPageState extends State<NewLeadPage> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController phoneController = TextEditingController();
+
 
   String? education;
   String? course;
-  @override
-  void dispose() {
-    phoneController.dispose();
-    super.dispose();
-  }
+//  @override
+  // void dispose() {
+  //   phoneController.dispose();
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {
+    LeadProvider pro= Provider.of<LeadProvider>(context,listen: false);
     return Scaffold(
       backgroundColor: Colors.white,
 
@@ -60,9 +63,9 @@ class _NewLeadPageState extends State<NewLeadPage> {
 
                       const SizedBox(height: 20),
                       _label('Full Name',),
-                      _input('Enter Name',),
+                      _input('Enter Name',context.read<LeadProvider>().nameController),
                       _label("Place"),
-                      _input("Enter Place"),
+                      _input("Enter Place",context.read<LeadProvider>().placeController),
                       _label("Phone"),
                       _phoneField(),
 
@@ -104,6 +107,7 @@ class _NewLeadPageState extends State<NewLeadPage> {
                         height: 48,
                         child: ElevatedButton(
                           onPressed: () {
+
                             if (_formKey.currentState!.validate()) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
@@ -146,10 +150,11 @@ class _NewLeadPageState extends State<NewLeadPage> {
     );
   }
 
-  Widget _input(String hint) {
+  Widget _input(String hint, TextEditingController controller,  ) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 14),
       child: TextFormField(
+        controller: controller,
         decoration: InputDecoration(
           hintText: hint,
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
@@ -160,10 +165,10 @@ class _NewLeadPageState extends State<NewLeadPage> {
         ),
         validator: (value) {
           if (value == null || value.isEmpty) {
-            return 'Please enter $hint';
+            return 'Please enter phone number';
           }
           return null;
-        },
+          }
       ),
     );
   }
@@ -172,7 +177,7 @@ class _NewLeadPageState extends State<NewLeadPage> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 14),
       child: TextFormField(
-        controller: phoneController,
+        controller: context.read<LeadProvider>().phoneController,
         keyboardType: TextInputType.phone,
         inputFormatters: [
           FilteringTextInputFormatter.digitsOnly,
@@ -190,7 +195,7 @@ class _NewLeadPageState extends State<NewLeadPage> {
           if (value == null || value.isEmpty) {
             return 'Please enter phone number';
           }
-          if (value.length != 10) {
+          if (value.length < 10) {
             return 'Phone number must be 10 digits';
           }
           return null;
@@ -198,6 +203,7 @@ class _NewLeadPageState extends State<NewLeadPage> {
       ),
     );
   }
+
 
   Widget _dropdown({
     required String hint,

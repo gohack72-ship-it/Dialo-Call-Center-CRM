@@ -1,6 +1,7 @@
 import 'package:dialo/constants/app_colors.dart';
 import 'package:dialo/constants/app_textstyle.dart';
-import 'package:dialo/views/reportsum.dart';
+
+import 'package:dialo/views/repots/reportsum.dart';
 import 'package:flutter/material.dart';
 
 class Reportpage extends StatefulWidget {
