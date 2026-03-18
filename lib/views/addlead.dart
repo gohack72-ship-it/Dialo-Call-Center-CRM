@@ -1,8 +1,12 @@
+import 'package:dialo/views/leads_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../constants/app_colors.dart';
+
 class NewLeadPage extends StatefulWidget {
-  const NewLeadPage({super.key});
+   final Function(bool) changeTheme;
+  const NewLeadPage({super.key,required this.changeTheme});
 
   @override
   State<NewLeadPage> createState() => _NewLeadPageState();
@@ -59,8 +63,8 @@ class _NewLeadPageState extends State<NewLeadPage> {
                       ),
 
                       const SizedBox(height: 20),
-                      _label('Full Name',),
-                      _input('Enter Name',),
+                      _label('Full Name'),
+                      _input('Enter Name'),
                       _label("Place"),
                       _input("Enter Place"),
                       _label("Phone"),
@@ -110,10 +114,16 @@ class _NewLeadPageState extends State<NewLeadPage> {
                                   content: Text('Lead Created Successfully'),
                                 ),
                               );
+                              Navigator.pop(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>  LeadsScreen(changeTheme: widget.changeTheme),
+                                ),
+                              );
                             }
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF3F5FBF),
+                            backgroundColor: AppColors.themeColor,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),

@@ -1,7 +1,9 @@
+import 'package:dialo/views/settingspage.dart';
 import 'package:flutter/material.dart';
 
 class LeadsScreen extends StatefulWidget {
-  const LeadsScreen({super.key});
+  final Function(bool) changeTheme;
+  const LeadsScreen({super.key,required this.changeTheme});
 
   @override
   State<LeadsScreen> createState() => _LeadsScreenState();
@@ -13,54 +15,57 @@ class _LeadsScreenState extends State<LeadsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: Colors.white,
+ 
 
-
-      endDrawer: const FilterDrawer(),
-
-      body: SafeArea(
-        child: Column(
-          children: [
-
-            Padding(
-              padding: const EdgeInsets.all(12),
-              child: Row(
-                children: [
-                  const Icon(Icons.arrow_back),
-                  const SizedBox(width: 12),
-                  const Text("Leads",
-                      style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-                  const Spacer(),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
+drawer: SettingsDrawer(changeTheme:widget.changeTheme),
+appBar: AppBar(
+  title:const Text(
+                      "Leads",
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                    onPressed: () {},
-                    child: const Text("Add Lead"),
-                  ),
-                ],
-              ),
-            ),
+                    actions: [
+                      ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 6,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                      ),
+                      onPressed: () {},
+                      child: const Text("Add Lead"),
+                  
+                    ),
+                    const SizedBox(height: 10),
+                    ],
 
-
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Builder(
-                builder: (context) {
-                  return TextField(
+  ),
+      body: Column(
+        children: [
+          
+      
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
                     decoration: InputDecoration(
                       hintText: "Search Leads",
                       prefixIcon: const Icon(Icons.search),
-                      suffixIcon: IconButton(
-                        icon: const Icon(Icons.tune),
-                        onPressed: () {
-                          Scaffold.of(context).openEndDrawer();
-                        },
-                      ),
+                      // suffixIcon: IconButton(
+                      //   icon: const Icon(Icons.tune),
+                      //   onPressed: () {
+                      //     Scaffold.of(context).openEndDrawer();
+                      //   },
+                      // ),
                       filled: true,
                       fillColor: Colors.white,
                       contentPadding: const EdgeInsets.symmetric(vertical: 0),
@@ -105,17 +110,13 @@ class _LeadsScreenState extends State<LeadsScreen> {
                   LeadCard(name: "Mathew", phone: "+1 (555) 123-4568", city: "UK", status: "Joined"),
                 ],
               ),
-            ),
-          ],
-        ),
-      ),
-
-
-     
-    );
-
+           ),
+        
   }
-}
+        ],
+        ),
+      );
+    }
 
 
 
@@ -136,8 +137,6 @@ class StatusChip extends StatelessWidget {
     );
   }
 }
-
-
 
 class LeadCard extends StatelessWidget {
   final String name, phone, city, status;
@@ -179,7 +178,13 @@ class LeadCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              Text(name, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+              Text(
+                name,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               const Spacer(),
               Container(
                 height: 26,
@@ -189,24 +194,35 @@ class LeadCard extends StatelessWidget {
                   color: getStatusColor(),
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: Text(status,
-                    style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600)),
+                child: Text(
+                  status,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
               ),
             ],
           ),
           const SizedBox(height: 8),
-          Row(children: const [Icon(Icons.phone, size: 16), SizedBox(width: 6)]),
+          Row(
+            children: const [Icon(Icons.phone, size: 16), SizedBox(width: 6)],
+          ),
           Text(phone),
           const SizedBox(height: 4),
-          Row(children: const [Icon(Icons.location_on, size: 16), SizedBox(width: 6)]),
+          Row(
+            children: const [
+              Icon(Icons.location_on, size: 16),
+              SizedBox(width: 6),
+            ],
+          ),
           Text(city),
         ],
       ),
     );
   }
 }
-
-
 
 class FilterDrawer extends StatefulWidget {
   const FilterDrawer({super.key});
@@ -229,26 +245,45 @@ class _FilterDrawerState extends State<FilterDrawer> {
           children: [
             const Text("Status", style: TextStyle(fontWeight: FontWeight.w500)),
             const SizedBox(height: 6),
-            _dropdown(status, ["All Status", "New", "Contacted", "Accepted", "Rejected", "Joined"],
-                    (v) => setState(() => status = v!)),
+            _dropdown(status, [
+              "All Status",
+              "New",
+              "Contacted",
+              "Accepted",
+              "Rejected",
+              "Joined",
+            ], (v) => setState(() => status = v!)),
 
             const SizedBox(height: 20),
             const Text("Course", style: TextStyle(fontWeight: FontWeight.w500)),
             const SizedBox(height: 6),
-            _dropdown(course, ["All Courses", "Flutter", "Python"], (v) => setState(() => course = v!)),
+            _dropdown(course, [
+              "All Courses",
+              "Flutter",
+              "Python",
+            ], (v) => setState(() => course = v!)),
 
             const SizedBox(height: 20),
             const Text("City", style: TextStyle(fontWeight: FontWeight.w500)),
             const SizedBox(height: 6),
-            _dropdown(city, ["All Cities", "New York", "Los Angeles", "UK", "India"],
-                    (v) => setState(() => city = v!)),
+            _dropdown(city, [
+              "All Cities",
+              "New York",
+              "Los Angeles",
+              "UK",
+              "India",
+            ], (v) => setState(() => city = v!)),
           ],
         ),
       ),
     );
   }
 
-  Widget _dropdown(String value, List<String> items, ValueChanged<String?> onChanged) {
+  Widget _dropdown(
+    String value,
+    List<String> items,
+    ValueChanged<String?> onChanged,
+  ) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12),
       decoration: BoxDecoration(
@@ -260,7 +295,9 @@ class _FilterDrawerState extends State<FilterDrawer> {
           value: value,
           isExpanded: true,
           icon: const Icon(Icons.keyboard_arrow_down),
-          items: items.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+          items: items
+              .map((e) => DropdownMenuItem(value: e, child: Text(e)))
+              .toList(),
           onChanged: onChanged,
         ),
       ),

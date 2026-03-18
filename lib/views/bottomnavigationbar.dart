@@ -6,7 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:dialo/constants/app_colors.dart';
 
 class BottomnavPage extends StatefulWidget {
-  const BottomnavPage({super.key});
+  final Function(bool) changeTheme;
+  const BottomnavPage({super.key,required this.changeTheme});
 
   @override
   State<BottomnavPage> createState() => _BottomnavPageState();
@@ -16,12 +17,18 @@ class _BottomnavPageState extends State<BottomnavPage> {
 
   int _currentIndex = 0;
 
-  final List<Widget> _pages = [
-    Dashboard(),
-    LeadsScreen(),
-    NewLeadPage(),
-    Reportpage(),
-  ];
+  late final List<Widget>_pages;
+  @override
+  void initState() {
+    super.initState();
+    _pages = [
+      Dashboard(changeTheme: widget.changeTheme),
+      LeadsScreen(changeTheme: widget.changeTheme),
+      NewLeadPage(changeTheme: widget.changeTheme),
+      Reportpage(changeTheme: widget.changeTheme),
+    ];
+  }
+
 
   @override
   Widget build(BuildContext context) {
