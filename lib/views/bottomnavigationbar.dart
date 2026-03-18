@@ -24,7 +24,7 @@ class _BottomnavPageState extends State<BottomnavPage> {
     _pages = [
       Dashboard(changeTheme: widget.changeTheme),
       LeadsScreen(changeTheme: widget.changeTheme),
-      NewLeadPage(changeTheme: widget.changeTheme),
+      NewLeadPage(),
       Reportpage(changeTheme: widget.changeTheme),
     ];
   }

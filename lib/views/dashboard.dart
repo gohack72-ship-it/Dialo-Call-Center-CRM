@@ -1,4 +1,4 @@
-import 'package:dialo/views/Name_page.dart';
+
 import 'package:dialo/views/settingspage.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../constants/app_colors.dart';
 import '../constants/app_textstyle.dart';
+import 'leads/lead_details.dart';
 
 class Dashboard extends StatefulWidget {
   final Function(bool) changeTheme;

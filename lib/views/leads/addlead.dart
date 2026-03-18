@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+
+import '../../providers/leadProvider.dart';
 
 class NewLeadPage extends StatefulWidget {
   const NewLeadPage({super.key});
@@ -146,10 +149,11 @@ class _NewLeadPageState extends State<NewLeadPage> {
     );
   }
 
-  Widget _input(String hint) {
+  Widget _input(String hint, TextEditingController controller) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 14),
       child: TextFormField(
+        controller: controller ,
         decoration: InputDecoration(
           hintText: hint,
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
