@@ -1,3 +1,5 @@
+import 'package:dialo/views/Name_page.dart';
+import 'package:dialo/views/settingspage.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -19,10 +21,10 @@ class _DbState extends State<Dashboard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xffFFFFFF),
+      backgroundColor: Colors.white,
       appBar: AppBar(
         toolbarHeight:50 ,
-        backgroundColor:Color(0xffFFFFFF) ,
+        backgroundColor:Colors.white ,
         leading: Builder(
           builder: (context) => IconButton(
             icon: const Icon(Icons.menu, color: Colors.black, size: 30),
@@ -255,158 +257,169 @@ class FollowUpCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade300),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-
-              children: [
-                const Text(
-                    "Mathew",
-                    style: AppTextstyle.NameText
-                ),
-                const SizedBox(height: 4),
-                const Text("Check on Proposal View"),
-                const SizedBox(height: 4),
-                const Text(
-                    "Jan-16-2026",
-                    style:AppTextstyle.MicroText
-                ),
-              ],
-            ),
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const LeadProfileScreen(),
           ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-            decoration: BoxDecoration(
-              color: index == 0
-                  ? Colors.orange.withOpacity(0.15)
-                  : Colors.green.withOpacity(0.15),
-              borderRadius: BorderRadius.circular(15),
-            ),
-            child: Text(
-              index == 0 ? "Contacted" : "Accepted",
-              style: TextStyle(
-                color: index == 0 ? Colors.orange : Colors.green,
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
 
-class SettingsDrawer extends StatefulWidget {
-  final Function(bool)changeTheme;
-  const SettingsDrawer({super.key,required this.changeTheme});
-  @override
-  State<SettingsDrawer> createState() => _SettingsDrawerState();
-
-  static Widget _item(String title, IconData icon) {
-    return ListTile(
-      leading: Icon(icon, size: 22, color: AppColors.textColor),
-      title: Text(title),
-      onTap: () {},
-    );
-  }
-}
-
-class _SettingsDrawerState extends State<SettingsDrawer> {
-  bool isDarkMode = false;
-
-  @override
-  void initState(){
-    super.initState();
-    loadTheme();
-  }
-
-  void loadTheme()async{
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      isDarkMode = prefs.getBool('isDarkMode') ?? false;
-    });
-  }
-
-  void saveTheme(bool value)async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setBool("darkMode", value);
-  }
-
-
-  @override
-  Widget build(BuildContext context) {
-    return Drawer(
-      child: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        );
+      },
+      child: Container(
+        width: double.infinity,
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.grey.shade300),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              child: Row(
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+
                 children: [
-                  IconButton(
-                    icon: const Icon(Icons.arrow_back, color: Colors.black),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                  SizedBox(width: 8),
                   const Text(
-                    "Settings",
-                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 24),
+                      "Mathew",
+                      style: AppTextstyle.NameText
+                  ),
+                  const SizedBox(height: 4),
+                  const Text("Check on Proposal View"),
+                  const SizedBox(height: 4),
+                  const Text(
+                      "Jan-16-2026",
+                      style:AppTextstyle.MicroText
                   ),
                 ],
               ),
             ),
-            SizedBox(height: 20),
-            const ListTile(
-              leading: CircleAvatar(
-                radius: 24,
-                backgroundColor: AppColors.themeColor,
-                child: Icon(
-                  Icons.person_outline,
-                  color:AppColors.textColor ,
-                  size: 28,
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              decoration: BoxDecoration(
+                color: index == 0
+                    ? Colors.orange.withOpacity(0.15)
+                    : Colors.green.withOpacity(0.15),
+                borderRadius: BorderRadius.circular(15),
+              ),
+              child: Text(
+                index == 0 ? "Contacted" : "Accepted",
+                style: TextStyle(
+                  color: index == 0 ? Colors.orange : Colors.green,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
-
-              title: Text(
-                "Profile",
-                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 22),
-              ),
             ),
-            SizedBox(height: 10),
-            const Divider(),
-            SettingsDrawer._item("Notifications", Icons.notifications),
-           ListTile(
-             leading: const Icon(Icons.dark_mode,
-                 size: 22,color: AppColors.textColor,),
-             title: const Text("Mode Change"),
-             trailing: Switch(value: isDarkMode,
-                 activeColor: AppColors.themeColor,
-                 onChanged: (value){
-               setState((){
-                 isDarkMode=value;
-               });
-               widget.changeTheme(value);
-                 }),
-           ),
-            SettingsDrawer._item("Help & About", Icons.help),
-            SettingsDrawer._item("Logout", Icons.logout),
           ],
         ),
       ),
     );
   }
 }
+
+// class SettingsDrawer extends StatefulWidget {
+//   final Function(bool)changeTheme;
+//   const SettingsDrawer({super.key,required this.changeTheme});
+//   @override
+//   State<SettingsDrawer> createState() => _SettingsDrawerState();
+
+//   static Widget _item(String title, IconData icon) {
+//     return ListTile(
+//       leading: Icon(icon, size: 22, color: AppColors.textColor),
+//       title: Text(title),
+//       onTap: () {},
+//     );
+//   }
+// }
+
+// class _SettingsDrawerState extends State<SettingsDrawer> {
+//   bool isDarkMode = false;
+
+//   @override
+//   void initState(){
+//     super.initState();
+//     loadTheme();
+//   }
+
+//   void loadTheme()async{
+//     SharedPreferences prefs = await SharedPreferences.getInstance();
+//     setState(() {
+//       isDarkMode = prefs.getBool('isDarkMode') ?? false;
+//     });
+//   }
+
+//   void saveTheme(bool value)async {
+//     SharedPreferences prefs = await SharedPreferences.getInstance();
+//     prefs.setBool("darkMode", value);
+//   }
+
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Drawer(
+//       child: SafeArea(
+//         child: Column(
+//           crossAxisAlignment: CrossAxisAlignment.start,
+//           children: [
+//             Padding(
+//               padding: const EdgeInsets.symmetric(vertical: 8),
+//               child: Row(
+//                 children: [
+//                   IconButton(
+//                     icon: const Icon(Icons.arrow_back, color: Colors.black),
+//                     onPressed: () => Navigator.pop(context),
+//                   ),
+//                   SizedBox(width: 8),
+//                   const Text(
+//                     "Settings",
+//                     style: TextStyle(fontWeight: FontWeight.w600, fontSize: 24),
+//                   ),
+//                 ],
+//               ),
+//             ),
+//             SizedBox(height: 20),
+//             const ListTile(
+//               leading: CircleAvatar(
+//                 radius: 24,
+//                 backgroundColor: AppColors.themeColor,
+//                 child: Icon(
+//                   Icons.person_outline,
+//                   color:AppColors.textColor ,
+//                   size: 28,
+//                 ),
+//               ),
+
+//               title: Text(
+//                 "Profile",
+//                 style: TextStyle(fontWeight: FontWeight.w600, fontSize: 22),
+//               ),
+//             ),
+//             SizedBox(height: 10),
+//             const Divider(),
+//             SettingsDrawer._item("Notifications", Icons.notifications),
+//            ListTile(
+//              leading: const Icon(Icons.dark_mode,
+//                  size: 22,color: AppColors.textColor,),
+//              title: const Text("Mode Change"),
+//              trailing: Switch(value: isDarkMode,
+//                  activeColor: AppColors.themeColor,
+//                  onChanged: (value){
+//                setState((){
+//                  isDarkMode=value;
+//                });
+//                widget.changeTheme(value);
+//                  }),
+//            ),
+//             SettingsDrawer._item("Help & About", Icons.help),
+//             SettingsDrawer._item("Logout", Icons.logout),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }

@@ -2,10 +2,12 @@ import 'package:dialo/constants/app_colors.dart';
 import 'package:dialo/constants/app_textstyle.dart';
 
 import 'package:dialo/views/repots/reportsum.dart';
+import 'package:dialo/views/settingspage.dart';
 import 'package:flutter/material.dart';
 
 class Reportpage extends StatefulWidget {
-  const Reportpage({super.key});
+  final Function(bool) changeTheme;
+  const Reportpage({super.key,required this.changeTheme});
 
   @override
   State<Reportpage> createState() => _ReportpageState();
@@ -17,13 +19,29 @@ class _ReportpageState extends State<Reportpage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.whitetext,
+       drawer: SettingsDrawer(changeTheme:widget.changeTheme),
       appBar: AppBar(
-        backgroundColor: AppColors.whitetext,
+
+
         title: const Text(
           "Reports",
           style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
         ),
-        leading: IconButton(icon: const Icon(Icons.menu), onPressed: () {}),
+        actions: [
+
+        ],
+        leading: IconButton(
+          icon: const Icon(Icons.menu),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) =>
+                     SettingsDrawer(changeTheme:widget.changeTheme),
+              ),
+            );
+          },
+        ),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -36,10 +54,12 @@ class _ReportpageState extends State<Reportpage> {
                 decoration: InputDecoration(
                   filled: true,
                   fillColor: AppColors.themeColor,
-                  hintText: "search leads",hintStyle:TextStyle(
-                  color:  AppColors.whitetext,
-                ),
-                  prefixIcon: const Icon(Icons.search,color:AppColors.whitetext),
+                  hintText: "search leads",
+                  hintStyle: TextStyle(color: AppColors.whitetext),
+                  prefixIcon: const Icon(
+                    Icons.search,
+                    color: AppColors.whitetext,
+                  ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(20),
                     borderSide: BorderSide.none,
@@ -63,28 +83,59 @@ class _ReportpageState extends State<Reportpage> {
                       ),
                       child: Column(
                         children: [
-                          Text("Today's workload",style: AppTextstyle.MiniText),
-                          const SizedBox(height: 10,),
-                          Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                            Text("Due today"), Text("23"),CircleAvatar(radius: 5,backgroundColor: AppColors.redColor,)]),
-                          Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [Text("This week"), Text("67"),CircleAvatar(radius: 5,backgroundColor: AppColors.themeColor,)]),
+                          Text(
+                            "Today's workload",
+                            style: AppTextstyle.MiniText,
+                          ),
+                          const SizedBox(height: 10),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Text("Due today"),
+                              Text("23"),
+                              CircleAvatar(
+                                radius: 5,
+                                backgroundColor: AppColors.redColor,
+                              ),
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Text("This week"),
+                              Text("67"),
+                              CircleAvatar(
+                                radius: 5,
+                                backgroundColor: AppColors.themeColor,
+                              ),
+                            ],
+                          ),
                           const SizedBox(height: 5),
                           Container(
                             decoration: BoxDecoration(
                               border: Border.all(color: Colors.black),
                             ),
-                            child:Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
-                                Text("View all reports",style: TextStyle(fontSize: 10),),
-                               IconButton(icon:Icon(Icons.arrow_forward),onPressed:(){
-                                 Navigator.push(context,MaterialPageRoute(builder: (_)=>ReportSum(),));
-                               })
+                                Text(
+                                  "View all reports",
+                                  style: TextStyle(fontSize: 10),
+                                ),
+                                IconButton(
+                                  icon: Icon(Icons.arrow_forward),
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => ReportSum(),
+                                      ),
+                                    );
+                                  },
+                                ),
                               ],
                             ),
-
-                          )
+                          ),
                         ],
                       ),
                     ),
@@ -99,14 +150,23 @@ class _ReportpageState extends State<Reportpage> {
                       ),
                       child: Column(
                         children: [
-                          Text("Daily metric card",style: AppTextstyle.MiniText,),
-                          const SizedBox(height:10),
-                          Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [Text("Call handled"), Text("26"),]),
-                          Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [Text("Conversion"), Text("5")]),
-                          Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [Text("Conversion"), Text("5")]),
+                          Text(
+                            "Daily metric card",
+                            style: AppTextstyle.MiniText,
+                          ),
+                          const SizedBox(height: 10),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [Text("Call handled"), Text("26")],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [Text("Conversion"), Text("5")],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [Text("Conversion"), Text("5")],
+                          ),
                         ],
                       ),
                     ),
@@ -180,9 +240,7 @@ class _ReportpageState extends State<Reportpage> {
                         ),
                         Row(
                           children: [
-                            Text(
-                              "Handle Time:",
-                            ),
+                            Text("Handle Time:"),
                             Text("5m 20s"),
                             Spacer(),
                             Container(
@@ -234,8 +292,14 @@ class _ReportpageState extends State<Reportpage> {
                             Spacer(),
                             Row(
                               children: [
-                                Icon(Icons.check_box_outlined,color: AppColors.greenColor,),
-                                Text("Completed",style: TextStyle(color: AppColors.greenColor),),
+                                Icon(
+                                  Icons.check_box_outlined,
+                                  color: AppColors.greenColor,
+                                ),
+                                Text(
+                                  "Completed",
+                                  style: TextStyle(color: AppColors.greenColor),
+                                ),
                               ],
                             ),
                           ],
@@ -263,26 +327,37 @@ class _ReportpageState extends State<Reportpage> {
                             Text("High"),
                           ],
                         ),
-                        Row(children: [Text("Handle time:"), Text("3m 32s"),
-                        Spacer(),
-                        Container(
-                          height: 25,
-                          width: 50,
-                          decoration: BoxDecoration(
-                            color: AppColors.greenColor,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Row(
-                            children: [
-                              Icon(Icons.call_end,color: AppColors.whitetext,size: 20,),
+                        Row(
+                          children: [
+                            Text("Handle time:"),
+                            Text("3m 32s"),
+                            Spacer(),
+                            Container(
+                              height: 25,
+                              width: 50,
+                              decoration: BoxDecoration(
+                                color: AppColors.greenColor,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.call_end,
+                                    color: AppColors.whitetext,
+                                    size: 20,
+                                  ),
 
-                              Text("Call",style: TextStyle(color: AppColors.whitetext),)
-                            ],
-                          ),
-
-                        )]
+                                  Text(
+                                    "Call",
+                                    style: TextStyle(
+                                      color: AppColors.whitetext,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
-
                       ],
                     ),
                   ),
@@ -293,5 +368,5 @@ class _ReportpageState extends State<Reportpage> {
         ),
       ),
     );
-}
+  }
 }

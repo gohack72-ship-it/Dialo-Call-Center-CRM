@@ -1,7 +1,5 @@
-import 'package:dialo/providers/leadProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
 
 class NewLeadPage extends StatefulWidget {
   const NewLeadPage({super.key});
@@ -12,19 +10,18 @@ class NewLeadPage extends StatefulWidget {
 
 class _NewLeadPageState extends State<NewLeadPage> {
   final _formKey = GlobalKey<FormState>();
-
+  final TextEditingController phoneController = TextEditingController();
 
   String? education;
   String? course;
-//  @override
-  // void dispose() {
-  //   phoneController.dispose();
-  //   super.dispose();
-  // }
+  @override
+  void dispose() {
+    phoneController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    LeadProvider pro= Provider.of<LeadProvider>(context,listen: false);
     return Scaffold(
       backgroundColor: Colors.white,
 
@@ -107,7 +104,6 @@ class _NewLeadPageState extends State<NewLeadPage> {
                         height: 48,
                         child: ElevatedButton(
                           onPressed: () {
-
                             if (_formKey.currentState!.validate()) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
@@ -150,11 +146,10 @@ class _NewLeadPageState extends State<NewLeadPage> {
     );
   }
 
-  Widget _input(String hint, TextEditingController controller,  ) {
+  Widget _input(String hint) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 14),
       child: TextFormField(
-        controller: controller,
         decoration: InputDecoration(
           hintText: hint,
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
@@ -165,10 +160,10 @@ class _NewLeadPageState extends State<NewLeadPage> {
         ),
         validator: (value) {
           if (value == null || value.isEmpty) {
-            return 'Please enter phone number';
+            return 'Please enter $hint';
           }
           return null;
-          }
+        },
       ),
     );
   }
@@ -177,7 +172,7 @@ class _NewLeadPageState extends State<NewLeadPage> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 14),
       child: TextFormField(
-        controller: context.read<LeadProvider>().phoneController,
+        controller: phoneController,
         keyboardType: TextInputType.phone,
         inputFormatters: [
           FilteringTextInputFormatter.digitsOnly,
@@ -195,7 +190,7 @@ class _NewLeadPageState extends State<NewLeadPage> {
           if (value == null || value.isEmpty) {
             return 'Please enter phone number';
           }
-          if (value.length < 10) {
+          if (value.length != 10) {
             return 'Phone number must be 10 digits';
           }
           return null;
@@ -203,7 +198,6 @@ class _NewLeadPageState extends State<NewLeadPage> {
       ),
     );
   }
-
 
   Widget _dropdown({
     required String hint,
