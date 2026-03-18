@@ -7,6 +7,7 @@ import 'package:dialo/views/addlead.dart';
 import 'package:dialo/views/bottomnavigationbar.dart';
 import 'package:dialo/splashScreen.dart';
 import 'package:dialo/views/dashboard.dart';
+
 import 'package:dialo/views/leads_screen.dart';
 import 'package:dialo/views/reportpage.dart';
 import 'package:dialo/views/reportsum.dart';
@@ -31,7 +32,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         scaffoldBackgroundColor: const Color(0xFFF5F5F5),
       ),
-      home: LeadsScreen(),
+      home: LeadProfileScreen(),
     );
   }
 }
