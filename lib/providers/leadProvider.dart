@@ -1,4 +1,6 @@
 
+import 'dart:core';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dialo/models/statusModel.dart';
 import 'package:flutter/cupertino.dart';
@@ -11,7 +13,9 @@ class LeadProvider extends ChangeNotifier {
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController educationController = TextEditingController();
   final TextEditingController interestedController = TextEditingController();
-  List<StatusModel> statusList = [];
+  List<String> statusList = [];
+  List<String>
+  String? selectedStatus;
 
   FirebaseFirestore fdb = FirebaseFirestore.instance;
 
@@ -25,21 +29,30 @@ class LeadProvider extends ChangeNotifier {
      "LEAD_ID":id,
     "ADDED_BY_ID":"",
     "ADDED_TIME":now,
+    "STATUS":"NEW",
 
     };
 
   fdb.collection("LEADS").doc(id).set(lead,);
 
-
+clearData();
 
   }
+void clearData(){
+    nameController.clear();
+    placeController.clear();
+    phoneController.clear();
+    statusList.clear();
+
+    notifyListeners();
+}
 
   void getLeadStatus()async{
     fdb.collection("LEAD_STATUS").get().then((value){
       if (value.docs.isNotEmpty){
         for (var element in value.docs){
           Map<String,dynamic>statusMap = element.data();
-statusList.add(StatusModel(status: statusMap["STATUS"]));
+statusList.add( statusMap["STATUS"]);
 
 
 
@@ -50,6 +63,10 @@ statusList.add(StatusModel(status: statusMap["STATUS"]));
 notifyListeners();
 
     });
+  }
+
+  void changeStatus(String status){
+    selectedStatus = status;
   }
 
 }

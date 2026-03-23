@@ -1,7 +1,7 @@
 
 import 'package:dialo/providers/leadProvider.dart';
 import 'package:dialo/views/bottomnavigationbar.dart';
-import 'package:dialo/views/leads/addlead.dart';
+
 
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -14,6 +14,7 @@ import 'firebase_options.dart';
 // 👈 import your page here
 
 Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -87,7 +88,7 @@ setState(() {
           ),
         ),
         themeMode: isDarkMode?ThemeMode.dark:ThemeMode.light,
-        home: NewLeadPage()
+        home: BottomnavPage(changeTheme: changeTheme,),
       ),
     );
   }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
+import '../../constants/app_textstyle.dart';
 import '../../providers/leadProvider.dart';
 
 class NewLeadPage extends StatefulWidget {
@@ -13,14 +14,16 @@ class NewLeadPage extends StatefulWidget {
 
 class _NewLeadPageState extends State<NewLeadPage> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController phoneController = TextEditingController();
+  // final TextEditingController phoneController = TextEditingController();
 
   String? education;
   String? course;
-  @override
-  void dispose() {
-    phoneController.dispose();
-    super.dispose();
+
+@override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    context.read<LeadProvider>().getLeadStatus();
   }
 
   @override
@@ -84,10 +87,18 @@ class _NewLeadPageState extends State<NewLeadPage> {
                         value: education,
                         items: const ['10', 'Plus Two', 'Post Graduation'],
                         onChanged: (value) {
-                          setState(() {
-                            education = value;
-                          });
+                          // setState(() {
+                          //   education = value;
+                          // });
                         },
+                      ),
+                      Consumer<LeadProvider>(
+                        builder: (context,status,child) {
+                          return _dropdown(hint: "Status", items:status.statusList, value:null,
+                              onChanged: (st){
+                               status.changeStatus(st!);
+                          });
+                        }
                       ),
 
                       _dropdown(
@@ -95,9 +106,9 @@ class _NewLeadPageState extends State<NewLeadPage> {
                         value: course,
                         items: const ['Flutter', 'Testing'],
                         onChanged: (value) {
-                          setState(() {
-                            course = value;
-                          });
+                          // setState(() {
+                          //   course = value;
+                          // });
                         },
                       ),
 
@@ -108,6 +119,7 @@ class _NewLeadPageState extends State<NewLeadPage> {
                         child: ElevatedButton(
                           onPressed: () {
                             if (_formKey.currentState!.validate()) {
+                              context.read<LeadProvider>().addNewLead();
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                   content: Text('Lead Created Successfully'),
@@ -153,6 +165,7 @@ class _NewLeadPageState extends State<NewLeadPage> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 14),
       child: TextFormField(
+        style: AppTextstyle.normalText,
         controller: controller ,
         decoration: InputDecoration(
           hintText: hint,
@@ -176,7 +189,7 @@ class _NewLeadPageState extends State<NewLeadPage> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 14),
       child: TextFormField(
-        controller: phoneController,
+        controller: context.read<LeadProvider>().phoneController,
         keyboardType: TextInputType.phone,
         inputFormatters: [
           FilteringTextInputFormatter.digitsOnly,
@@ -212,6 +225,7 @@ class _NewLeadPageState extends State<NewLeadPage> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 14),
       child: DropdownButtonFormField<String>(
+        style: AppTextstyle.normalText,
         value: value,
         hint: Text(hint),
         items: items
