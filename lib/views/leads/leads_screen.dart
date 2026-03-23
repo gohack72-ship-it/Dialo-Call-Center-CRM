@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 class LeadsScreen extends StatefulWidget {
   final Function(bool) changeTheme;
-  const LeadsScreen({super.key,required this.changeTheme});
+  const LeadsScreen({super.key, required this.changeTheme});
 
   @override
   State<LeadsScreen> createState() => _LeadsScreenState();
@@ -16,41 +16,33 @@ class _LeadsScreenState extends State<LeadsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
- 
 
-drawer: SettingsDrawer(changeTheme:widget.changeTheme),
-appBar: AppBar(
-  title:const Text(
-                      "Leads",
-                      style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    actions: [
-                      ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 6,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                      ),
-                      onPressed: () {},
-                      child: const Text("Add Lead"),
-                  
-                    ),
-                    const SizedBox(height: 10),
-                    ],
+      drawer: SettingsDrawer(changeTheme: widget.changeTheme),
 
-  ),
+      appBar: AppBar(
+        title: const Text(
+          "Leads",
+          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+        ),
+        actions: [
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.blue,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30),
+              ),
+            ),
+            onPressed: () {},
+            child: const Text("Add Lead"),
+          ),
+          const SizedBox(width: 10), // ✅ FIXED
+        ],
+      ),
+
       body: Column(
         children: [
-          
-      
+          // 🔍 SEARCH
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Row(
@@ -60,66 +52,80 @@ appBar: AppBar(
                     decoration: InputDecoration(
                       hintText: "Search Leads",
                       prefixIcon: const Icon(Icons.search),
-                      // suffixIcon: IconButton(
-                      //   icon: const Icon(Icons.tune),
-                      //   onPressed: () {
-                      //     Scaffold.of(context).openEndDrawer();
-                      //   },
-                      // ),
                       filled: true,
                       fillColor: Colors.white,
-                      contentPadding: const EdgeInsets.symmetric(vertical: 0),
+                      contentPadding:
+                      const EdgeInsets.symmetric(vertical: 0),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30),
                         borderSide: BorderSide.none,
                       ),
                     ),
-                  );
-                },
-              ),
+                  ),
+                ),
+              ],
             ),
+          ),
 
-            const SizedBox(height: 10),
+          const SizedBox(height: 10),
 
+          // 🔘 STATUS CHIPS
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              children: const [
+                StatusChip(text: "New"),
+                StatusChip(text: "Contacted"),
+                StatusChip(text: "Accepted"),
+                StatusChip(text: "Rejected"),
+                StatusChip(text: "Joined"),
+              ],
+            ),
+          ),
 
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
+          const SizedBox(height: 10),
+
+          // 📋 LIST
+          Expanded(
+            child: ListView(
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Row(
-                children: const [
-                  StatusChip(text: "New"),
-                  StatusChip(text: "Contacted"),
-                  StatusChip(text: "Accepted"),
-                  StatusChip(text: "Rejected"),
-                  StatusChip(text: "Joined"),
-                ],
-              ),
+              children: const [
+                LeadCard(
+                    name: "John",
+                    phone: "+1 (555) 123-4567",
+                    city: "New York",
+                    status: "Accepted"),
+                LeadCard(
+                    name: "Emily",
+                    phone: "+1 (555) 123-4568",
+                    city: "Los Angeles",
+                    status: "Contacted"),
+                LeadCard(
+                    name: "Sarah",
+                    phone: "+1 (555) 123-4568",
+                    city: "UK",
+                    status: "New"),
+                LeadCard(
+                    name: "Michael",
+                    phone: "+1 (555) 123-4568",
+                    city: "New York",
+                    status: "Rejected"),
+                LeadCard(
+                    name: "Mathew",
+                    phone: "+1 (555) 123-4568",
+                    city: "UK",
+                    status: "Joined"),
+              ],
             ),
-
-            const SizedBox(height: 10),
-
-
-            Expanded(
-              child: ListView(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                children: const [
-                  LeadCard(name: "John", phone: "+1 (555) 123-4567", city: "New York", status: "Accepted"),
-                  LeadCard(name: "Emily", phone: "+1 (555) 123-4568", city: "Los Angeles", status: "Contacted"),
-                  LeadCard(name: "Sarah", phone: "+1 (555) 123-4568", city: "UK", status: "New"),
-                  LeadCard(name: "Michael", phone: "+1 (555) 123-4568", city: "New York", status: "Rejected"),
-                  LeadCard(name: "Mathew", phone: "+1 (555) 123-4568", city: "UK", status: "Joined"),
-                ],
-              ),
-           ),
-        
-  }
+          ),
         ],
-        ),
-      );
-    }
+      ),
+    );
+  }
+}
 
-
-
+// 🔘 STATUS CHIP
 class StatusChip extends StatelessWidget {
   final String text;
   const StatusChip({super.key, required this.text});
@@ -133,11 +139,15 @@ class StatusChip extends StatelessWidget {
         color: const Color(0xFFEAF0F4),
         borderRadius: BorderRadius.circular(20),
       ),
-      child: Text(text, style: const TextStyle(fontWeight: FontWeight.w500)),
+      child: Text(
+        text,
+        style: const TextStyle(fontWeight: FontWeight.w500),
+      ),
     );
   }
 }
 
+// 📋 LEAD CARD
 class LeadCard extends StatelessWidget {
   final String name, phone, city, status;
 
@@ -172,6 +182,9 @@ class LeadCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
+        boxShadow: const [
+          BoxShadow(color: Colors.black12, blurRadius: 4),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -206,11 +219,17 @@ class LeadCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 8),
+
           Row(
-            children: const [Icon(Icons.phone, size: 16), SizedBox(width: 6)],
+            children: const [
+              Icon(Icons.phone, size: 16),
+              SizedBox(width: 6),
+            ],
           ),
           Text(phone),
+
           const SizedBox(height: 4),
+
           Row(
             children: const [
               Icon(Icons.location_on, size: 16),
@@ -224,6 +243,7 @@ class LeadCard extends StatelessWidget {
   }
 }
 
+// 🎛 FILTER DRAWER
 class FilterDrawer extends StatefulWidget {
   const FilterDrawer({super.key});
 
@@ -243,7 +263,8 @@ class _FilterDrawerState extends State<FilterDrawer> {
         padding: const EdgeInsets.all(16),
         child: ListView(
           children: [
-            const Text("Status", style: TextStyle(fontWeight: FontWeight.w500)),
+            const Text("Status",
+                style: TextStyle(fontWeight: FontWeight.w500)),
             const SizedBox(height: 6),
             _dropdown(status, [
               "All Status",
@@ -255,7 +276,9 @@ class _FilterDrawerState extends State<FilterDrawer> {
             ], (v) => setState(() => status = v!)),
 
             const SizedBox(height: 20),
-            const Text("Course", style: TextStyle(fontWeight: FontWeight.w500)),
+
+            const Text("Course",
+                style: TextStyle(fontWeight: FontWeight.w500)),
             const SizedBox(height: 6),
             _dropdown(course, [
               "All Courses",
@@ -264,7 +287,9 @@ class _FilterDrawerState extends State<FilterDrawer> {
             ], (v) => setState(() => course = v!)),
 
             const SizedBox(height: 20),
-            const Text("City", style: TextStyle(fontWeight: FontWeight.w500)),
+
+            const Text("City",
+                style: TextStyle(fontWeight: FontWeight.w500)),
             const SizedBox(height: 6),
             _dropdown(city, [
               "All Cities",
@@ -280,10 +305,7 @@ class _FilterDrawerState extends State<FilterDrawer> {
   }
 
   Widget _dropdown(
-    String value,
-    List<String> items,
-    ValueChanged<String?> onChanged,
-  ) {
+      String value, List<String> items, ValueChanged<String?> onChanged) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12),
       decoration: BoxDecoration(

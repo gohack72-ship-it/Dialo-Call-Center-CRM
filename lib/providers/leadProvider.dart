@@ -2,7 +2,7 @@
 import 'dart:core';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dialo/models/statusModel.dart';
+
 import 'package:flutter/cupertino.dart';
 
 
@@ -14,7 +14,7 @@ class LeadProvider extends ChangeNotifier {
   final TextEditingController educationController = TextEditingController();
   final TextEditingController interestedController = TextEditingController();
   List<String> statusList = [];
-  List<String>
+
   String? selectedStatus;
 
   FirebaseFirestore fdb = FirebaseFirestore.instance;
