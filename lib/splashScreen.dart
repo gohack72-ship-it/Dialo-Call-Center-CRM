@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:dialo/views/bottomnavigationbar.dart';
 import 'package:dialo/views/dashboard.dart';
-import 'package:dialo/views/home.dart';
+
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
