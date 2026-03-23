@@ -3,7 +3,8 @@
 
 
 import 'package:dialo/providers/leadProvider.dart';
-import 'package:dialo/views/Name_page.dart';
+
+import 'package:dialo/views/bottomnavigationbar.dart';
 
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
