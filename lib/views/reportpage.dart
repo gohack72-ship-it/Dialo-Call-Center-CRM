@@ -19,6 +19,7 @@ class _ReportpageState extends State<Reportpage> {
     return Scaffold(
       backgroundColor: AppColors.whitetext,
        drawer: SettingsDrawer(changeTheme:widget.changeTheme),
+       
       appBar: AppBar(
         
        

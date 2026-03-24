@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 class LeadsScreen extends StatefulWidget {
   final Function(bool) changeTheme;
-  const LeadsScreen({super.key,required this.changeTheme});
+  const LeadsScreen({super.key, required this.changeTheme});
 
   @override
   State<LeadsScreen> createState() => _LeadsScreenState();
@@ -16,41 +16,30 @@ class _LeadsScreenState extends State<LeadsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
- 
-
-drawer: SettingsDrawer(changeTheme:widget.changeTheme),
-appBar: AppBar(
-  title:const Text(
-                      "Leads",
-                      style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    actions: [
-                      ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 6,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                      ),
-                      onPressed: () {},
-                      child: const Text("Add Lead"),
-                  
-                    ),
-                    const SizedBox(height: 10),
-                    ],
-
-  ),
+        
+      drawer: SettingsDrawer(changeTheme: widget.changeTheme),
+      appBar: AppBar(
+        title: const Text(
+          "Leads",
+          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+        ),
+        actions: [
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.blue,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30),
+              ),
+            ),
+            onPressed: () {},
+            child: const Text("Add Lead"),
+          ),
+          const SizedBox(height: 10),
+        ],
+      ),
       body: Column(
         children: [
-          
-      
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Row(
@@ -77,17 +66,23 @@ appBar: AppBar(
                   ),
                 ),
                 IconButton(
-                      icon: const Icon(Icons.tune),
-                      onPressed: () {
-                        Scaffold.of(context).openEndDrawer();
-                      },
-                    ),
+                  icon: const Icon(Icons.tune),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => FilterDrawer(),
+                      ),
+                    );
+                    Scaffold.of(context).openEndDrawer();
+                  },
+                ),
               ],
             ),
           ),
-      
+
           const SizedBox(height: 10),
-      
+
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -101,9 +96,9 @@ appBar: AppBar(
               ],
             ),
           ),
-      
+
           const SizedBox(height: 10),
-      
+
           Expanded(
             child: ListView(
               padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -274,7 +269,6 @@ class FilterDrawer extends StatefulWidget {
 }
 
 class _FilterDrawerState extends State<FilterDrawer> {
-  String status = "All Status";
   String course = "All Courses";
   String city = "All Cities";
 
@@ -285,18 +279,6 @@ class _FilterDrawerState extends State<FilterDrawer> {
         padding: const EdgeInsets.all(16),
         child: ListView(
           children: [
-            const Text("Status", style: TextStyle(fontWeight: FontWeight.w500)),
-            const SizedBox(height: 6),
-            _dropdown(status, [
-              "All Status",
-              "New",
-              "Contacted",
-              "Accepted",
-              "Rejected",
-              "Joined",
-            ], (v) => setState(() => status = v!)),
-
-            const SizedBox(height: 20),
             const Text("Course", style: TextStyle(fontWeight: FontWeight.w500)),
             const SizedBox(height: 6),
             _dropdown(course, [
