@@ -2,7 +2,9 @@ import 'package:dialo/constants/app_colors.dart';
 import 'package:dialo/constants/app_textstyle.dart';
 import 'package:flutter/material.dart';
 
-import 'Name_page.dart';
+import 'leads/lead_details.dart';
+
+
 
 class ReminderPage extends StatefulWidget {
   const ReminderPage({super.key});

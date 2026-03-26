@@ -1,5 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dialo/providers/leadProvider.dart';
 import 'package:dialo/views/settingspage.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class LeadsScreen extends StatefulWidget {
   final Function(bool) changeTheme;
@@ -14,10 +17,14 @@ class _LeadsScreenState extends State<LeadsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    LeadProvider pro = Provider.of<LeadProvider>(context, listen: false);
     return Scaffold(
       backgroundColor: Colors.white,
-        
+
       drawer: SettingsDrawer(changeTheme: widget.changeTheme),
+
+      endDrawer: const FilterDrawer(),
+
       appBar: AppBar(
         title: const Text(
           "Leads",
@@ -49,12 +56,6 @@ class _LeadsScreenState extends State<LeadsScreen> {
                     decoration: InputDecoration(
                       hintText: "Search Leads",
                       prefixIcon: const Icon(Icons.search),
-                      // suffixIcon: IconButton(
-                      //   icon: const Icon(Icons.tune),
-                      //   onPressed: () {
-                      //     Scaffold.of(context).openEndDrawer();
-                      //   },
-                      // ),
                       filled: true,
                       fillColor: Colors.white,
                       contentPadding: const EdgeInsets.symmetric(vertical: 0),
@@ -68,11 +69,10 @@ class _LeadsScreenState extends State<LeadsScreen> {
                 IconButton(
                   icon: const Icon(Icons.tune),
                   onPressed: () {
+                    pro.fetchAdditionalLeadDetails();
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                        builder: (context) => FilterDrawer(),
-                      ),
+                      MaterialPageRoute(builder: (context) => FilterDrawer()),
                     );
                     Scaffold.of(context).openEndDrawer();
                   },
@@ -138,25 +138,11 @@ class _LeadsScreenState extends State<LeadsScreen> {
           ),
         ],
       ),
-
-      // bottomNavigationBar: BottomNavigationBar(
-      //   currentIndex: _currentIndex,
-      //   type: BottomNavigationBarType.fixed,
-      //   selectedItemColor: Colors.black,
-      //   unselectedItemColor: Colors.grey,
-      //   onTap: (index) {
-      //     setState(() => _currentIndex = index);
-      //   },
-      //   // items: const [
-      //   BottomNavigationBarItem(icon: Icon(Icons.dashboard), label: 'Dashboard'),
-      //   BottomNavigationBarItem(icon: Icon(Icons.people_outline_rounded), label: 'Leads'),
-      //   BottomNavigationBarItem(icon: Icon(Icons.add_outlined), label: 'Add leads'),
-      //   BottomNavigationBarItem(icon: Icon(Icons.bar_chart_rounded), label: 'Reports'),
-      // ],
     );
   }
 }
 
+// 🔘 STATUS CHIP
 class StatusChip extends StatelessWidget {
   final String text;
   const StatusChip({super.key, required this.text});
@@ -175,6 +161,7 @@ class StatusChip extends StatelessWidget {
   }
 }
 
+// 📋 LEAD CARD
 class LeadCard extends StatelessWidget {
   final String name, phone, city, status;
 
@@ -209,6 +196,7 @@ class LeadCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
+        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 4)],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -243,11 +231,14 @@ class LeadCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 8),
+
           Row(
             children: const [Icon(Icons.phone, size: 16), SizedBox(width: 6)],
           ),
           Text(phone),
+
           const SizedBox(height: 4),
+
           Row(
             children: const [
               Icon(Icons.location_on, size: 16),
@@ -261,6 +252,7 @@ class LeadCard extends StatelessWidget {
   }
 }
 
+// 🎛 FILTER DRAWER
 class FilterDrawer extends StatefulWidget {
   const FilterDrawer({super.key});
 
@@ -269,34 +261,69 @@ class FilterDrawer extends StatefulWidget {
 }
 
 class _FilterDrawerState extends State<FilterDrawer> {
-  String course = "All Courses";
-  String city = "All Cities";
+  String course = "";
+
+  bool isChecked = false;
 
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      child: Container(
+      child: Padding(
         padding: const EdgeInsets.all(16),
-        child: ListView(
-          children: [
-            const Text("Course", style: TextStyle(fontWeight: FontWeight.w500)),
-            const SizedBox(height: 6),
-            _dropdown(course, [
-              "All Courses",
-              "Flutter",
-              "Python",
-            ], (v) => setState(() => course = v!)),
 
+        child: Column(
+          children: [
+            const Text(
+              "Filters",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 20),
-            const Text("City", style: TextStyle(fontWeight: FontWeight.w500)),
-            const SizedBox(height: 6),
-            _dropdown(city, [
-              "All Cities",
-              "New York",
-              "Los Angeles",
-              "UK",
-              "India",
-            ], (v) => setState(() => city = v!)),
+            Consumer<LeadProvider>(
+              builder: (context, val, child) {
+                return SizedBox(
+                  height: MediaQuery.of(context).size.height/1.5,
+                  child: ListView.builder(
+                    itemCount: val.additionalLeadDetailsList.length,
+                    itemBuilder: (context, index) {
+                      var item = val.additionalLeadDetailsList[index];
+                      return Expanded(
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                Checkbox(
+                                  value: isChecked,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      isChecked = value!;
+                                    });
+                                  },
+                                ),
+                                Text(
+                                  item.title,
+                                  style: TextStyle(fontWeight: FontWeight.w500),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 10),
+
+                            _dropdown(
+                              null,
+                              item.sub,
+                              (v) {
+                                val.selectedLeadsFilters.add({item.title: v});
+                              },
+                            ),
+
+                            const SizedBox(height: 20),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                );
+              },
+            ),
           ],
         ),
       ),
@@ -304,7 +331,7 @@ class _FilterDrawerState extends State<FilterDrawer> {
   }
 
   Widget _dropdown(
-    String value,
+    String? value,
     List<String> items,
     ValueChanged<String?> onChanged,
   ) {
@@ -316,6 +343,7 @@ class _FilterDrawerState extends State<FilterDrawer> {
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
+          hint: Text("Select", style: TextStyle(color: Colors.grey),),
           value: value,
           isExpanded: true,
           icon: const Icon(Icons.keyboard_arrow_down),

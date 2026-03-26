@@ -1,7 +1,9 @@
 import 'package:dialo/views/reminderpage.dart';
 import 'package:flutter/material.dart';
 
-import '../constants/app_colors.dart';
+import '../../constants/app_colors.dart';
+
+
 
 class LeadProfileScreen extends StatefulWidget {
   const LeadProfileScreen({super.key});

@@ -36,7 +36,7 @@ class AppTextstyle{
   );
   static const TextStyle MiniText = TextStyle(
     fontSize: 15,
-    fontWeight: FontWeight.w600,
+    fontWeight: FontWeight.w500,
     color: AppColors.textColor,
   );
   static const TextStyle MicroText = TextStyle(
@@ -55,7 +55,7 @@ class AppTextstyle{
     color: AppColors.textColor,
   );
   static const TextStyle normalText= TextStyle(
-    fontSize: 17,
+    fontSize: 14,
     fontWeight: FontWeight.normal,
     color: AppColors.textColor,
   );
