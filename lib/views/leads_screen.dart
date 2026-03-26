@@ -74,51 +74,93 @@ appBar: AppBar(
                         borderSide: BorderSide.none,
                       ),
                     ),
-                  );
-                },
-              ),
+                  ),
+                ),
+                IconButton(
+                      icon: const Icon(Icons.tune),
+                      onPressed: () {
+                        Scaffold.of(context).openEndDrawer();
+                      },
+                    ),
+              ],
             ),
-
-            const SizedBox(height: 10),
-
-
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
+          ),
+      
+          const SizedBox(height: 10),
+      
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              children: const [
+                StatusChip(text: "New"),
+                StatusChip(text: "Contacted"),
+                StatusChip(text: "Accepted"),
+                StatusChip(text: "Rejected"),
+                StatusChip(text: "Joined"),
+              ],
+            ),
+          ),
+      
+          const SizedBox(height: 10),
+      
+          Expanded(
+            child: ListView(
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Row(
-                children: const [
-                  StatusChip(text: "New"),
-                  StatusChip(text: "Contacted"),
-                  StatusChip(text: "Accepted"),
-                  StatusChip(text: "Rejected"),
-                  StatusChip(text: "Joined"),
-                ],
-              ),
+              children: const [
+                LeadCard(
+                  name: "John",
+                  phone: "+1 (555) 123-4567",
+                  city: "New York",
+                  status: "Accepted",
+                ),
+                LeadCard(
+                  name: "Emily",
+                  phone: "+1 (555) 123-4568",
+                  city: "Los Angeles",
+                  status: "Contacted",
+                ),
+                LeadCard(
+                  name: "Sarah",
+                  phone: "+1 (555) 123-4568",
+                  city: "UK",
+                  status: "New",
+                ),
+                LeadCard(
+                  name: "Michael",
+                  phone: "+1 (555) 123-4568",
+                  city: "New York",
+                  status: "Rejected",
+                ),
+                LeadCard(
+                  name: "Mathew",
+                  phone: "+1 (555) 123-4568",
+                  city: "UK",
+                  status: "Joined",
+                ),
+              ],
             ),
-
-            const SizedBox(height: 10),
-
-
-            Expanded(
-              child: ListView(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                children: const [
-                  LeadCard(name: "John", phone: "+1 (555) 123-4567", city: "New York", status: "Accepted"),
-                  LeadCard(name: "Emily", phone: "+1 (555) 123-4568", city: "Los Angeles", status: "Contacted"),
-                  LeadCard(name: "Sarah", phone: "+1 (555) 123-4568", city: "UK", status: "New"),
-                  LeadCard(name: "Michael", phone: "+1 (555) 123-4568", city: "New York", status: "Rejected"),
-                  LeadCard(name: "Mathew", phone: "+1 (555) 123-4568", city: "UK", status: "Joined"),
-                ],
-              ),
-           ),
-        
-  }
+          ),
         ],
-        ),
-      );
-    }
+      ),
 
-
+      // bottomNavigationBar: BottomNavigationBar(
+      //   currentIndex: _currentIndex,
+      //   type: BottomNavigationBarType.fixed,
+      //   selectedItemColor: Colors.black,
+      //   unselectedItemColor: Colors.grey,
+      //   onTap: (index) {
+      //     setState(() => _currentIndex = index);
+      //   },
+      //   // items: const [
+      //   BottomNavigationBarItem(icon: Icon(Icons.dashboard), label: 'Dashboard'),
+      //   BottomNavigationBarItem(icon: Icon(Icons.people_outline_rounded), label: 'Leads'),
+      //   BottomNavigationBarItem(icon: Icon(Icons.add_outlined), label: 'Add leads'),
+      //   BottomNavigationBarItem(icon: Icon(Icons.bar_chart_rounded), label: 'Reports'),
+      // ],
+    );
+  }
+}
 
 class StatusChip extends StatelessWidget {
   final String text;
