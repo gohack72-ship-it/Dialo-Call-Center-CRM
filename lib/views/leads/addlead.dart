@@ -189,6 +189,7 @@ class _NewLeadPageState extends State<NewLeadPage> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 14),
       child: TextFormField(
+        style: AppTextstyle.normalText,
         controller: context.read<LeadProvider>().phoneController,
         keyboardType: TextInputType.phone,
         inputFormatters: [

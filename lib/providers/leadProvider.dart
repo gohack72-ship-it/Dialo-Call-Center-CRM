@@ -71,3 +71,8 @@ notifyListeners();
 
 }
 
+void getDetails() async{
+  await fdb.collection("LEADS").then((value){
+
+
+}
