@@ -1,3 +1,4 @@
+import 'package:dialo/loginpage.dart';
 import 'package:dialo/splash%20screen.dart';
 import 'package:flutter/material.dart';
 // 👈 import your page here
@@ -17,7 +18,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         useMaterial3: true,
       ),
-      home:AnimatedSplashScreenWidget(), // 👈 this is your home page
+      home:Loginpage(), // 👈 this is your home page
       debugShowCheckedModeBanner: false,
     );
   }
