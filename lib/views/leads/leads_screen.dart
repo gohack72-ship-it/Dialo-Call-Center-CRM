@@ -1,5 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dialo/providers/leadProvider.dart';
 import 'package:dialo/views/settingspage.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class LeadsScreen extends StatefulWidget {
   final Function(bool) changeTheme;
@@ -14,10 +17,13 @@ class _LeadsScreenState extends State<LeadsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    LeadProvider pro = Provider.of<LeadProvider>(context, listen: false);
     return Scaffold(
       backgroundColor: Colors.white,
 
       drawer: SettingsDrawer(changeTheme: widget.changeTheme),
+
+      endDrawer: const FilterDrawer(),
 
       appBar: AppBar(
         title: const Text(
@@ -36,13 +42,11 @@ class _LeadsScreenState extends State<LeadsScreen> {
             onPressed: () {},
             child: const Text("Add Lead"),
           ),
-          const SizedBox(width: 10), // ✅ FIXED
+          const SizedBox(height: 10),
         ],
       ),
-
       body: Column(
         children: [
-          // 🔍 SEARCH
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Row(
@@ -54,8 +58,7 @@ class _LeadsScreenState extends State<LeadsScreen> {
                       prefixIcon: const Icon(Icons.search),
                       filled: true,
                       fillColor: Colors.white,
-                      contentPadding:
-                      const EdgeInsets.symmetric(vertical: 0),
+                      contentPadding: const EdgeInsets.symmetric(vertical: 0),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30),
                         borderSide: BorderSide.none,
@@ -63,13 +66,23 @@ class _LeadsScreenState extends State<LeadsScreen> {
                     ),
                   ),
                 ),
+                IconButton(
+                  icon: const Icon(Icons.tune),
+                  onPressed: () {
+                    pro.fetchAdditionalLeadDetails();
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => FilterDrawer()),
+                    );
+                    Scaffold.of(context).openEndDrawer();
+                  },
+                ),
               ],
             ),
           ),
 
           const SizedBox(height: 10),
 
-          // 🔘 STATUS CHIPS
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -86,36 +99,40 @@ class _LeadsScreenState extends State<LeadsScreen> {
 
           const SizedBox(height: 10),
 
-          // 📋 LIST
           Expanded(
             child: ListView(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               children: const [
                 LeadCard(
-                    name: "John",
-                    phone: "+1 (555) 123-4567",
-                    city: "New York",
-                    status: "Accepted"),
+                  name: "John",
+                  phone: "+1 (555) 123-4567",
+                  city: "New York",
+                  status: "Accepted",
+                ),
                 LeadCard(
-                    name: "Emily",
-                    phone: "+1 (555) 123-4568",
-                    city: "Los Angeles",
-                    status: "Contacted"),
+                  name: "Emily",
+                  phone: "+1 (555) 123-4568",
+                  city: "Los Angeles",
+                  status: "Contacted",
+                ),
                 LeadCard(
-                    name: "Sarah",
-                    phone: "+1 (555) 123-4568",
-                    city: "UK",
-                    status: "New"),
+                  name: "Sarah",
+                  phone: "+1 (555) 123-4568",
+                  city: "UK",
+                  status: "New",
+                ),
                 LeadCard(
-                    name: "Michael",
-                    phone: "+1 (555) 123-4568",
-                    city: "New York",
-                    status: "Rejected"),
+                  name: "Michael",
+                  phone: "+1 (555) 123-4568",
+                  city: "New York",
+                  status: "Rejected",
+                ),
                 LeadCard(
-                    name: "Mathew",
-                    phone: "+1 (555) 123-4568",
-                    city: "UK",
-                    status: "Joined"),
+                  name: "Mathew",
+                  phone: "+1 (555) 123-4568",
+                  city: "UK",
+                  status: "Joined",
+                ),
               ],
             ),
           ),
@@ -139,10 +156,7 @@ class StatusChip extends StatelessWidget {
         color: const Color(0xFFEAF0F4),
         borderRadius: BorderRadius.circular(20),
       ),
-      child: Text(
-        text,
-        style: const TextStyle(fontWeight: FontWeight.w500),
-      ),
+      child: Text(text, style: const TextStyle(fontWeight: FontWeight.w500)),
     );
   }
 }
@@ -182,9 +196,7 @@ class LeadCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: const [
-          BoxShadow(color: Colors.black12, blurRadius: 4),
-        ],
+        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 4)],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -221,10 +233,7 @@ class LeadCard extends StatelessWidget {
           const SizedBox(height: 8),
 
           Row(
-            children: const [
-              Icon(Icons.phone, size: 16),
-              SizedBox(width: 6),
-            ],
+            children: const [Icon(Icons.phone, size: 16), SizedBox(width: 6)],
           ),
           Text(phone),
 
@@ -252,52 +261,69 @@ class FilterDrawer extends StatefulWidget {
 }
 
 class _FilterDrawerState extends State<FilterDrawer> {
-  String status = "All Status";
-  String course = "All Courses";
-  String city = "All Cities";
+  String course = "";
+
+  bool isChecked = false;
 
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      child: Container(
+      child: Padding(
         padding: const EdgeInsets.all(16),
-        child: ListView(
+
+        child: Column(
           children: [
-            const Text("Status",
-                style: TextStyle(fontWeight: FontWeight.w500)),
-            const SizedBox(height: 6),
-            _dropdown(status, [
-              "All Status",
-              "New",
-              "Contacted",
-              "Accepted",
-              "Rejected",
-              "Joined",
-            ], (v) => setState(() => status = v!)),
-
+            const Text(
+              "Filters",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 20),
+            Consumer<LeadProvider>(
+              builder: (context, val, child) {
+                return SizedBox(
+                  height: MediaQuery.of(context).size.height/1.5,
+                  child: ListView.builder(
+                    itemCount: val.additionalLeadDetailsList.length,
+                    itemBuilder: (context, index) {
+                      var item = val.additionalLeadDetailsList[index];
+                      return Expanded(
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                Checkbox(
+                                  value: isChecked,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      isChecked = value!;
+                                    });
+                                  },
+                                ),
+                                Text(
+                                  item.title,
+                                  style: TextStyle(fontWeight: FontWeight.w500),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 10),
 
-            const Text("Course",
-                style: TextStyle(fontWeight: FontWeight.w500)),
-            const SizedBox(height: 6),
-            _dropdown(course, [
-              "All Courses",
-              "Flutter",
-              "Python",
-            ], (v) => setState(() => course = v!)),
+                            _dropdown(
+                              null,
+                              item.sub,
+                              (v) {
+                                val.selectedLeadsFilters.add({item.title: v});
+                              },
+                            ),
 
-            const SizedBox(height: 20),
-
-            const Text("City",
-                style: TextStyle(fontWeight: FontWeight.w500)),
-            const SizedBox(height: 6),
-            _dropdown(city, [
-              "All Cities",
-              "New York",
-              "Los Angeles",
-              "UK",
-              "India",
-            ], (v) => setState(() => city = v!)),
+                            const SizedBox(height: 20),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                );
+              },
+            ),
           ],
         ),
       ),
@@ -305,7 +331,10 @@ class _FilterDrawerState extends State<FilterDrawer> {
   }
 
   Widget _dropdown(
-      String value, List<String> items, ValueChanged<String?> onChanged) {
+    String? value,
+    List<String> items,
+    ValueChanged<String?> onChanged,
+  ) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12),
       decoration: BoxDecoration(
@@ -314,6 +343,7 @@ class _FilterDrawerState extends State<FilterDrawer> {
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
+          hint: Text("Select", style: TextStyle(color: Colors.grey),),
           value: value,
           isExpanded: true,
           icon: const Icon(Icons.keyboard_arrow_down),
