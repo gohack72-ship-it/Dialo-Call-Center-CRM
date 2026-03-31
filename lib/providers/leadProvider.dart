@@ -29,8 +29,14 @@ class LeadProvider extends ChangeNotifier {
       "PHONE": phoneController.text,
       "LEAD_ID": id,
       "ADDED_BY_ID": "",
-      "ADDED_TIME": now,
+      "ADDED_TIME":now,
       "STATUS": "NEW",
+
+      "FOLLOW_UP_DATE":now,
+      "FOLLOW_UP_TIME":"",
+      "PRIORITY":'Medium',
+      "ASSIGNED_AGENT":"",
+      "FOLLOW_UP_STATUS":"pending",
     };
 
     fdb.collection("LEADS").doc(id).set(lead);
