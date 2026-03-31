@@ -1,7 +1,7 @@
 import 'dart:developer';
 
+import 'package:dialo/loginpage.dart';
 import 'package:flutter/material.dart';
-import 'package:my_to_do_app/todo2.dart';
 import 'package:shared_preferences/shared_preferences.dart'; // <--- added
 
 class Signuppage extends StatefulWidget {
@@ -288,7 +288,8 @@ class _SignuppageState extends State<Signuppage> {
 
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (_) => const Todo2()),
+                        MaterialPageRoute(
+                          builder: (_) => Loginpage()),
                       );
                     }
                   },

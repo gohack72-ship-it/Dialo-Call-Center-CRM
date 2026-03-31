@@ -12,6 +12,7 @@ class _LoginpageState extends State<Loginpage> {
   bool remeberme = false;
   bool obscuretext = true;
   final _formkey = GlobalKey<FormState>();
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,21 +27,22 @@ class _LoginpageState extends State<Loginpage> {
           ("assets/ChatGPT Image Jan 29, 2026, 11_55_11 AM.png"),
           ),
           ),
-          Form(child: Column(
+          Form(
             key:_formkey ,
-           crossAxisAlignment: CrossAxisAlignment.start,
+            child: Column(
+            
+           crossAxisAlignment: CrossAxisAlignment.center,
            children: [
-           ],
-          )),
+           
           const SizedBox(height: 30,),
             const Text(
-              "email/user",
+              "Email/User",
               style: TextStyle(fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8,),
                TextFormField(
             decoration: InputDecoration(
-              hintText: "enter your email",
+              hintText: "Enter Your Email",
               prefixIcon: const Icon(Icons.email_outlined,color: Colors.blue),
               border:OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
@@ -48,24 +50,24 @@ class _LoginpageState extends State<Loginpage> {
                 ),  
                 validator: (value) {
                  if (value == null || value.isEmpty){
-                  return "email is required";
+                  return "Email is Required";
                  } 
                  if (!value.contains("@")){
-                  return "enter a valid email";
+                  return "Enter a Valid Email";
                  }
                  return null;
                 },
           ),
           const SizedBox(height: 20),
           const Text(
-            "password",
+            "Password",
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
-          const SizedBox(height: 8),
-          TextField(
+          const SizedBox(height:8),
+          TextFormField(
             obscureText: obscuretext,
             decoration: InputDecoration(
-              hintText: "enter your password",
+              hintText: "Enter Your Password",
               prefixIcon: const Icon(Icons.lock_outline,color:Colors.blue),
               suffixIcon: IconButton(
               icon: Icon(
@@ -80,46 +82,78 @@ class _LoginpageState extends State<Loginpage> {
               border:OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
               ) 
-            )
+            ),
+           validator :(value){
+            if (value == null || value.isEmpty){
+              return "Password is Required"; 
+            }
+            if (value.length < 8){
+              return "Password must be atleast 8 characters";
+            }
+            if (! RegExp(r'[0-9]').hasMatch(value)){
+              return "Password must contain atleast one number";
+            }
+            return null;
+           }
           ),
           Row(
             children: [
               Text("Remember Me",style: TextStyle(color:CupertinoColors.darkBackgroundGray),),
               Checkbox(value:remeberme,
-               onChanged: (value){
-                setState(() {
+               onChanged: (value){        
+                        setState(() {
                   remeberme = value!;
                 });
                })
             ],
           ),
-          const SizedBox(height: 10),
-          ElevatedButton(
+          const SizedBox(height: 15),
+          SizedBox(
+            height: 40,
+            width: 200,
+        child:ElevatedButton(
            style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.blue.shade800,
-            padding: const EdgeInsets.symmetric(vertical: 14),
+            backgroundColor: const Color.fromARGB(255, 21, 115, 192),
+            padding: const EdgeInsets.symmetric(vertical:12),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(10),
             )
            ),
-            
-            onPressed:(){
-
-            }, child: const Text(
-              "Log in",
-              style:TextStyle(fontSize: 16,color: Colors.white),
-            )),
-            ElevatedButton(
-              onPressed: (){
+            onPressed: (){
                 if (_formkey.currentState!.validate()){
                   print("Login successful");
                 }else {
-                  print("validation error");
+                  print("Validation error");
                 }
-              }, child:const Text("Log in")),
-        ],
-     ),
-     )
+              }, child:const Text("Log in",style:TextStyle(fontSize:16,fontWeight:FontWeight.bold,color:  Colors.white),)),
+
+          ),
+              SizedBox(
+                height: 15,
+              ),
+              SizedBox(
+                height:40,
+                width: 200,
+                child: ElevatedButton.icon(
+                    onPressed: (){},
+                    style:ElevatedButton.styleFrom(
+                      backgroundColor: const Color.fromARGB(255, 21, 115, 192),
+                      padding: EdgeInsets.symmetric(vertical:12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius:BorderRadius.circular(10),
+                      ),
+                    ),
+                    icon: Image.asset("assets/googleicon.png",
+                    height:10 ,
+                     ),
+                    label: Text("Login with Google",style: TextStyle(fontSize:16,color:Colors.white ),),),
+              )
+        ]
+            )
+            ),
+           
+],
+          )),
     );
   }
 }
