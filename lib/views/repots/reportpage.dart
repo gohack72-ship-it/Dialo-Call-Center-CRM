@@ -20,6 +20,7 @@ class _ReportpageState extends State<Reportpage> {
     return Scaffold(
       backgroundColor: AppColors.whitetext,
        drawer: SettingsDrawer(changeTheme:widget.changeTheme),
+       
       appBar: AppBar(
 
 
@@ -27,9 +28,7 @@ class _ReportpageState extends State<Reportpage> {
           "Reports",
           style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
         ),
-        actions: [
-
-        ],
+        
         leading: IconButton(
           icon: const Icon(Icons.menu),
           onPressed: () {

@@ -1,7 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dialo/providers/leadProvider.dart';
 import 'package:dialo/providers/leadProvider.dart';
 import 'package:dialo/views/settingspage.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import '../../providers/leadProvider.dart';
 
 class LeadsScreen extends StatefulWidget {
   final Function(bool) changeTheme;
@@ -25,10 +29,13 @@ class _LeadsScreenState extends State<LeadsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    LeadProvider pro = Provider.of<LeadProvider>(context, listen: false);
     return Scaffold(
       backgroundColor: Colors.white,
 
       drawer: SettingsDrawer(changeTheme: widget.changeTheme),
+
+      endDrawer: const FilterDrawer(),
 
       appBar: AppBar(
         title: const Text(
@@ -47,13 +54,11 @@ class _LeadsScreenState extends State<LeadsScreen> {
             onPressed: () {},
             child: const Text("Add Lead"),
           ),
-          const SizedBox(width: 10),
+          const SizedBox(height: 10),
         ],
       ),
-
       body: Column(
         children: [
-          // 🔍 SEARCH
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Row(
@@ -65,8 +70,7 @@ class _LeadsScreenState extends State<LeadsScreen> {
                       prefixIcon: const Icon(Icons.search),
                       filled: true,
                       fillColor: Colors.white,
-                      contentPadding:
-                      const EdgeInsets.symmetric(vertical: 0),
+                      contentPadding: const EdgeInsets.symmetric(vertical: 0),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30),
                         borderSide: BorderSide.none,
@@ -74,13 +78,23 @@ class _LeadsScreenState extends State<LeadsScreen> {
                     ),
                   ),
                 ),
+                IconButton(
+                  icon: const Icon(Icons.tune),
+                  onPressed: () {
+                    pro.fetchAdditionalLeadDetails();
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => FilterDrawer()),
+                    );
+                    Scaffold.of(context).openEndDrawer();
+                  },
+                ),
               ],
             ),
           ),
 
           const SizedBox(height: 10),
 
-          // 🔘 STATUS CHIPS
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -97,7 +111,6 @@ class _LeadsScreenState extends State<LeadsScreen> {
 
           const SizedBox(height: 10),
 
-          // 📋 LIST
           Expanded(
             child: Consumer<LeadProvider>(
               builder: (context1, pro, child) {
@@ -147,10 +160,7 @@ class StatusChip extends StatelessWidget {
         color: const Color(0xFFEAF0F4),
         borderRadius: BorderRadius.circular(20),
       ),
-      child: Text(
-        text,
-        style: const TextStyle(fontWeight: FontWeight.w500),
-      ),
+      child: Text(text, style: const TextStyle(fontWeight: FontWeight.w500)),
     );
   }
 }
@@ -190,9 +200,7 @@ class LeadCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: const [
-          BoxShadow(color: Colors.black12, blurRadius: 4),
-        ],
+        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 4)],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -229,10 +237,7 @@ class LeadCard extends StatelessWidget {
           const SizedBox(height: 8),
 
           Row(
-            children: const [
-              Icon(Icons.phone, size: 16),
-              SizedBox(width: 6),
-            ],
+            children: const [Icon(Icons.phone, size: 16), SizedBox(width: 6)],
           ),
           Text(phone),
 
