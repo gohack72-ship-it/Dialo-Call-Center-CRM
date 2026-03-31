@@ -1,5 +1,7 @@
+import 'package:dialo/providers/leadProvider.dart';
 import 'package:dialo/views/settingspage.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class LeadsScreen extends StatefulWidget {
   final Function(bool) changeTheme;
@@ -11,6 +13,15 @@ class LeadsScreen extends StatefulWidget {
 
 class _LeadsScreenState extends State<LeadsScreen> {
   int _currentIndex = 1;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // ✅ FETCH DATA
+    Future.microtask(() =>
+        Provider.of<LeadProvider>(context, listen: false).fetchLeads());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +47,7 @@ class _LeadsScreenState extends State<LeadsScreen> {
             onPressed: () {},
             child: const Text("Add Lead"),
           ),
-          const SizedBox(width: 10), // ✅ FIXED
+          const SizedBox(width: 10),
         ],
       ),
 
@@ -88,35 +99,32 @@ class _LeadsScreenState extends State<LeadsScreen> {
 
           // 📋 LIST
           Expanded(
-            child: ListView(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              children: const [
-                LeadCard(
-                    name: "John",
-                    phone: "+1 (555) 123-4567",
-                    city: "New York",
-                    status: "Accepted"),
-                LeadCard(
-                    name: "Emily",
-                    phone: "+1 (555) 123-4568",
-                    city: "Los Angeles",
-                    status: "Contacted"),
-                LeadCard(
-                    name: "Sarah",
-                    phone: "+1 (555) 123-4568",
-                    city: "UK",
-                    status: "New"),
-                LeadCard(
-                    name: "Michael",
-                    phone: "+1 (555) 123-4568",
-                    city: "New York",
-                    status: "Rejected"),
-                LeadCard(
-                    name: "Mathew",
-                    phone: "+1 (555) 123-4568",
-                    city: "UK",
-                    status: "Joined"),
-              ],
+            child: Consumer<LeadProvider>(
+              builder: (context1, pro, child) {
+                // ✅ DEBUG
+                print("Leads count: ${pro.leadsList.length}");
+
+                // ✅ LOADING STATE
+                if (pro.leadsList.isEmpty) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+
+                return ListView.builder(
+                  itemCount: pro.leadsList.length,
+                  itemBuilder: (context, index) {
+                    var lead = pro.leadsList[index];
+
+                    return LeadCard(
+                      name: lead["name"] ?? "",
+                      phone: lead["phone"] ?? "",
+                      city: lead["place"] ?? "",
+                      status: lead["status"] ?? "New",
+                    );
+                  },
+                );
+              },
             ),
           ),
         ],
@@ -238,90 +246,6 @@ class LeadCard extends StatelessWidget {
           ),
           Text(city),
         ],
-      ),
-    );
-  }
-}
-
-// 🎛 FILTER DRAWER
-class FilterDrawer extends StatefulWidget {
-  const FilterDrawer({super.key});
-
-  @override
-  State<FilterDrawer> createState() => _FilterDrawerState();
-}
-
-class _FilterDrawerState extends State<FilterDrawer> {
-  String status = "All Status";
-  String course = "All Courses";
-  String city = "All Cities";
-
-  @override
-  Widget build(BuildContext context) {
-    return Drawer(
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        child: ListView(
-          children: [
-            const Text("Status",
-                style: TextStyle(fontWeight: FontWeight.w500)),
-            const SizedBox(height: 6),
-            _dropdown(status, [
-              "All Status",
-              "New",
-              "Contacted",
-              "Accepted",
-              "Rejected",
-              "Joined",
-            ], (v) => setState(() => status = v!)),
-
-            const SizedBox(height: 20),
-
-            const Text("Course",
-                style: TextStyle(fontWeight: FontWeight.w500)),
-            const SizedBox(height: 6),
-            _dropdown(course, [
-              "All Courses",
-              "Flutter",
-              "Python",
-            ], (v) => setState(() => course = v!)),
-
-            const SizedBox(height: 20),
-
-            const Text("City",
-                style: TextStyle(fontWeight: FontWeight.w500)),
-            const SizedBox(height: 6),
-            _dropdown(city, [
-              "All Cities",
-              "New York",
-              "Los Angeles",
-              "UK",
-              "India",
-            ], (v) => setState(() => city = v!)),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _dropdown(
-      String value, List<String> items, ValueChanged<String?> onChanged) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey.shade400),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton<String>(
-          value: value,
-          isExpanded: true,
-          icon: const Icon(Icons.keyboard_arrow_down),
-          items: items
-              .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-              .toList(),
-          onChanged: onChanged,
-        ),
       ),
     );
   }

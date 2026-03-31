@@ -14,10 +14,11 @@ class LeadProvider extends ChangeNotifier {
   final TextEditingController educationController = TextEditingController();
   final TextEditingController interestedController = TextEditingController();
   List<String> statusList = [];
+  List<Map<String, dynamic>> leadsList = [];
 
   String? selectedStatus;
 
-  FirebaseFirestore fdb = FirebaseFirestore.instance;
+  final FirebaseFirestore fdb = FirebaseFirestore.instance;
 
   void addNewLead() {
     DateTime now = DateTime.now();
@@ -36,6 +37,7 @@ class LeadProvider extends ChangeNotifier {
   fdb.collection("LEADS").doc(id).set(lead,);
 
 clearData();
+getLeads();
 
   }
 void clearData(){
@@ -69,10 +71,18 @@ notifyListeners();
     selectedStatus = status;
   }
 
+  ///fetching leads
+  Future<void> getLeads() async {
+    leadsList.clear();
+
+    QuerySnapshot snapshot = await fdb.collection("LEADS").get();
+
+    for (var doc in snapshot.docs) {
+      leadsList.add(doc.data() as Map<String, dynamic>);
+    }
+
+    notifyListeners();
+  }
 }
 
-void getDetails() async{
-  await fdb.collection("LEADS").then((value){
 
-
-}

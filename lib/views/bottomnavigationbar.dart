@@ -17,16 +17,17 @@ class _BottomnavPageState extends State<BottomnavPage> {
 
   int _currentIndex = 0;
 
-  late final List<Widget>_pages;
+  late final List<Widget> _pages = [
+  Dashboard(changeTheme: widget.changeTheme),
+  LeadsScreen(changeTheme: widget.changeTheme),
+  NewLeadPage(),
+  Reportpage(changeTheme: widget.changeTheme),
+  ];
+
   @override
   void initState() {
     super.initState();
-    _pages = [
-      Dashboard(changeTheme: widget.changeTheme),
-      LeadsScreen(changeTheme: widget.changeTheme),
-      NewLeadPage(),
-      Reportpage(changeTheme: widget.changeTheme),
-    ];
+
   }
 
 
