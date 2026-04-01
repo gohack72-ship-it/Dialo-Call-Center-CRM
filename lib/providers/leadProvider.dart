@@ -35,6 +35,14 @@ class LeadProvider extends ChangeNotifier {
       "STATUS": selectedStatus ?? "NEW",
       "EDUCATION": education,
       "COURSE": course,
+      "ADDED_TIME":now,
+      "STATUS": "NEW",
+
+      "FOLLOW_UP_DATE":now,
+      "FOLLOW_UP_TIME":"",
+      "PRIORITY":'Medium',
+      "ASSIGNED_AGENT":"",
+      "FOLLOW_UP_STATUS":"pending",
     };
 
     fdb.collection("LEADS").doc(id).set(lead);

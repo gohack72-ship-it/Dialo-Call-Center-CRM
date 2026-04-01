@@ -1,4 +1,6 @@
 
+import 'package:dialo/loginpage.dart';
+
 
 
 
@@ -94,7 +96,8 @@ setState(() {
           ),
         ),
         themeMode: isDarkMode?ThemeMode.dark:ThemeMode.light,
-        home: BottomnavPage(changeTheme: changeTheme,),
+        home: Loginpage(),
+
       ),
     );
   }
