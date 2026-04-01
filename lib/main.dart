@@ -55,7 +55,10 @@ setState(() {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [ ChangeNotifierProvider(create: (_)=>LeadProvider()),],
+
+      providers: [ ChangeNotifierProvider(
+        create: (_) => LeadProvider()..getLeads(),
+    ),],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Leads CRM',

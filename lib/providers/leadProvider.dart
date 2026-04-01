@@ -21,7 +21,8 @@ class LeadProvider extends ChangeNotifier {
 
   final FirebaseFirestore fdb = FirebaseFirestore.instance;
 
-  void addNewLead() {
+  void addNewLead(String? education, String? course) {
+
     DateTime now = DateTime.now();
     String id = now.millisecondsSinceEpoch.toString();
     final lead = {
@@ -31,7 +32,9 @@ class LeadProvider extends ChangeNotifier {
       "LEAD_ID": id,
       "ADDED_BY_ID": "",
       "ADDED_TIME": now,
-      "STATUS": "NEW",
+      "STATUS": selectedStatus ?? "NEW",
+      "EDUCATION": education,
+      "COURSE": course,
     };
 
     fdb.collection("LEADS").doc(id).set(lead);
@@ -54,6 +57,7 @@ class LeadProvider extends ChangeNotifier {
         for (var element in value.docs) {
           Map<String, dynamic> statusMap = element.data();
           statusList.add(statusMap["STATUS"]);
+
         }
       }
 
@@ -99,5 +103,6 @@ class LeadProvider extends ChangeNotifier {
 
     notifyListeners();
   }
+
 }
 

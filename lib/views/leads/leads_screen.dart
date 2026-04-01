@@ -1,11 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dialo/providers/leadProvider.dart';
-import 'package:dialo/providers/leadProvider.dart';
 import 'package:dialo/views/settingspage.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../providers/leadProvider.dart';
+import 'addlead.dart';
+import 'lead_details.dart';
 
 class LeadsScreen extends StatefulWidget {
   final Function(bool) changeTheme;
@@ -17,15 +17,6 @@ class LeadsScreen extends StatefulWidget {
 
 class _LeadsScreenState extends State<LeadsScreen> {
   int _currentIndex = 1;
-
-  @override
-  void initState() {
-    super.initState();
-
-    // ✅ FETCH DATA
-    Future.microtask(() =>
-        Provider.of<LeadProvider>(context, listen: false).fetchLeads());
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +42,10 @@ class _LeadsScreenState extends State<LeadsScreen> {
                 borderRadius: BorderRadius.circular(30),
               ),
             ),
-            onPressed: () {},
+            onPressed: () {
+
+
+            },
             child: const Text("Add Lead"),
           ),
           const SizedBox(height: 10),
@@ -113,32 +107,37 @@ class _LeadsScreenState extends State<LeadsScreen> {
 
           Expanded(
             child: Consumer<LeadProvider>(
-              builder: (context1, pro, child) {
-                // ✅ DEBUG
-                print("Leads count: ${pro.leadsList.length}");
-
-                // ✅ LOADING STATE
+              builder: (context, pro, child) {
                 if (pro.leadsList.isEmpty) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
+                  return const Center(child: Text("No Leads Found"));
                 }
 
                 return ListView.builder(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
                   itemCount: pro.leadsList.length,
                   itemBuilder: (context, index) {
                     var lead = pro.leadsList[index];
 
-                    return LeadCard(
-                      name: lead["name"] ?? "",
-                      phone: lead["phone"] ?? "",
-                      city: lead["place"] ?? "",
-                      status: lead["status"] ?? "New",
+                    return GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => LeadProfileScreen(),
+                        ),
+                      );
+                    },
+                    child: LeadCard(
+                      name: lead["NAME"] ?? "",
+                      phone: lead["PHONE"] ?? "",
+                      city: lead["PLACE"] ?? "",
+                      status: lead["STATUS"] ?? "",
+                    ),
                     );
                   },
                 );
               },
-            ),
+            )
           ),
         ],
       ),
@@ -251,6 +250,111 @@ class LeadCard extends StatelessWidget {
           ),
           Text(city),
         ],
+      ),
+    );
+  }
+}
+
+// 🎛 FILTER DRAWER
+class FilterDrawer extends StatefulWidget {
+  const FilterDrawer({super.key});
+
+  @override
+  State<FilterDrawer> createState() => _FilterDrawerState();
+}
+
+class _FilterDrawerState extends State<FilterDrawer> {
+  String course = "";
+
+  bool isChecked = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Drawer(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+
+        child: Column(
+          children: [
+            const Text(
+              "Filters",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 20),
+            Consumer<LeadProvider>(
+              builder: (context, val, child) {
+                return SizedBox(
+                  height: MediaQuery.of(context).size.height/1.5,
+                  child: ListView.builder(
+                    itemCount: val.additionalLeadDetailsList.length,
+                    itemBuilder: (context, index) {
+                      var item = val.additionalLeadDetailsList[index];
+                      return Expanded(
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                Checkbox(
+                                  value: isChecked,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      isChecked = value!;
+                                    });
+                                  },
+                                ),
+                                Text(
+                                  item.title,
+                                  style: TextStyle(fontWeight: FontWeight.w500),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 10),
+
+                            _dropdown(
+                              null,
+                              item.sub,
+                                  (v) {
+                                val.selectedLeadsFilters.add({item.title: v});
+                              },
+                            ),
+
+                            const SizedBox(height: 20),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _dropdown(
+      String? value,
+      List<String> items,
+      ValueChanged<String?> onChanged,
+      ) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey.shade400),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<String>(
+          hint: Text("Select", style: TextStyle(color: Colors.grey),),
+          value: value,
+          isExpanded: true,
+          icon: const Icon(Icons.keyboard_arrow_down),
+          items: items
+              .map((e) => DropdownMenuItem(value: e, child: Text(e)))
+              .toList(),
+          onChanged: onChanged,
+        ),
       ),
     );
   }

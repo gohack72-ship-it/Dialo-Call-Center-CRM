@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../../constants/app_textstyle.dart';
 import '../../providers/leadProvider.dart';
+import 'leads_screen.dart';
 
 class NewLeadPage extends StatefulWidget {
   const NewLeadPage({super.key});
@@ -37,8 +38,15 @@ class _NewLeadPageState extends State<NewLeadPage> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: Row(
-                children: const [
-                  Icon(Icons.arrow_back),
+                children:  [
+                  IconButton(onPressed: (){
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => LeadsScreen(changeTheme: (v) {}),
+                      ),
+                    );
+                  }, icon: Icon(Icons.arrow_back)),
                   SizedBox(width: 12),
                   Text(
                     'New Lead',
@@ -87,9 +95,9 @@ class _NewLeadPageState extends State<NewLeadPage> {
                         value: education,
                         items: const ['10', 'Plus Two', 'Post Graduation'],
                         onChanged: (value) {
-                          // setState(() {
-                          //   education = value;
-                          // });
+                          setState(() {
+                            education = value;
+                          });
                         },
                       ),
                       Consumer<LeadProvider>(
@@ -106,9 +114,9 @@ class _NewLeadPageState extends State<NewLeadPage> {
                         value: course,
                         items: const ['Flutter', 'Testing'],
                         onChanged: (value) {
-                          // setState(() {
-                          //   course = value;
-                          // });
+                          setState(() {
+                            course = value;
+                          });
                         },
                       ),
 
@@ -119,7 +127,7 @@ class _NewLeadPageState extends State<NewLeadPage> {
                         child: ElevatedButton(
                           onPressed: () {
                             if (_formKey.currentState!.validate()) {
-                              context.read<LeadProvider>().addNewLead();
+                              context.read<LeadProvider>().addNewLead(education, course);
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                   content: Text('Lead Created Successfully'),
