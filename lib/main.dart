@@ -1,3 +1,9 @@
+
+import 'package:dialo/loginpage.dart';
+
+
+
+
 import 'package:dialo/providers/leadProvider.dart';
 
 // import 'package:dialo/views/bottomnavigationbar.
@@ -88,7 +94,7 @@ setState(() {
           ),
         ),
         themeMode: isDarkMode?ThemeMode.dark:ThemeMode.light,
-        home: NewLeadPage(),
+        home: BottomnavPage(changeTheme: changeTheme,),
       ),
     );
   }
