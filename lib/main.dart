@@ -1,14 +1,8 @@
-
 import 'package:dialo/loginpage.dart';
-
-
-
-
 import 'package:dialo/providers/leadProvider.dart';
-
+import 'package:dialo/views/bottomnavigationbar.dart';
 // import 'package:dialo/views/bottomnavigationbar.
 import 'package:dialo/views/leads/addlead.dart';
-
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
@@ -94,7 +88,7 @@ setState(() {
           ),
         ),
         themeMode: isDarkMode?ThemeMode.dark:ThemeMode.light,
-        home: BottomnavPage(changeTheme: changeTheme,),
+        home: NewLeadPage(),
       ),
     );
   }
