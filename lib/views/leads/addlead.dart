@@ -17,146 +17,154 @@ class _NewLeadPageState extends State<NewLeadPage> {
   final _formKey = GlobalKey<FormState>();
   // final TextEditingController phoneController = TextEditingController();
 
-  String? education;
+  String? source;
   String? course;
 
-@override
+  @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    context.read<LeadProvider>().getLeadStatus();
+
   }
+
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
+    return PopScope(
+      canPop:false,
 
-      body: SafeArea(
-        child: Column(
-          children: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              child: Row(
-                children:  [
-                  IconButton(onPressed: (){
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => LeadsScreen(changeTheme: (v) {}),
-                      ),
-                    );
-                  }, icon: Icon(Icons.arrow_back)),
-                  SizedBox(width: 12),
-                  Text(
-                    'New Lead',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
-                  ),
-                ],
+      child: Scaffold(
+        backgroundColor: Colors.white,
+
+        body: SafeArea(
+          child: Column(
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                child: Row(
+                  children:  [
+                    // IconButton(onPressed: (){
+                    //   Navigator.pushReplacement(
+                    //     context,
+                    //     MaterialPageRoute(
+                    //       builder: (context) => LeadsScreen(changeTheme: (v) {}),
+                    //     ),
+                    //   );
+                    // }, icon: Icon(Icons.arrow_back)),
+                    SizedBox(width: 12),
+                    Text(
+                      'New Lead',
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(16),
-                child: Form(
-                  key: _formKey,
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(16),
+                  child: Form(
+                    key: _formKey,
 
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Basic Information',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Basic Information',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
-                      ),
 
-                      const SizedBox(height: 20),
-                      _label('Full Name',),
-                      _input('Enter Name',context.read<LeadProvider>().nameController),
-                      _label("Place"),
-                      _input("Enter Place",context.read<LeadProvider>().placeController),
-                      _label("Phone"),
-                      _phoneField(),
+                        const SizedBox(height: 20),
+                        _label('Full Name',),
+                        _input('Enter Name',context.read<LeadProvider>().nameController),
+                        _label("Place"),
+                        _input("Enter Place",context.read<LeadProvider>().placeController),
+                        _label("Email"),
+                        _input("Enter Email",context.read<LeadProvider>().emailController),
+                        _label("Phone"),
+                        _phoneField(),
 
-                      const SizedBox(height: 10),
-                      SizedBox(width: double.infinity, height: 10),
-                      const Text(
-                        'Lead Details',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      _dropdown(
-                        hint: 'Education',
-                        value: education,
-                        items: const ['10', 'Plus Two', 'Post Graduation'],
-                        onChanged: (value) {
-                          setState(() {
-                            education = value;
-                          });
-                        },
-                      ),
-                      Consumer<LeadProvider>(
-                        builder: (context,status,child) {
-                          return _dropdown(hint: "Status", items:status.statusList, value:null,
-                              onChanged: (st){
-                               status.changeStatus(st!);
-                          });
-                        }
-                      ),
-
-                      _dropdown(
-                        hint: 'Interested Course',
-                        value: course,
-                        items: const ['Flutter', 'Testing'],
-                        onChanged: (value) {
-                          setState(() {
-                            course = value;
-                          });
-                        },
-                      ),
-
-                      const SizedBox(height: 40),
-                      SizedBox(
-                        width: double.infinity,
-                        height: 48,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            if (_formKey.currentState!.validate()) {
-                              context.read<LeadProvider>().addNewLead(education, course);
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Lead Created Successfully'),
-                                ),
-                              );
-                            }
+                        const SizedBox(height: 10),
+                        _dropdown(
+                          hint: 'SOURCE',
+                          value: source,
+                          items: const ['Whatsapp', 'Friends', 'Instagram'],
+                          onChanged: (value) {
+                            setState(() {
+                              source = value;
+                            });
                           },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF3F5FBF),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
+                        ),
+                        SizedBox(width: double.infinity, height: 10),
+                        const Text(
+                          'Lead Details',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
                           ),
-                          child: const Text(
-                            'Create Lead',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white,
+                        ),
+                        const SizedBox(height: 12),
+
+                        Consumer<LeadProvider>(
+                            builder: (context,status,child) {
+                              return _dropdown(hint: "Status", items:status.statusList, value:null,
+                                  onChanged: (st){
+                                    status.changeStatus(st!);
+                                  });
+                            }
+                        ),
+
+                        // _dropdown(
+                        //   hint: 'Interested Course',
+                        //   value: course,
+                        //   items: const ['Flutter', 'Testing'],
+                        //   onChanged: (value) {
+                        //     setState(() {
+                        //       course = value;
+                        //     });
+                        //   },
+                        // ),
+
+                        const SizedBox(height: 40),
+                        SizedBox(
+                          width: double.infinity,
+                          height: 48,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              if (_formKey.currentState!.validate()) {
+                                context.read<LeadProvider>().addNewLead();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Lead Created Successfully'),
+                                  ),
+                                );
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF3F5FBF),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            child: const Text(
+                              'Create Lead',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -240,8 +248,8 @@ class _NewLeadPageState extends State<NewLeadPage> {
         items: items
             .map(
               (item) =>
-                  DropdownMenuItem<String>(value: item, child: Text(item)),
-            )
+              DropdownMenuItem<String>(value: item, child: Text(item)),
+        )
             .toList(),
         onChanged: onChanged,
         validator: (value) => value == null ? 'Please select $hint' : null,

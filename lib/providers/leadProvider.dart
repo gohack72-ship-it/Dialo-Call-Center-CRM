@@ -10,19 +10,17 @@ class LeadProvider extends ChangeNotifier {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController placeController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
-  final TextEditingController educationController = TextEditingController();
-  final TextEditingController interestedController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+
   List<String> statusList = [];
   List<LeadDetailsModel> additionalLeadDetailsList = [];
   List<Map<String, dynamic>> selectedLeadsFilters = [];
-  List<Map<String, dynamic>> leadsList = [];
 
   String? selectedStatus;
 
-  final FirebaseFirestore fdb = FirebaseFirestore.instance;
+  FirebaseFirestore fdb = FirebaseFirestore.instance;
 
-  void addNewLead(String? education, String? course) {
-
+  void addNewLead() {
     DateTime now = DateTime.now();
     String id = now.millisecondsSinceEpoch.toString();
     final lead = {
@@ -31,12 +29,9 @@ class LeadProvider extends ChangeNotifier {
       "PHONE": phoneController.text,
       "LEAD_ID": id,
       "ADDED_BY_ID": "",
-      "ADDED_TIME": now,
-      "STATUS": selectedStatus ?? "NEW",
-      "EDUCATION": education,
-      "COURSE": course,
       "ADDED_TIME":now,
       "STATUS": "NEW",
+      "SOURSE":"",
 
       "FOLLOW_UP_DATE":now,
       "FOLLOW_UP_TIME":"",
@@ -47,7 +42,7 @@ class LeadProvider extends ChangeNotifier {
 
     fdb.collection("LEADS").doc(id).set(lead);
 
-    clearData();getLeads();
+    clearData();
   }
 
   void clearData() {
@@ -65,7 +60,6 @@ class LeadProvider extends ChangeNotifier {
         for (var element in value.docs) {
           Map<String, dynamic> statusMap = element.data();
           statusList.add(statusMap["STATUS"]);
-
         }
       }
 
@@ -99,18 +93,4 @@ class LeadProvider extends ChangeNotifier {
       }
     });
   }
-  ///fetching leads
-  Future<void> getLeads() async {
-    leadsList.clear();
-
-    QuerySnapshot snapshot = await fdb.collection("LEADS").get();
-
-    for (var doc in snapshot.docs) {
-      leadsList.add(doc.data() as Map<String, dynamic>);
-    }
-
-    notifyListeners();
-  }
-
 }
-

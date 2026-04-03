@@ -4,9 +4,6 @@ import 'package:dialo/views/settingspage.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'addlead.dart';
-import 'lead_details.dart';
-
 class LeadsScreen extends StatefulWidget {
   final Function(bool) changeTheme;
   const LeadsScreen({super.key, required this.changeTheme});
@@ -42,10 +39,7 @@ class _LeadsScreenState extends State<LeadsScreen> {
                 borderRadius: BorderRadius.circular(30),
               ),
             ),
-            onPressed: () {
-
-
-            },
+            onPressed: () {},
             child: const Text("Add Lead"),
           ),
           const SizedBox(height: 10),
@@ -106,38 +100,41 @@ class _LeadsScreenState extends State<LeadsScreen> {
           const SizedBox(height: 10),
 
           Expanded(
-            child: Consumer<LeadProvider>(
-              builder: (context, pro, child) {
-                if (pro.leadsList.isEmpty) {
-                  return const Center(child: Text("No Leads Found"));
-                }
-
-                return ListView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  itemCount: pro.leadsList.length,
-                  itemBuilder: (context, index) {
-                    var lead = pro.leadsList[index];
-
-                    return GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => LeadProfileScreen(),
-                        ),
-                      );
-                    },
-                    child: LeadCard(
-                      name: lead["NAME"] ?? "",
-                      phone: lead["PHONE"] ?? "",
-                      city: lead["PLACE"] ?? "",
-                      status: lead["STATUS"] ?? "",
-                    ),
-                    );
-                  },
-                );
-              },
-            )
+            child: ListView(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              children: const [
+                LeadCard(
+                  name: "John",
+                  phone: "+1 (555) 123-4567",
+                  city: "New York",
+                  status: "Accepted",
+                ),
+                LeadCard(
+                  name: "Emily",
+                  phone: "+1 (555) 123-4568",
+                  city: "Los Angeles",
+                  status: "Contacted",
+                ),
+                LeadCard(
+                  name: "Sarah",
+                  phone: "+1 (555) 123-4568",
+                  city: "UK",
+                  status: "New",
+                ),
+                LeadCard(
+                  name: "Michael",
+                  phone: "+1 (555) 123-4568",
+                  city: "New York",
+                  status: "Rejected",
+                ),
+                LeadCard(
+                  name: "Mathew",
+                  phone: "+1 (555) 123-4568",
+                  city: "UK",
+                  status: "Joined",
+                ),
+              ],
+            ),
           ),
         ],
       ),
