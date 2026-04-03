@@ -96,7 +96,7 @@ appBar: AppBar(
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => const LeadProfileScreen(),
+                    builder: (_) => const LeadProfileScreen(leadData: {},),
                   ),
                 );
 

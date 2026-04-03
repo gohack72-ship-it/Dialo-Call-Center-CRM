@@ -1,7 +1,11 @@
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dialo/providers/leadProvider.dart';
 import 'package:dialo/views/settingspage.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import 'lead_details.dart';
 
 class LeadsScreen extends StatefulWidget {
   final Function(bool) changeTheme;
@@ -99,40 +103,52 @@ class _LeadsScreenState extends State<LeadsScreen> {
           const SizedBox(height: 10),
 
           Expanded(
-            child: ListView(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              children: const [
-                LeadCard(
-                  name: "John",
-                  phone: "+1 (555) 123-4567",
-                  city: "New York",
-                  status: "Accepted",
-                ),
-                LeadCard(
-                  name: "Emily",
-                  phone: "+1 (555) 123-4568",
-                  city: "Los Angeles",
-                  status: "Contacted",
-                ),
-                LeadCard(
-                  name: "Sarah",
-                  phone: "+1 (555) 123-4568",
-                  city: "UK",
-                  status: "New",
-                ),
-                LeadCard(
-                  name: "Michael",
-                  phone: "+1 (555) 123-4568",
-                  city: "New York",
-                  status: "Rejected",
-                ),
-                LeadCard(
-                  name: "Mathew",
-                  phone: "+1 (555) 123-4568",
-                  city: "UK",
-                  status: "Joined",
-                ),
-              ],
+            child:Expanded(
+              child: StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance
+        .collection("LEADS")
+        .orderBy("ADDED_TIME", descending: true)
+        .snapshots(),
+                builder: (context, snapshot) {
+
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                    return const Center(child: Text("No Leads Found"));
+                  }
+
+                  final leads = snapshot.data!.docs;
+
+                  return ListView.builder(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    itemCount: leads.length,
+                    itemBuilder: (context, index) {
+                      var data = leads[index].data() as Map<String, dynamic>;
+
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => LeadProfileScreen(
+                                leadData: data,
+                              ),
+                            ),
+                          );
+                        },
+                        child: LeadCard(
+                          name: data["NAME"] ?? "",
+                          phone: data["PHONE"] ?? "",
+                          city: data["PLACE"] ?? "",
+                          status: data["STATUS"] ?? "New",
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
             ),
           ),
         ],

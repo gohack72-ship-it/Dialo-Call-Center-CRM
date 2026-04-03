@@ -5,8 +5,11 @@ import '../../constants/app_colors.dart';
 
 
 
-class LeadProfileScreen extends StatefulWidget {
-  const LeadProfileScreen({super.key});
+
+  class LeadProfileScreen extends StatefulWidget {
+  final Map<String, dynamic> leadData;
+
+  const LeadProfileScreen({super.key, required this.leadData});
 
   @override
   State<LeadProfileScreen> createState() => _LeadProfileScreenState();
@@ -30,13 +33,12 @@ class _LeadProfileScreenState extends State<LeadProfileScreen> {
             Navigator.pop(context);
           },
         ),
-        title: const Text(
-          "Name",
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-            fontSize: 22,
-          ),
+        title: Text(widget.leadData["NAME"] ?? "Name", style: TextStyle(
+          color: Colors.black,
+          fontWeight: FontWeight.bold,
+          fontSize: 22,
+        ),
+
         ),
         actions: [
           Padding(
@@ -141,9 +143,15 @@ class _LeadProfileScreenState extends State<LeadProfileScreen> {
 
             // 4. Contact Information (NOW EDITABLE)
             _buildHeader("Contact Information"),
-            _buildEditableTile(Icons.phone_outlined, "Phone"),
+            _buildEditableTile(
+              Icons.phone_outlined,
+              widget.leadData["PHONE"] ?? "",
+            ),
             const SizedBox(height: 10),
-            _buildEditableTile(Icons.location_on_outlined, "Location"),
+            _buildEditableTile(
+              Icons.location_on_outlined,
+              widget.leadData["PLACE"] ?? "",
+            ),
             const SizedBox(height: 20),
 
             // 5. Lead Details (NOW EDITABLE)
