@@ -1,7 +1,7 @@
 
 import 'package:dialo/views/settingspage.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
 
 
 import '../constants/app_colors.dart';
@@ -17,7 +17,7 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DbState extends State<Dashboard> {
-  int _currentIndex=0;
+  int currentIndex=0;
 
   @override
   Widget build(BuildContext context) {
