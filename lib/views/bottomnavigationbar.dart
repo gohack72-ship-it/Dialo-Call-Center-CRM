@@ -2,6 +2,8 @@ import 'package:dialo/views/dashboard.dart';
 import 'package:dialo/views/repots/reportpage.dart';
 import 'package:flutter/material.dart';
 import 'package:dialo/constants/app_colors.dart';
+import 'package:provider/provider.dart';
+import '../providers/leadProvider.dart';
 import 'leads/addlead.dart';
 import 'leads/leads_screen.dart';
 
@@ -43,7 +45,12 @@ class _BottomnavPageState extends State<BottomnavPage> {
         onTap: (index) {
           setState(() {
             _currentIndex = index;
+
           });
+          if(index == 2){
+            context.read<LeadProvider>().getLeadStatus();
+            context.read()<LeadProvider>().fetchAdditionalLeadDetails();
+          }
         },
         items: const [
           BottomNavigationBarItem(
