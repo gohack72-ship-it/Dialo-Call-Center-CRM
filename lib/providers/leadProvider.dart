@@ -28,7 +28,7 @@ class LeadProvider extends ChangeNotifier {
       "PLACE": placeController.text,
       "PHONE": phoneController.text,
       "LEAD_ID": id,
-      "ADDED_BY_ID": "1774346921657000",
+      "ADDED_BY_ID": "",
       "ADDED_TIME":now,
       "STATUS": "NEW",
 
