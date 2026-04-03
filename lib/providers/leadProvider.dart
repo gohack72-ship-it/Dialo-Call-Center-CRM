@@ -2,7 +2,7 @@ import 'dart:core';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dialo/models/lead_details_Model.dart';
-// import 'package:dialo/models/statusModel.dart';
+
 
 import 'package:flutter/cupertino.dart';
 // import 'package:provider/provider.dart';
@@ -11,8 +11,10 @@ class LeadProvider extends ChangeNotifier {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController placeController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
-  final TextEditingController educationController = TextEditingController();
-  final TextEditingController interestedController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController sourceController = TextEditingController();
+
+
   List<String> statusList = [];
   List<LeadDetailsModel> additionalLeadDetailsList = [];
   List<Map<String, dynamic>> selectedLeadsFilters = [];
@@ -28,10 +30,18 @@ class LeadProvider extends ChangeNotifier {
       "NAME": nameController.text,
       "PLACE": placeController.text,
       "PHONE": phoneController.text,
+      "EMAIL": emailController.text,
       "LEAD_ID": id,
       "ADDED_BY_ID": "",
-      "ADDED_TIME": now,
-      "STATUS": "NEW",
+      "ADDED_TIME":now,
+      "STATUS": selectedStatus ?? "NEW",
+      "SOURCE":sourceController.text,
+
+      "FOLLOW_UP_DATE":now.add(Duration(days: 3)),
+      "FOLLOW_UP_TIME":"",
+      "PRIORITY":'Medium',
+      "ASSIGNED_AGENT":"",
+      "FOLLOW_UP_STATUS":"pending",
     };
 
     fdb.collection("LEADS").doc(id).set(lead);
@@ -43,13 +53,15 @@ class LeadProvider extends ChangeNotifier {
     nameController.clear();
     placeController.clear();
     phoneController.clear();
-    statusList.clear();
+
+    //  DON'T CLEAR statusList
 
     notifyListeners();
   }
 
   void getLeadStatus() async {
     fdb.collection("LEAD_STATUS").get().then((value) {
+      statusList.clear();
       if (value.docs.isNotEmpty) {
         for (var element in value.docs) {
           Map<String, dynamic> statusMap = element.data();
@@ -63,6 +75,7 @@ class LeadProvider extends ChangeNotifier {
 
   void changeStatus(String status) {
     selectedStatus = status;
+    notifyListeners();
   }
 
   Future<void> fetchAdditionalLeadDetails() async {

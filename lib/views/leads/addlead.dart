@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../../constants/app_textstyle.dart';
 import '../../providers/leadProvider.dart';
-import 'leads_screen.dart';
+
 
 class NewLeadPage extends StatefulWidget {
   const NewLeadPage({super.key});
@@ -22,8 +22,8 @@ class _NewLeadPageState extends State<NewLeadPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+
 
   }
 
@@ -85,18 +85,21 @@ class _NewLeadPageState extends State<NewLeadPage> {
                         _input("Enter Email",context.read<LeadProvider>().emailController),
                         _label("Phone"),
                         _phoneField(),
+                        _label("Source"),
+                        _input("Source",context.read<LeadProvider>().sourceController),
 
                         const SizedBox(height: 10),
-                        _dropdown(
-                          hint: 'SOURCE',
-                          value: source,
-                          items: const ['Whatsapp', 'Friends', 'Instagram'],
-                          onChanged: (value) {
-                            setState(() {
-                              source = value;
-                            });
-                          },
-                        ),
+
+                        // _dropdown(
+                        //   hint: 'STATUS',
+                        //   value: source,
+                        //   items: const ['Whatsapp', 'Friends', 'Instagram'],
+                        //   onChanged: (value) {
+                        //     setState(() {
+                        //       source = value;
+                        //     });
+                        //   },
+                        // ),
                         SizedBox(width: double.infinity, height: 10),
                         const Text(
                           'Lead Details',
@@ -108,14 +111,17 @@ class _NewLeadPageState extends State<NewLeadPage> {
                         const SizedBox(height: 12),
 
                         Consumer<LeadProvider>(
-                            builder: (context,status,child) {
-                              return _dropdown(hint: "Status", items:status.statusList, value:null,
-                                  onChanged: (st){
-                                    status.changeStatus(st!);
-                                  });
-                            }
+                          builder: (context, status, child) {
+                            return _dropdown(
+                              hint: "Status",
+                              items: status.statusList,
+                              value: status.selectedStatus,
+                              onChanged: (st) {
+                                status.changeStatus(st!);
+                              },
+                            );
+                          },
                         ),
-
                         // _dropdown(
                         //   hint: 'Interested Course',
                         //   value: course,
