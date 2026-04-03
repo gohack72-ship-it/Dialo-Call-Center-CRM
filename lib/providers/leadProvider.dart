@@ -12,6 +12,7 @@ class LeadProvider extends ChangeNotifier {
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
 
+
   List<String> statusList = [];
   List<LeadDetailsModel> additionalLeadDetailsList = [];
   List<Map<String, dynamic>> selectedLeadsFilters = [];
