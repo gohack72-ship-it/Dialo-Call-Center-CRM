@@ -13,7 +13,7 @@ class LeadsScreen extends StatefulWidget {
 }
 
 class _LeadsScreenState extends State<LeadsScreen> {
-  int _currentIndex = 1;
+  int currentIndex = 1;
 
   @override
   Widget build(BuildContext context) {
