@@ -310,7 +310,7 @@ class _FilterDrawerState extends State<FilterDrawer> {
                             _dropdown(
                               null,
                               item.sub,
-                              (v) {
+                                  (v) {
                                 val.selectedLeadsFilters.add({item.title: v});
                               },
                             ),
@@ -331,10 +331,10 @@ class _FilterDrawerState extends State<FilterDrawer> {
   }
 
   Widget _dropdown(
-    String? value,
-    List<String> items,
-    ValueChanged<String?> onChanged,
-  ) {
+      String? value,
+      List<String> items,
+      ValueChanged<String?> onChanged,
+      ) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12),
       decoration: BoxDecoration(

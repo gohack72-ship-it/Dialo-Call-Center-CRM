@@ -1,6 +1,10 @@
 import 'package:dialo/loginpage.dart';
 import 'package:dialo/providers/leadProvider.dart';
 import 'package:dialo/views/bottomnavigationbar.dart';
+
+// import 'package:dialo/views/bottomnavigationbar.
+import 'package:dialo/views/leads/addlead.dart';
+
 // import 'package:dialo/views/bottomnavigationbar.
 import 'package:dialo/views/leads/addlead.dart';
 import 'package:flutter/material.dart';
@@ -30,20 +34,20 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   bool isDarkMode = false;
-@override
-void initState(){
-  super.initState();
-  loadTheme();
-}
-void loadTheme()async{
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  setState(() {
-    isDarkMode = prefs.getBool('isDarkMode') ?? false;
-  });
-}
-void changeTheme(bool value)async {
-SharedPreferences prefs = await SharedPreferences.getInstance();
-prefs.setBool('isDarkMode', value);
+  @override
+  void initState(){
+    super.initState();
+    loadTheme();
+  }
+  void loadTheme()async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      isDarkMode = prefs.getBool('isDarkMode') ?? false;
+    });
+  }
+  void changeTheme(bool value)async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('isDarkMode', value);
 
 setState(() {
   isDarkMode = value;
@@ -88,7 +92,8 @@ setState(() {
           ),
         ),
         themeMode: isDarkMode?ThemeMode.dark:ThemeMode.light,
-        home: NewLeadPage(),
+        home: Loginpage(),
+
       ),
     );
   }

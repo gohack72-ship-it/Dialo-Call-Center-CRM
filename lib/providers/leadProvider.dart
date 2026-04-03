@@ -10,8 +10,9 @@ class LeadProvider extends ChangeNotifier {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController placeController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
-  final TextEditingController educationController = TextEditingController();
-  final TextEditingController interestedController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+
+
   List<String> statusList = [];
   List<LeadDetailsModel> additionalLeadDetailsList = [];
   List<Map<String, dynamic>> selectedLeadsFilters = [];
@@ -31,6 +32,7 @@ class LeadProvider extends ChangeNotifier {
       "ADDED_BY_ID": "",
       "ADDED_TIME":now,
       "STATUS": "NEW",
+      "SOURSE":"",
 
       "FOLLOW_UP_DATE":now,
       "FOLLOW_UP_TIME":"",
