@@ -92,7 +92,7 @@ setState(() {
           ),
         ),
         themeMode: isDarkMode?ThemeMode.dark:ThemeMode.light,
-        home: Loginpage(),
+        home: NewLeadPage(),
 
       ),
     );
