@@ -3,8 +3,8 @@ import 'dart:core';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dialo/models/lead_details_Model.dart';
 import 'package:dialo/models/statusModel.dart';
-
 import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
 
 class LeadProvider extends ChangeNotifier {
   final TextEditingController nameController = TextEditingController();
@@ -86,4 +86,19 @@ class LeadProvider extends ChangeNotifier {
       }
     });
   }
+}
+void resetFilters() {
+  selectedLeadsFilters.clear();
+  notifyListeners();
+}
+
+
+
+
+void _applyFilters(BuildContext context) {
+  final provider = Provider.of<LeadProvider>(context, listen: false);
+
+  print(provider.selectedLeadsFilters); // debug
+
+  Navigator.pop(context); // close drawer
 }
