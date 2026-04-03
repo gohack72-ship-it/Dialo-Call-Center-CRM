@@ -140,7 +140,11 @@ class _NewLeadPageState extends State<NewLeadPage> {
                           child: ElevatedButton(
                             onPressed: () {
                               if (_formKey.currentState!.validate()) {
+
                                 context.read<LeadProvider>().addNewLead();
+
+                                Navigator.pop(context); // ✅ ADD THIS LINE HERE
+
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
                                     content: Text('Lead Created Successfully'),
@@ -247,7 +251,7 @@ class _NewLeadPageState extends State<NewLeadPage> {
   }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 14),
-      child: DropdownButtonFormField<String>(
+      child: DropdownButtonFormField(
         style: AppTextstyle.normalText,
         value: value,
         hint: Text(hint),
