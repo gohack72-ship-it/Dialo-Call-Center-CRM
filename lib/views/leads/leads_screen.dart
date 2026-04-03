@@ -1,4 +1,3 @@
-
 import 'package:dialo/providers/leadProvider.dart';
 import 'package:dialo/views/settingspage.dart';
 import 'package:flutter/material.dart';
@@ -261,9 +260,7 @@ class FilterDrawer extends StatefulWidget {
 }
 
 class _FilterDrawerState extends State<FilterDrawer> {
-  String course = "";
-
-  bool isChecked = false;
+  Map<int, bool> checkedItems = {};
 
   @override
   Widget build(BuildContext context) {
@@ -278,11 +275,11 @@ class _FilterDrawerState extends State<FilterDrawer> {
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 20),
-            Consumer<LeadProvider>(
-              builder: (context, val, child) {
-                return SizedBox(
-                  height: MediaQuery.of(context).size.height/1.5,
-                  child: ListView.builder(
+
+            Expanded(
+              child: Consumer<LeadProvider>(
+                builder: (context, val, child) {
+                  return ListView.builder(
                     itemCount: val.additionalLeadDetailsList.length,
                     itemBuilder: (context, index) {
                       var item = val.additionalLeadDetailsList[index];
@@ -290,15 +287,15 @@ class _FilterDrawerState extends State<FilterDrawer> {
                         children: [
                           Row(
                             children: [
-                              if(item.sub.isEmpty)
-                              Checkbox(
-                                value: isChecked,
-                                onChanged: (value) {
-                                  setState(() {
-                                    isChecked = value!;
-                                  });
-                                },
-                              ),
+                              if (item.sub.isEmpty)
+                                Checkbox(
+                                  value: checkedItems[index] ?? false,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      checkedItems[index] = value!;
+                                    });
+                                  },
+                                ),
                               Text(
                                 item.title,
                                 style: TextStyle(fontWeight: FontWeight.w500),
@@ -306,22 +303,50 @@ class _FilterDrawerState extends State<FilterDrawer> {
                             ],
                           ),
                           const SizedBox(height: 10),
-                            if (item.sub.isNotEmpty)
-                          _dropdown(
-                            null,
-                            item.sub,
-                            (v) {
+                          if (item.sub.isNotEmpty)
+                            _dropdown(null, item.sub, (v) {
                               val.selectedLeadsFilters.add({item.title: v});
-                            },
-                          ),
-                      
+                            }),
+
                           const SizedBox(height: 20),
                         ],
                       );
                     },
+                  );
+                },
+              ),
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: () {
+                      setState(() {
+                        checkedItems.clear();
+                      });
+                      Provider.of<LeadProvider>(
+                        context,
+                        listen: false,
+                      ).selectedLeadsFilters.clear();
+                    },
+                    child: const Text("Reset"),
                   ),
-                );
-              },
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      final provider = Provider.of<LeadProvider>(
+                        context,
+                        listen: false,
+                      );
+                      print(provider.selectedLeadsFilters);
+                      Navigator.pop(context);
+                    },
+                    child: const Text("Apply"),
+                  ),
+                ),
+              ],
             ),
           ],
         ),
@@ -342,7 +367,7 @@ class _FilterDrawerState extends State<FilterDrawer> {
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
-          hint: Text("Select", style: TextStyle(color: Colors.grey),),
+          hint: Text("Select", style: TextStyle(color: Colors.grey)),
           value: value,
           isExpanded: true,
           icon: const Icon(Icons.keyboard_arrow_down),

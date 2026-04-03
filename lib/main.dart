@@ -92,7 +92,7 @@ class _MyAppState extends State<MyApp> {
           ),
         ),
         themeMode: isDarkMode?ThemeMode.dark:ThemeMode.light,
-        home: BottomnavPage(),
+        home: BottomnavPage(changeTheme: changeTheme,),
       ),
     );
   }
