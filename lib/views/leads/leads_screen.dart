@@ -5,6 +5,8 @@ import 'package:dialo/views/settingspage.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'lead_details.dart';
+
 class LeadsScreen extends StatefulWidget {
   final Function(bool) changeTheme;
   const LeadsScreen({super.key, required this.changeTheme});
@@ -123,13 +125,25 @@ class _LeadsScreenState extends State<LeadsScreen> {
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     itemCount: leads.length,
                     itemBuilder: (context, index) {
-                      var data = leads[index];
+                      var data = leads[index].data() as Map<String, dynamic>;
 
-                      return LeadCard(
-                        name: data["NAME"] ?? "",
-                        phone: data["PHONE"] ?? "",
-                        city: data["PLACE"] ?? "",
-                        status: data["STATUS"] ?? "New",
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => LeadProfileScreen(
+                                leadData: data,
+                              ),
+                            ),
+                          );
+                        },
+                        child: LeadCard(
+                          name: data["NAME"] ?? "",
+                          phone: data["PHONE"] ?? "",
+                          city: data["PLACE"] ?? "",
+                          status: data["STATUS"] ?? "New",
+                        ),
                       );
                     },
                   );

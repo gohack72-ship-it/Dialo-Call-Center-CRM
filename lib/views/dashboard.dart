@@ -263,7 +263,7 @@ class FollowUpCard extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const LeadProfileScreen(),
+            builder: (context) =>  LeadProfileScreen(leadData: {},),
           ),
 
         );
