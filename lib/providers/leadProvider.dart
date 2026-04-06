@@ -19,13 +19,20 @@ class LeadProvider extends ChangeNotifier {
   List<LeadDetailsModel> additionalLeadDetailsList = [];
   List<Map<String, dynamic>> selectedLeadsFilters = [];
 
+
   String? selectedStatus;
 
   FirebaseFirestore fdb = FirebaseFirestore.instance;
 
+
   void addNewLead() {
     DateTime now = DateTime.now();
     String id = now.millisecondsSinceEpoch.toString();
+    Map<String, dynamic> additionalData = {};
+    for (var element in selectedLeadsFilters) {
+      additionalData.addAll(element);
+      print("$element");
+    }
     final lead = {
       "NAME": nameController.text,
       "PLACE": placeController.text,
@@ -42,6 +49,7 @@ class LeadProvider extends ChangeNotifier {
       "PRIORITY":'Medium',
       "ASSIGNED_AGENT":"",
       "FOLLOW_UP_STATUS":"pending",
+      "ADDITIONAL_DETAILS": additionalData,
     };
 
     fdb.collection("LEADS").doc(id).set(lead);
