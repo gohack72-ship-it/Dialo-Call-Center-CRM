@@ -19,6 +19,8 @@ class LeadProvider extends ChangeNotifier {
   List<Map<String, dynamic>> selectedLeadsFilters = [];
 
   String? selectedStatus;
+  String? selectedAgentId;
+
 
   FirebaseFirestore fdb = FirebaseFirestore.instance;
 
@@ -31,7 +33,6 @@ class LeadProvider extends ChangeNotifier {
       "PHONE": phoneController.text,
       "EMAIL": emailController.text,
       "LEAD_ID": id,
-      "ADDED_BY_ID": "",
       "ADDED_TIME":now,
       "STATUS": selectedStatus ?? "NEW",
       "SOURCE":sourceController.text,
@@ -39,7 +40,7 @@ class LeadProvider extends ChangeNotifier {
       "FOLLOW_UP_DATE":now.add(Duration(days: 3)),
       "FOLLOW_UP_TIME":"",
       "PRIORITY":'Medium',
-      "ASSIGNED_AGENT":"",
+      "ASSIGNED_AGENT_ID": selectedAgentId ?? "",
       "FOLLOW_UP_STATUS":"pending",
     };
 
