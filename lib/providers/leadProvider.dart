@@ -20,32 +20,51 @@ class LeadProvider extends ChangeNotifier {
   List<Map<String, dynamic>> selectedLeadsFilters = [];
 
   String? selectedStatus;
-  String? selectedAgentId;
+  String? agentId;
 
 
   FirebaseFirestore fdb = FirebaseFirestore.instance;
 
-  void addNewLead() {
+  Future<void> addNewLead() async {
     DateTime now = DateTime.now();
     String id = now.millisecondsSinceEpoch.toString();
+
+    /// ✅ GET ANY AGENT (TEMP FIX)
+    String agentId = "";
+
+    try {
+      final agentSnapshot = await fdb.collection("AGENT").get();
+
+      if (agentSnapshot.docs.isNotEmpty) {
+        agentId = agentSnapshot.docs.first.id; // ✅ pick first agent
+      }
+    } catch (e) {
+      print("Agent fetch error: $e");
+    }
+
     final lead = {
       "NAME": nameController.text,
       "PLACE": placeController.text,
       "PHONE": phoneController.text,
       "EMAIL": emailController.text,
       "LEAD_ID": id,
-      "ADDED_TIME":now,
-      "STATUS": selectedStatus ?? "NEW",
-      "SOURCE":sourceController.text,
 
-      "FOLLOW_UP_DATE":now.add(Duration(days: 3)),
-      "FOLLOW_UP_TIME":"",
-      "PRIORITY":'Medium',
-      "ASSIGNED_AGENT_ID": selectedAgentId ?? "",
-      "FOLLOW_UP_STATUS":"pending",
+      /// ✅ TEMP FIX
+      "ADDED_BY_ID": agentId,
+      "ASSIGNED_AGENT_ID": agentId,
+
+      "ADDED_TIME": now,
+      "STATUS": selectedStatus ?? "NEW",
+      "SOURCE": sourceController.text,
+
+      "FOLLOW_UP_DATE": now.add(const Duration(days: 3)),
+      "FOLLOW_UP_TIME": "",
+      "PRIORITY": 'Medium',
+
+      "FOLLOW_UP_STATUS": "pending",
     };
 
-    fdb.collection("LEADS").doc(id).set(lead);
+    await fdb.collection("LEADS").doc(id).set(lead);
 
     clearData();
   }
