@@ -50,6 +50,7 @@ class _BottomnavPageState extends State<BottomnavPage> {
           if(index == 2){
             context.read<LeadProvider>().getLeadStatus();
             context.read()<LeadProvider>().fetchAdditionalLeadDetails();
+            context.read<LeadProvider>().fetchAdditionalLeadDetails();
           }
         },
         items: const [

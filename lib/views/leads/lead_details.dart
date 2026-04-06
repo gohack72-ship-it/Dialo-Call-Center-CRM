@@ -154,16 +154,8 @@ class _LeadProfileScreenState extends State<LeadProfileScreen> {
             ),
             const SizedBox(height: 20),
 
-            // 5. Lead Details (NOW EDITABLE)
-            _buildHeader("Lead Details"),
-            _buildEditableTile(Icons.menu_book_outlined, "Education"),
-            const SizedBox(height: 10),
-            _buildEditableTile(Icons.smartphone_outlined, "Interested Course"),
-            const SizedBox(height: 10),
-            _buildEditableTile(Icons.calendar_today_outlined, "Create Date"),
-            const SizedBox(height: 20),
 
-            // 6. Interaction History
+
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
