@@ -1,6 +1,13 @@
+import 'package:dialo/loginpage.dart';
+
+
+
+
 import 'package:dialo/providers/leadProvider.dart';
 import 'package:dialo/views/bottomnavigationbar.dart';
 import 'package:dialo/views/leads/addlead.dart';
+
+
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
@@ -43,9 +50,9 @@ class _MyAppState extends State<MyApp> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setBool('isDarkMode', value);
 
-setState(() {
-  isDarkMode = value;
-});}
+    setState(() {
+      isDarkMode = value;
+    });}
 
   @override
   Widget build(BuildContext context) {
@@ -86,7 +93,7 @@ setState(() {
           ),
         ),
         themeMode: isDarkMode?ThemeMode.dark:ThemeMode.light,
-        home:NewLeadPage(),
+        home: BottomnavPage(changeTheme: (bool p1) {  },),
       ),
     );
   }

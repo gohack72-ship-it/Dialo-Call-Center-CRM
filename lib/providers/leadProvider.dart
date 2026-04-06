@@ -5,6 +5,7 @@ import 'package:dialo/models/lead_details_Model.dart';
 
 
 import 'package:flutter/cupertino.dart';
+// import 'package:provider/provider.dart';
 
 class LeadProvider extends ChangeNotifier {
   final TextEditingController nameController = TextEditingController();
@@ -101,3 +102,4 @@ class LeadProvider extends ChangeNotifier {
     });
   }
 }
+
