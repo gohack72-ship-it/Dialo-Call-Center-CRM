@@ -41,7 +41,7 @@ class LeadProvider extends ChangeNotifier {
       "LEAD_ID": id,
       "ADDED_BY_ID": "",
       "ADDED_TIME":now,
-      "STATUS": selectedStatus ?? "NEW",
+      "STATUS": selectedStatus ?? "New",
       "SOURCE":sourceController.text,
 
       "FOLLOW_UP_DATE":now.add(Duration(days: 3)),
@@ -50,6 +50,7 @@ class LeadProvider extends ChangeNotifier {
       "ASSIGNED_AGENT":"",
       "FOLLOW_UP_STATUS":"pending",
       "ADDITIONAL_DETAILS": additionalData,
+      "LAST_CONTACTED_DATE":now,
     };
 
     fdb.collection("LEADS").doc(id).set(lead);
@@ -61,8 +62,10 @@ class LeadProvider extends ChangeNotifier {
     nameController.clear();
     placeController.clear();
     phoneController.clear();
-
-    //  DON'T CLEAR statusList
+    emailController.clear();
+    sourceController.clear();
+    selectedStatus = null;
+    selectedLeadsFilters.clear();
 
     notifyListeners();
   }
@@ -109,4 +112,3 @@ class LeadProvider extends ChangeNotifier {
     });
   }
 }
-

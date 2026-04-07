@@ -5,6 +5,7 @@ import 'package:dialo/views/settingspage.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'addlead.dart';
 import 'lead_details.dart';
 
 class LeadsScreen extends StatefulWidget {
@@ -17,6 +18,8 @@ class LeadsScreen extends StatefulWidget {
 
 class _LeadsScreenState extends State<LeadsScreen> {
   int currentIndex = 1;
+  // STEP 1: Create a variable to hold the currently selected filter
+  String selectedStatus = "All";
 
   @override
   Widget build(BuildContext context) {
@@ -42,10 +45,15 @@ class _LeadsScreenState extends State<LeadsScreen> {
                 borderRadius: BorderRadius.circular(30),
               ),
             ),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const NewLeadPage()),
+              );
+            },
             child: const Text("Add Lead"),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(width: 10),
         ],
       ),
       body: Column(
@@ -69,16 +77,14 @@ class _LeadsScreenState extends State<LeadsScreen> {
                     ),
                   ),
                 ),
-                IconButton(
-                  icon: const Icon(Icons.tune),
-                  onPressed: () {
-                    pro.fetchAdditionalLeadDetails();
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => FilterDrawer()),
-                    );
-                    Scaffold.of(context).openEndDrawer();
-                  },
+                Builder(
+                  builder: (context) => IconButton(
+                    icon: const Icon(Icons.tune),
+                    onPressed: () {
+                      pro.fetchAdditionalLeadDetails();
+                      Scaffold.of(context).openEndDrawer();
+                    },
+                  ),
                 ),
               ],
             ),
@@ -86,16 +92,38 @@ class _LeadsScreenState extends State<LeadsScreen> {
 
           const SizedBox(height: 10),
 
+          // STEP 2: Update the Chips to react to taps
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Row(
-              children: const [
-                StatusChip(text: "New"),
-                StatusChip(text: "Contacted"),
-                StatusChip(text: "Accepted"),
-                StatusChip(text: "Rejected"),
-                StatusChip(text: "Joined"),
+              children: [
+                StatusChip(
+                  text: "All",
+                  isSelected: selectedStatus == "All",
+                  onTap: () => setState(() => selectedStatus = "All"),
+                ),
+                StatusChip(
+                  text: "New",
+                  isSelected: selectedStatus == "New",
+                  onTap: () => setState(() => selectedStatus = "New"),
+                ),
+                StatusChip(
+                  text: "Contacted",
+                  isSelected: selectedStatus == "Contacted",
+                  onTap: () => setState(() => selectedStatus = "Contacted"),
+                ),
+                StatusChip(
+                  text: "Accepted",
+                  isSelected: selectedStatus == "Accepted",
+                  onTap: () => setState(() => selectedStatus = "Accepted"),
+                ),
+                StatusChip(
+                  text: "Rejected",
+                  isSelected: selectedStatus == "Rejected",
+                  onTap: () => setState(() => selectedStatus = "Rejected"),
+                ),
+
               ],
             ),
           ),
@@ -103,52 +131,69 @@ class _LeadsScreenState extends State<LeadsScreen> {
           const SizedBox(height: 10),
 
           Expanded(
-            child:Expanded(
-              child: StreamBuilder<QuerySnapshot>(
-                stream: FirebaseFirestore.instance
-        .collection("LEADS")
-        .orderBy("ADDED_TIME", descending: true)
-        .snapshots(),
-                builder: (context, snapshot) {
-
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-
-                  if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                    return const Center(child: Text("No Leads Found"));
-                  }
-
-                  final leads = snapshot.data!.docs;
-
-                  return ListView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    itemCount: leads.length,
-                    itemBuilder: (context, index) {
-                      var data = leads[index].data() as Map<String, dynamic>;
-
-                      return GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => LeadProfileScreen(
-                                leadData: data,
-                              ),
-                            ),
-                          );
-                        },
-                        child: LeadCard(
-                          name: data["NAME"] ?? "",
-                          phone: data["PHONE"] ?? "",
-                          city: data["PLACE"] ?? "",
-                          status: data["STATUS"] ?? "New",
-                        ),
-                      );
-                    },
+            child: StreamBuilder<QuerySnapshot>(
+              // STEP 3: Update the Stream to filter based on 'selectedStatus'
+              stream: selectedStatus == "All"
+                  ? FirebaseFirestore.instance
+                      .collection("LEADS")
+                      .orderBy("ADDED_TIME", descending: true)
+                      .snapshots()
+                  : FirebaseFirestore.instance
+                      .collection("LEADS")
+                      .where("STATUS", isEqualTo: selectedStatus)
+                      .orderBy("ADDED_TIME", descending: true)
+                      .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Text(
+                        "Error: ${snapshot.error}\n\nCheck your console for the Index link!",
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(color: Colors.red),
+                      ),
+                    ),
                   );
-                },
-              ),
+                }
+
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                  return const Center(child: Text("No Leads Found"));
+                }
+
+                final leads = snapshot.data!.docs;
+
+                return ListView.builder(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  itemCount: leads.length,
+                  itemBuilder: (context, index) {
+                    var data = leads[index].data() as Map<String, dynamic>;
+
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => LeadProfileScreen(
+                              leadData: data,
+                            ),
+                          ),
+                        );
+                      },
+                      child: LeadCard(
+                        name: data["NAME"] ?? "",
+                        phone: data["PHONE"] ?? "",
+                        city: data["PLACE"] ?? "",
+                        status: data["STATUS"] ?? "New",
+                      ),
+                    );
+                  },
+                );
+              },
             ),
           ),
         ],
@@ -157,26 +202,45 @@ class _LeadsScreenState extends State<LeadsScreen> {
   }
 }
 
-// 🔘 STATUS CHIP
+// 🔘 UPDATED STATUS CHIP
 class StatusChip extends StatelessWidget {
   final String text;
-  const StatusChip({super.key, required this.text});
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const StatusChip({
+    super.key,
+    required this.text,
+    required this.isSelected,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(right: 8),
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-      decoration: BoxDecoration(
-        color: const Color(0xFFEAF0F4),
-        borderRadius: BorderRadius.circular(20),
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: const EdgeInsets.only(right: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        decoration: BoxDecoration(
+          // If selected, show blue. If not, show light grey.
+          color: isSelected ? Colors.blue : const Color(0xFFEAF0F4),
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Text(
+          text,
+          style: TextStyle(
+            fontWeight: FontWeight.w500,
+            // If selected, show white text.
+            color: isSelected ? Colors.white : Colors.black,
+          ),
+        ),
       ),
-      child: Text(text, style: const TextStyle(fontWeight: FontWeight.w500)),
     );
   }
 }
 
-// 📋 LEAD CARD
+// 📋 LEAD CARD (No changes needed here for filtering)
 class LeadCard extends StatelessWidget {
   final String name, phone, city, status;
 
@@ -246,28 +310,28 @@ class LeadCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 8),
-
           Row(
-            children: const [Icon(Icons.phone, size: 16), SizedBox(width: 6)],
-          ),
-          Text(phone),
-
-          const SizedBox(height: 4),
-
-          Row(
-            children: const [
-              Icon(Icons.location_on, size: 16),
-              SizedBox(width: 6),
+            children: [
+              const Icon(Icons.phone, size: 16),
+              const SizedBox(width: 6),
+              Text(phone),
             ],
           ),
-          Text(city),
+          const SizedBox(height: 4),
+          Row(
+            children: [
+              const Icon(Icons.location_on, size: 16),
+              const SizedBox(width: 6),
+              Text(city),
+            ],
+          ),
         ],
       ),
     );
   }
 }
 
-// 🎛 FILTER DRAWER
+// 🎛 FILTER DRAWER (Kept the same for now)
 class FilterDrawer extends StatefulWidget {
   const FilterDrawer({super.key});
 
@@ -283,7 +347,6 @@ class _FilterDrawerState extends State<FilterDrawer> {
     return Drawer(
       child: Padding(
         padding: const EdgeInsets.all(16),
-
         child: Column(
           children: [
             const Text(
@@ -291,7 +354,6 @@ class _FilterDrawerState extends State<FilterDrawer> {
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 20),
-
             Expanded(
               child: Consumer<LeadProvider>(
                 builder: (context, val, child) {
@@ -314,7 +376,7 @@ class _FilterDrawerState extends State<FilterDrawer> {
                                 ),
                               Text(
                                 item.title,
-                                style: TextStyle(fontWeight: FontWeight.w500),
+                                style: const TextStyle(fontWeight: FontWeight.w500),
                               ),
                             ],
                           ),
@@ -323,7 +385,6 @@ class _FilterDrawerState extends State<FilterDrawer> {
                             _dropdown(null, item.sub, (v) {
                               val.selectedLeadsFilters.add({item.title: v});
                             }),
-
                           const SizedBox(height: 20),
                         ],
                       );
@@ -383,7 +444,7 @@ class _FilterDrawerState extends State<FilterDrawer> {
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
-          hint: Text("Select", style: TextStyle(color: Colors.grey)),
+          hint: const Text("Select", style: TextStyle(color: Colors.grey)),
           value: value,
           isExpanded: true,
           icon: const Icon(Icons.keyboard_arrow_down),
