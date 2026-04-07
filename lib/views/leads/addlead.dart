@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import '../../constants/app_textstyle.dart';
 import '../../providers/leadProvider.dart';
 
-
 class NewLeadPage extends StatefulWidget {
   const NewLeadPage({super.key});
 
@@ -15,56 +14,51 @@ class NewLeadPage extends StatefulWidget {
 
 class _NewLeadPageState extends State<NewLeadPage> {
   final _formKey = GlobalKey<FormState>();
-  // final TextEditingController phoneController = TextEditingController();
-
-  String? source;
-  String? course;
 
   @override
   void initState() {
     super.initState();
 
-
+    // ✅ LOAD DROPDOWN DATA
+    Future.microtask(() {
+      context.read<LeadProvider>().fetchAdditionalLeadDetails();
+      context.read<LeadProvider>().getLeadStatus();
+    });
   }
-
 
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      canPop:false,
-
+      canPop: false,
       child: Scaffold(
         backgroundColor: Colors.white,
-
         body: SafeArea(
           child: Column(
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                child: Row(
-                  children:  [
-                    // IconButton(onPressed: (){
-                    //   Navigator.pushReplacement(
-                    //     context,
-                    //     MaterialPageRoute(
-                    //       builder: (context) => LeadsScreen(changeTheme: (v) {}),
-                    //     ),
-                    //   );
-                    // }, icon: Icon(Icons.arrow_back)),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
+                child: const Row(
+                  children: [
                     SizedBox(width: 12),
                     Text(
                       'New Lead',
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ],
                 ),
               ),
+
               Expanded(
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.all(16),
                   child: Form(
                     key: _formKey,
-
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -77,30 +71,36 @@ class _NewLeadPageState extends State<NewLeadPage> {
                         ),
 
                         const SizedBox(height: 20),
-                        _label('Full Name',),
-                        _input('Enter Name',context.read<LeadProvider>().nameController),
+
+                        _label('Full Name'),
+                        _input(
+                          'Enter Name',
+                          context.read<LeadProvider>().nameController,
+                        ),
+
                         _label("Place"),
-                        _input("Enter Place",context.read<LeadProvider>().placeController),
+                        _input(
+                          "Enter Place",
+                          context.read<LeadProvider>().placeController,
+                        ),
+
                         _label("Email"),
-                        _input("Enter Email",context.read<LeadProvider>().emailController),
+                        _input(
+                          "Enter Email",
+                          context.read<LeadProvider>().emailController,
+                        ),
+
                         _label("Phone"),
                         _phoneField(),
+
                         _label("Source"),
-                        _input("Source",context.read<LeadProvider>().sourceController),
+                        _input(
+                          "Source",
+                          context.read<LeadProvider>().sourceController,
+                        ),
 
                         const SizedBox(height: 10),
 
-                        // _dropdown(
-                        //   hint: 'STATUS',
-                        //   value: source,
-                        //   items: const ['Whatsapp', 'Friends', 'Instagram'],
-                        //   onChanged: (value) {
-                        //     setState(() {
-                        //       source = value;
-                        //     });
-                        //   },
-                        // ),
-                        SizedBox(width: double.infinity, height: 10),
                         const Text(
                           'Lead Details',
                           style: TextStyle(
@@ -108,10 +108,18 @@ class _NewLeadPageState extends State<NewLeadPage> {
                             fontWeight: FontWeight.w600,
                           ),
                         ),
+
                         const SizedBox(height: 12),
 
+                        /// ✅ STATUS DROPDOWN
                         Consumer<LeadProvider>(
                           builder: (context, status, child) {
+                            if (status.statusList.isEmpty) {
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            }
+
                             return _dropdown(
                               hint: "Status",
                               items: status.statusList,
@@ -122,28 +130,82 @@ class _NewLeadPageState extends State<NewLeadPage> {
                             );
                           },
                         ),
-                        // _dropdown(
-                        //   hint: 'Interested Course',
-                        //   value: course,
-                        //   items: const ['Flutter', 'Testing'],
-                        //   onChanged: (value) {
-                        //     setState(() {
-                        //       course = value;
-                        //     });
-                        //   },
-                        // ),
+
+                        Consumer<LeadProvider>(
+
+                          builder: (context, val, child) {
+                            if (val.additionalLeadDetailsList.isEmpty) {
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            }
+
+                            return Column(
+                              children: val.additionalLeadDetailsList.map((
+                                item,
+                              ) {
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    _label(item.title),
+
+                                    item.sub != null && item.sub.isNotEmpty
+                                        ? _dropdown(
+                                      hint: item.title,
+                                      items: item.sub,
+                                      value: null,
+                                      onChanged: (v) {
+                                        val.selectedLeadsFilters.removeWhere(
+                                                (e) => e.containsKey(item.title));
+
+                                        val.selectedLeadsFilters.add({
+                                          item.title: v,
+                                        });
+
+                                        print("DROPDOWN: ${val.selectedLeadsFilters}");
+
+                                      },
+                                    )
+                                        : Builder(
+
+                                      builder: (context) {
+                                        final controller = TextEditingController();
+
+                                        controller.addListener(() {
+                                          val.selectedLeadsFilters.removeWhere(
+                                                  (e) => e.containsKey(item.title));
+
+                                          val.selectedLeadsFilters.add({
+                                            item.title: controller.text,
+                                          });
+
+                                          print("TEXT: ${val.selectedLeadsFilters}");
+                                        });
+
+                                        return _input(
+                                          "Enter ${item.title}",
+                                          controller,
+                                        );
+                                      },
+                                    ),
+                                    const SizedBox(height: 10),
+                                  ],
+                                );
+                              }).toList(),
+                            );
+                          },
+                        ),
 
                         const SizedBox(height: 40),
+
+                        /// ✅ CREATE BUTTON
                         SizedBox(
                           width: double.infinity,
                           height: 48,
                           child: ElevatedButton(
                             onPressed: () {
                               if (_formKey.currentState!.validate()) {
-
                                 context.read<LeadProvider>().addNewLead();
-
-                                Navigator.pop(context); // ✅ ADD THIS LINE HERE
 
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
@@ -180,6 +242,7 @@ class _NewLeadPageState extends State<NewLeadPage> {
     );
   }
 
+  /// 🔹 LABEL
   static Widget _label(String text) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 6),
@@ -187,12 +250,13 @@ class _NewLeadPageState extends State<NewLeadPage> {
     );
   }
 
+  /// 🔹 INPUT
   Widget _input(String hint, TextEditingController controller) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 14),
       child: TextFormField(
         style: AppTextstyle.normalText,
-        controller: controller ,
+        controller: controller,
         decoration: InputDecoration(
           hintText: hint,
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
@@ -211,6 +275,7 @@ class _NewLeadPageState extends State<NewLeadPage> {
     );
   }
 
+  /// 🔹 PHONE FIELD
   Widget _phoneField() {
     return Padding(
       padding: const EdgeInsets.only(bottom: 14),
@@ -243,6 +308,7 @@ class _NewLeadPageState extends State<NewLeadPage> {
     );
   }
 
+  /// 🔹 DROPDOWN
   Widget _dropdown({
     required String hint,
     required List<String> items,
@@ -251,15 +317,14 @@ class _NewLeadPageState extends State<NewLeadPage> {
   }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 14),
-      child: DropdownButtonFormField(
-        style: AppTextstyle.normalText,
+      child: DropdownButtonFormField<String>(
         value: value,
         hint: Text(hint),
         items: items
             .map(
               (item) =>
-              DropdownMenuItem<String>(value: item, child: Text(item)),
-        )
+                  DropdownMenuItem<String>(value: item, child: Text(item)),
+            )
             .toList(),
         onChanged: onChanged,
         validator: (value) => value == null ? 'Please select $hint' : null,
