@@ -30,13 +30,13 @@ class LeadProvider extends ChangeNotifier {
     String id = now.millisecondsSinceEpoch.toString();
 
     /// ✅ GET ANY AGENT (TEMP FIX)
-    String agentId = "";
+    String tempAgentId = "";
 
     try {
       final agentSnapshot = await fdb.collection("AGENT").get();
 
       if (agentSnapshot.docs.isNotEmpty) {
-        agentId = agentSnapshot.docs.first.id; // ✅ pick first agent
+        tempAgentId = agentSnapshot.docs.first.id;
       }
     } catch (e) {
       print("Agent fetch error: $e");
@@ -49,9 +49,9 @@ class LeadProvider extends ChangeNotifier {
       "EMAIL": emailController.text,
       "LEAD_ID": id,
 
-      /// ✅ TEMP FIX
-      "ADDED_BY_ID": agentId,
-      "ASSIGNED_AGENT_ID": agentId,
+
+      "ADDED_BY_ID": tempAgentId,
+      "ASSIGNED_AGENT_ID": tempAgentId,
 
       "ADDED_TIME": now,
       "STATUS": selectedStatus ?? "NEW",
