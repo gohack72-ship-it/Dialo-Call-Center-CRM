@@ -32,10 +32,17 @@ class LeadProvider extends ChangeNotifier {
     String tempAgentId = "";
 
     try {
+
       final agentSnapshot = await fdb.collection("AGENT").get();
 
+
+      final leadsSnapshot = await fdb.collection("LEADS").get();
+      int leadCount = leadsSnapshot.docs.length;
+
       if (agentSnapshot.docs.isNotEmpty) {
-        tempAgentId = agentSnapshot.docs.first.id;
+        int index = (leadCount ~/ 5) % agentSnapshot.docs.length;
+
+        tempAgentId = agentSnapshot.docs[index].id;
       }
     } catch (e) {
       print("Agent fetch error: $e");
