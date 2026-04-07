@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dialo/providers/leadProvider.dart';
 import 'package:dialo/views/settingspage.dart';
@@ -279,6 +281,7 @@ class FilterDrawer extends StatefulWidget {
 
 class _FilterDrawerState extends State<FilterDrawer> {
   Map<int, bool> checkedItems = {};
+  Map<int, String?> selectedDropdownValues = {};
 
   @override
   Widget build(BuildContext context) {
@@ -322,7 +325,15 @@ class _FilterDrawerState extends State<FilterDrawer> {
                           ),
                           const SizedBox(height: 10),
                           if (item.sub.isNotEmpty)
-                            _dropdown(null, item.sub, (v) {
+                            _dropdown(selectedDropdownValues[index], item.sub, (
+                              v
+                            ) {
+                              setState(() {
+                                selectedDropdownValues[index] = v;
+                              });
+                              val.selectedLeadsFilters.removeWhere(
+                                (e) => e.containsKey(item.title),
+                              );
                               val.selectedLeadsFilters.add({item.title: v});
                             }),
 
@@ -351,6 +362,7 @@ class _FilterDrawerState extends State<FilterDrawer> {
                     onPressed: () {
                       setState(() {
                         checkedItems.clear();
+                        selectedDropdownValues.clear();
                       });
                       Provider.of<LeadProvider>(
                         context,
@@ -366,7 +378,7 @@ class _FilterDrawerState extends State<FilterDrawer> {
                   width: 120,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFF3F5FBF), 
+                      backgroundColor: Color(0xFF3F5FBF),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
                       ),
