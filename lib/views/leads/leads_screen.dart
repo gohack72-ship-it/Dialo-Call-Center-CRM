@@ -1,4 +1,3 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dialo/providers/leadProvider.dart';
 import 'package:dialo/views/settingspage.dart';
@@ -39,7 +38,7 @@ class _LeadsScreenState extends State<LeadsScreen> {
         actions: [
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blue,
+              backgroundColor: Color(0xFF3F5FBF),
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(30),
@@ -51,7 +50,14 @@ class _LeadsScreenState extends State<LeadsScreen> {
                 MaterialPageRoute(builder: (context) => const NewLeadPage()),
               );
             },
-            child: const Text("Add Lead"),
+            child: const Text(
+              "Add Lead",
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: Colors.white,
+              ),
+            ),
           ),
           const SizedBox(width: 10),
         ],
@@ -183,7 +189,7 @@ class _LeadsScreenState extends State<LeadsScreen> {
                           context,
                           MaterialPageRoute(
                             builder: (_) => LeadProfileScreen(
-                              leadData: data,
+                              leadData: data
                             ),
                           ),
                         );
@@ -398,9 +404,19 @@ class _FilterDrawerState extends State<FilterDrawer> {
               ),
             ),
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Expanded(
+                SizedBox(
+                  width: 120,
                   child: OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      backgroundColor: Color(0xFF3F5FBF),
+                      side: BorderSide.none,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
                     onPressed: () {
                       setState(() {
                         checkedItems.clear();
@@ -413,9 +429,17 @@ class _FilterDrawerState extends State<FilterDrawer> {
                     child: const Text("Reset"),
                   ),
                 ),
-                const SizedBox(width: 10),
-                Expanded(
+                SizedBox(width: 10),
+
+                SizedBox(
+                  width: 120,
                   child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xFF3F5FBF),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
                     onPressed: () {
                       final provider = Provider.of<LeadProvider>(
                         context,
@@ -424,7 +448,10 @@ class _FilterDrawerState extends State<FilterDrawer> {
                       print(provider.selectedLeadsFilters);
                       Navigator.pop(context);
                     },
-                    child: const Text("Apply"),
+                    child: const Text(
+                      "Apply",
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
                 ),
               ],
