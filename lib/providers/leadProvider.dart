@@ -19,30 +19,49 @@ class LeadProvider extends ChangeNotifier {
   List<LeadDetailsModel> additionalLeadDetailsList = [];
   List<Map<String, dynamic>> selectedLeadsFilters = [];
 
-
   String? selectedStatus;
+
 
   FirebaseFirestore fdb = FirebaseFirestore.instance;
 
-
-  void addNewLead() {
+  Future<void> addNewLead() async {
     DateTime now = DateTime.now();
     String id = now.millisecondsSinceEpoch.toString();
-    Map<String, dynamic> additionalData = {};
-    for (var element in selectedLeadsFilters) {
-      additionalData.addAll(element);
-      print("$element");
+
+    /// ✅ GET ANY AGENT (TEMP FIX)
+    String tempAgentId = "";
+
+    try {
+
+      final agentSnapshot = await fdb.collection("AGENT").get();
+
+
+      final leadsSnapshot = await fdb.collection("LEADS").get();
+      int leadCount = leadsSnapshot.docs.length;
+
+      if (agentSnapshot.docs.isNotEmpty) {
+        int index = (leadCount ~/ 5) % agentSnapshot.docs.length;
+
+        tempAgentId = agentSnapshot.docs[index].id;
+      }
+    } catch (e) {
+      print("Agent fetch error: $e");
     }
+
     final lead = {
       "NAME": nameController.text,
       "PLACE": placeController.text,
       "PHONE": phoneController.text,
       "EMAIL": emailController.text,
       "LEAD_ID": id,
-      "ADDED_BY_ID": "",
-      "ADDED_TIME":now,
+
+
+      "ADDED_BY_ID": tempAgentId,
+      "ASSIGNED_AGENT_ID": tempAgentId,
+
+      "ADDED_TIME": now,
       "STATUS": selectedStatus ?? "New",
-      "SOURCE":sourceController.text,
+      "SOURCE": sourceController.text,
 
       "FOLLOW_UP_DATE":now.add(Duration(days: 3)),
       "FOLLOW_UP_TIME":"",
@@ -50,10 +69,9 @@ class LeadProvider extends ChangeNotifier {
       "ASSIGNED_AGENT":"",
       "FOLLOW_UP_STATUS":"pending",
       "ADDITIONAL_DETAILS": additionalData,
-      "LAST_CONTACTED_DATE":now,
     };
 
-    fdb.collection("LEADS").doc(id).set(lead);
+    await fdb.collection("LEADS").doc(id).set(lead);
 
     clearData();
   }

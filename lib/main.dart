@@ -5,6 +5,7 @@ import 'package:dialo/loginpage.dart';
 
 import 'package:dialo/providers/leadProvider.dart';
 import 'package:dialo/views/bottomnavigationbar.dart';
+import 'package:dialo/views/leads/addlead.dart';
 
 
 import 'package:flutter/material.dart';
@@ -92,7 +93,7 @@ class _MyAppState extends State<MyApp> {
           ),
         ),
         themeMode: isDarkMode?ThemeMode.dark:ThemeMode.light,
-        home: BottomnavPage(changeTheme: changeTheme,),
+        home: BottomnavPage(changeTheme: (bool p1) {  },),
       ),
     );
   }
