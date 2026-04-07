@@ -60,15 +60,14 @@ class LeadProvider extends ChangeNotifier {
       "ASSIGNED_AGENT_ID": tempAgentId,
 
       "ADDED_TIME": now,
-      "STATUS": selectedStatus ?? "New",
+      "STATUS": selectedStatus ?? "NEW",
       "SOURCE": sourceController.text,
 
-      "FOLLOW_UP_DATE":now.add(Duration(days: 3)),
-      "FOLLOW_UP_TIME":"",
-      "PRIORITY":'Medium',
-      "ASSIGNED_AGENT":"",
-      "FOLLOW_UP_STATUS":"pending",
-      "ADDITIONAL_DETAILS": ,
+      "FOLLOW_UP_DATE": now.add(const Duration(days: 3)),
+      "FOLLOW_UP_TIME": "",
+      "PRIORITY": 'Medium',
+
+      "FOLLOW_UP_STATUS": "pending",
     };
 
     await fdb.collection("LEADS").doc(id).set(lead);
@@ -80,10 +79,8 @@ class LeadProvider extends ChangeNotifier {
     nameController.clear();
     placeController.clear();
     phoneController.clear();
-    emailController.clear();
-    sourceController.clear();
-    selectedStatus = null;
-    selectedLeadsFilters.clear();
+
+    //  DON'T CLEAR statusList
 
     notifyListeners();
   }
@@ -94,12 +91,7 @@ class LeadProvider extends ChangeNotifier {
       if (value.docs.isNotEmpty) {
         for (var element in value.docs) {
           Map<String, dynamic> statusMap = element.data();
-          String status = statusMap["STATUS"] ?? "";
-          if (status.isNotEmpty) {
-            // Normalize "NEW" or "new" to "New"
-            String normalized = status[0].toUpperCase() + status.substring(1).toLowerCase();
-            statusList.add(normalized);
-          }
+          statusList.add(statusMap["STATUS"]);
         }
       }
 
