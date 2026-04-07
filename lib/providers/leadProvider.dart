@@ -76,7 +76,12 @@ class LeadProvider extends ChangeNotifier {
       if (value.docs.isNotEmpty) {
         for (var element in value.docs) {
           Map<String, dynamic> statusMap = element.data();
-          statusList.add(statusMap["STATUS"]);
+          String status = statusMap["STATUS"] ?? "";
+          if (status.isNotEmpty) {
+            // Normalize "NEW" or "new" to "New"
+            String normalized = status[0].toUpperCase() + status.substring(1).toLowerCase();
+            statusList.add(normalized);
+          }
         }
       }
 

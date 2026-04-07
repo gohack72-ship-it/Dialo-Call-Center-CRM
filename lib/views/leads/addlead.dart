@@ -29,7 +29,7 @@ class _NewLeadPageState extends State<NewLeadPage> {
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      canPop: false,
+      canPop: true, // Changed to true so the back button works
       child: Scaffold(
         backgroundColor: Colors.white,
         body: SafeArea(
@@ -40,10 +40,14 @@ class _NewLeadPageState extends State<NewLeadPage> {
                   horizontal: 16,
                   vertical: 12,
                 ),
-                child: const Row(
+                child: Row(
                   children: [
-                    SizedBox(width: 12),
-                    Text(
+                    IconButton(
+                      icon: const Icon(Icons.arrow_back),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                    const SizedBox(width: 12),
+                    const Text(
                       'New Lead',
                       style: TextStyle(
                         fontSize: 20,
@@ -212,6 +216,9 @@ class _NewLeadPageState extends State<NewLeadPage> {
                                     content: Text('Lead Created Successfully'),
                                   ),
                                 );
+                                
+                                // Automatically go back to the leads list
+                                Navigator.pop(context);
                               }
                             },
                             style: ElevatedButton.styleFrom(

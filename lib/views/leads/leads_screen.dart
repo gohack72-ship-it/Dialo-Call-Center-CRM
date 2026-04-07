@@ -123,7 +123,11 @@ class _LeadsScreenState extends State<LeadsScreen> {
                   isSelected: selectedStatus == "Rejected",
                   onTap: () => setState(() => selectedStatus = "Rejected"),
                 ),
-
+                StatusChip(
+                  text: "Joined",
+                  isSelected: selectedStatus == "Joined",
+                  onTap: () => setState(() => selectedStatus = "Joined"),
+                ),
               ],
             ),
           ),
