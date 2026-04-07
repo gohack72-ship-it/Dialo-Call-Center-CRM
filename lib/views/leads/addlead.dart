@@ -36,13 +36,19 @@ class _NewLeadPageState extends State<NewLeadPage> {
           child: Column(
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
                 child: const Row(
                   children: [
                     SizedBox(width: 12),
                     Text(
                       'New Lead',
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ],
                 ),
@@ -56,38 +62,51 @@ class _NewLeadPageState extends State<NewLeadPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-
                         const Text(
                           'Basic Information',
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
 
                         const SizedBox(height: 20),
 
                         _label('Full Name'),
-                        _input('Enter Name',
-                            context.read<LeadProvider>().nameController),
+                        _input(
+                          'Enter Name',
+                          context.read<LeadProvider>().nameController,
+                        ),
 
                         _label("Place"),
-                        _input("Enter Place",
-                            context.read<LeadProvider>().placeController),
+                        _input(
+                          "Enter Place",
+                          context.read<LeadProvider>().placeController,
+                        ),
 
                         _label("Email"),
-                        _input("Enter Email",
-                            context.read<LeadProvider>().emailController),
+                        _input(
+                          "Enter Email",
+                          context.read<LeadProvider>().emailController,
+                        ),
 
                         _label("Phone"),
                         _phoneField(),
 
                         _label("Source"),
-                        _input("Source",
-                            context.read<LeadProvider>().sourceController),
+                        _input(
+                          "Source",
+                          context.read<LeadProvider>().sourceController,
+                        ),
 
                         const SizedBox(height: 10),
 
                         const Text(
                           'Lead Details',
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
 
                         const SizedBox(height: 12),
@@ -95,10 +114,10 @@ class _NewLeadPageState extends State<NewLeadPage> {
                         /// ✅ STATUS DROPDOWN
                         Consumer<LeadProvider>(
                           builder: (context, status, child) {
-
                             if (status.statusList.isEmpty) {
                               return const Center(
-                                  child: CircularProgressIndicator());
+                                child: CircularProgressIndicator(),
+                              );
                             }
 
                             return _dropdown(
@@ -112,33 +131,63 @@ class _NewLeadPageState extends State<NewLeadPage> {
                           },
                         ),
 
-
                         Consumer<LeadProvider>(
-                          builder: (context, val, child) {
 
+                          builder: (context, val, child) {
                             if (val.additionalLeadDetailsList.isEmpty) {
                               return const Center(
-                                  child: CircularProgressIndicator());
+                                child: CircularProgressIndicator(),
+                              );
                             }
 
                             return Column(
-                              children: val.additionalLeadDetailsList.map((item) {
+                              children: val.additionalLeadDetailsList.map((
+                                item,
+                              ) {
                                 return Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-
                                     _label(item.title),
 
-                                    _dropdown(
+                                    item.sub != null && item.sub.isNotEmpty
+                                        ? _dropdown(
                                       hint: item.title,
                                       items: item.sub,
                                       value: null,
                                       onChanged: (v) {
-                                        val.selectedLeadsFilters
-                                            .add({item.title: v});
+                                        val.selectedLeadsFilters.removeWhere(
+                                                (e) => e.containsKey(item.title));
+
+                                        val.selectedLeadsFilters.add({
+                                          item.title: v,
+                                        });
+
+                                        print("DROPDOWN: ${val.selectedLeadsFilters}");
+
+                                      },
+                                    )
+                                        : Builder(
+
+                                      builder: (context) {
+                                        final controller = TextEditingController();
+
+                                        controller.addListener(() {
+                                          val.selectedLeadsFilters.removeWhere(
+                                                  (e) => e.containsKey(item.title));
+
+                                          val.selectedLeadsFilters.add({
+                                            item.title: controller.text,
+                                          });
+
+                                          print("TEXT: ${val.selectedLeadsFilters}");
+                                        });
+
+                                        return _input(
+                                          "Enter ${item.title}",
+                                          controller,
+                                        );
                                       },
                                     ),
-
                                     const SizedBox(height: 10),
                                   ],
                                 );
@@ -156,10 +205,7 @@ class _NewLeadPageState extends State<NewLeadPage> {
                           child: ElevatedButton(
                             onPressed: () {
                               if (_formKey.currentState!.validate()) {
-
                                 context.read<LeadProvider>().addNewLead();
-
-                                Navigator.pop(context);
 
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
@@ -214,8 +260,10 @@ class _NewLeadPageState extends State<NewLeadPage> {
         decoration: InputDecoration(
           hintText: hint,
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-          contentPadding:
-          const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 12,
+            vertical: 14,
+          ),
         ),
         validator: (value) {
           if (value == null || value.isEmpty) {
@@ -242,8 +290,10 @@ class _NewLeadPageState extends State<NewLeadPage> {
         decoration: InputDecoration(
           hintText: 'Enter Phone Number',
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-          contentPadding:
-          const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 12,
+            vertical: 14,
+          ),
         ),
         validator: (value) {
           if (value == null || value.isEmpty) {
@@ -271,16 +321,19 @@ class _NewLeadPageState extends State<NewLeadPage> {
         value: value,
         hint: Text(hint),
         items: items
-            .map((item) =>
-            DropdownMenuItem<String>(value: item, child: Text(item)))
+            .map(
+              (item) =>
+                  DropdownMenuItem<String>(value: item, child: Text(item)),
+            )
             .toList(),
         onChanged: onChanged,
-        validator: (value) =>
-        value == null ? 'Please select $hint' : null,
+        validator: (value) => value == null ? 'Please select $hint' : null,
         decoration: InputDecoration(
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-          contentPadding:
-          const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 12,
+            vertical: 14,
+          ),
         ),
       ),
     );

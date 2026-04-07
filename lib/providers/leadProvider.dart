@@ -20,7 +20,6 @@ class LeadProvider extends ChangeNotifier {
   List<Map<String, dynamic>> selectedLeadsFilters = [];
 
   String? selectedStatus;
-  String? agentId;
 
 
   FirebaseFirestore fdb = FirebaseFirestore.instance;
