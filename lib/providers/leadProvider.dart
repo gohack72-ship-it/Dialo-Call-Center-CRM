@@ -68,7 +68,7 @@ class LeadProvider extends ChangeNotifier {
       "PRIORITY":'Medium',
       "ASSIGNED_AGENT":"",
       "FOLLOW_UP_STATUS":"pending",
-      "ADDITIONAL_DETAILS": additionalData,
+      "ADDITIONAL_DETAILS": ,
     };
 
     await fdb.collection("LEADS").doc(id).set(lead);
