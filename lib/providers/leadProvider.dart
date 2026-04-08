@@ -2,44 +2,75 @@ import 'dart:core';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dialo/models/lead_details_Model.dart';
-import 'package:dialo/models/statusModel.dart';
+
 
 import 'package:flutter/cupertino.dart';
+// import 'package:provider/provider.dart';
 
 class LeadProvider extends ChangeNotifier {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController placeController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
-  final TextEditingController educationController = TextEditingController();
-  final TextEditingController interestedController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController sourceController = TextEditingController();
+
+
   List<String> statusList = [];
   List<LeadDetailsModel> additionalLeadDetailsList = [];
   List<Map<String, dynamic>> selectedLeadsFilters = [];
 
   String? selectedStatus;
 
+
   FirebaseFirestore fdb = FirebaseFirestore.instance;
 
-  void addNewLead() {
+  Future<void> addNewLead() async {
     DateTime now = DateTime.now();
     String id = now.millisecondsSinceEpoch.toString();
+
+
+    String tempAgentId = "";
+
+    try {
+
+      final agentSnapshot = await fdb.collection("AGENT").get();
+
+
+      final leadsSnapshot = await fdb.collection("LEADS").get();
+      int leadCount = leadsSnapshot.docs.length;
+
+      if (agentSnapshot.docs.isNotEmpty) {
+        int index = (leadCount ~/ 5) % agentSnapshot.docs.length;
+
+        tempAgentId = agentSnapshot.docs[index].id;
+      }
+    } catch (e) {
+      print("Agent fetch error: $e");
+    }
+
     final lead = {
       "NAME": nameController.text,
       "PLACE": placeController.text,
       "PHONE": phoneController.text,
+      "EMAIL": emailController.text,
       "LEAD_ID": id,
-      "ADDED_BY_ID": "",
-      "ADDED_TIME":now,
-      "STATUS": "NEW",
 
-      "FOLLOW_UP_DATE":now,
-      "FOLLOW_UP_TIME":"",
-      "PRIORITY":'Medium',
-      "ASSIGNED_AGENT":"",
-      "FOLLOW_UP_STATUS":"pending",
+
+      "ADDED_BY_ID": tempAgentId,
+      "ASSIGNED_AGENT_ID": tempAgentId,
+
+      "ADDED_TIME": now,
+      "STATUS": selectedStatus ?? "NEW",
+      "SOURCE": sourceController.text,
+
+      "FOLLOW_UP_DATE": now.add(const Duration(days: 3)),
+      "FOLLOW_UP_TIME": "",
+      "PRIORITY": 'Medium',
+
+      "FOLLOW_UP_STATUS": "pending",
     };
 
-    fdb.collection("LEADS").doc(id).set(lead);
+    await fdb.collection("LEADS").doc(id).set(lead);
 
     clearData();
   }
@@ -48,13 +79,15 @@ class LeadProvider extends ChangeNotifier {
     nameController.clear();
     placeController.clear();
     phoneController.clear();
-    statusList.clear();
+
+    //  DON'T CLEAR statusList
 
     notifyListeners();
   }
 
   void getLeadStatus() async {
     fdb.collection("LEAD_STATUS").get().then((value) {
+      statusList.clear();
       if (value.docs.isNotEmpty) {
         for (var element in value.docs) {
           Map<String, dynamic> statusMap = element.data();
@@ -68,6 +101,7 @@ class LeadProvider extends ChangeNotifier {
 
   void changeStatus(String status) {
     selectedStatus = status;
+    notifyListeners();
   }
 
   Future<void> fetchAdditionalLeadDetails() async {

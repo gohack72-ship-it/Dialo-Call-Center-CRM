@@ -5,18 +5,26 @@ import '../../constants/app_colors.dart';
 
 
 
-class LeadProfileScreen extends StatefulWidget {
-  const LeadProfileScreen({super.key});
+
+  class LeadProfileScreen extends StatefulWidget {
+  final Map<String, dynamic> leadData;
+
+  const LeadProfileScreen({super.key, required this.leadData});
 
   @override
   State<LeadProfileScreen> createState() => _LeadProfileScreenState();
 }
 
 class _LeadProfileScreenState extends State<LeadProfileScreen> {
+
   String? _selectedStatus;
 
   @override
   Widget build(BuildContext context) {
+
+    Map<String, dynamic> extra =
+        widget.leadData["ADDITIONAL_DETAILS"] ??
+            widget.leadData["ADDITIONAL_DATA"] ?? {};
     return Scaffold(
       backgroundColor: Colors.white,
 
@@ -30,13 +38,12 @@ class _LeadProfileScreenState extends State<LeadProfileScreen> {
             Navigator.pop(context);
           },
         ),
-        title: const Text(
-          "Name",
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-            fontSize: 22,
-          ),
+        title: Text(widget.leadData["NAME"] ?? "Name", style: TextStyle(
+          color: Colors.black,
+          fontWeight: FontWeight.bold,
+          fontSize: 22,
+        ),
+
         ),
         actions: [
           Padding(
@@ -99,8 +106,53 @@ class _LeadProfileScreenState extends State<LeadProfileScreen> {
                 ),
               ],
             ),
-            const SizedBox(height: 24),
+           SizedBox(height: 10,),
+            Text("Name"),
+            _buildEditableTile(
+              Icons.person_outline_outlined,
+              widget.leadData["NAME"] ?? "",
+            ),
 
+            SizedBox(height: 10,),
+            Text("Place"),
+            _buildEditableTile(
+              Icons.place,
+              widget.leadData["PLACE"] ?? "",
+            ),
+            SizedBox(height: 10,),
+            Text("Email"),
+            _buildEditableTile(
+              Icons.mail,
+              widget.leadData["EMAIL"] ?? "",
+            ),
+            SizedBox(height: 10,),
+            Text("Sourse"),
+            _buildEditableTile(
+              Icons.source,
+              widget.leadData["SOURCE"] ?? "",
+            ),
+            const SizedBox(height: 20),
+
+            _buildHeader("Additional Details"),
+
+            Column(
+              children: extra.entries.map((e) {
+                print(widget.leadData);
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(e.key),
+                    _buildEditableTile(Icons.info, e.value.toString()),
+                    const SizedBox(height: 10),
+
+                  ],
+                );
+              }).toList(),
+
+            ),
+
+
+            SizedBox(height: 10,),
             // 2. Status
             _buildHeader("Status"),
             Container(
@@ -141,34 +193,32 @@ class _LeadProfileScreenState extends State<LeadProfileScreen> {
 
             // 4. Contact Information (NOW EDITABLE)
             _buildHeader("Contact Information"),
-            _buildEditableTile(Icons.phone_outlined, "Phone"),
-            const SizedBox(height: 10),
-            _buildEditableTile(Icons.location_on_outlined, "Location"),
-            const SizedBox(height: 20),
-
-            // 5. Lead Details (NOW EDITABLE)
-            _buildHeader("Lead Details"),
-            _buildEditableTile(Icons.menu_book_outlined, "Education"),
-            const SizedBox(height: 10),
-            _buildEditableTile(Icons.smartphone_outlined, "Interested Course"),
-            const SizedBox(height: 10),
-            _buildEditableTile(Icons.calendar_today_outlined, "Create Date"),
-            const SizedBox(height: 20),
-
-            // 6. Interaction History
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _buildHeader("Interaction History", padding: 0),
-                const Text(
-                  "view all >",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
-                ),
-              ],
+            _buildEditableTile(
+              Icons.phone_outlined,
+              widget.leadData["PHONE"] ?? "",
             ),
-            const SizedBox(height: 8),
-            Container(height: 80, decoration: _boxDecoration()),
-            const SizedBox(height: 40),
+            // const SizedBox(height: 10),
+            // _buildEditableTile(
+            //   Icons.location_on_outlined,
+            //   widget.leadData["PLACE"] ?? "",
+            // ),
+            // const SizedBox(height: 20),
+
+
+
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //   children: [
+            //     _buildHeader("Interaction History", padding: 0),
+            //     const Text(
+            //       "view all >",
+            //       style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+            //     ),
+            //   ],
+            // ),
+            // const SizedBox(height: 8),
+            // Container(height: 80, decoration: _boxDecoration()),
+            // const SizedBox(height: 40),
           ],
         ),
       ),
