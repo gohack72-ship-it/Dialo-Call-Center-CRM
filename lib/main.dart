@@ -5,6 +5,7 @@ import 'package:dialo/loginpage.dart';
 
 
 import 'package:dialo/providers/leadProvider.dart';
+import 'package:dialo/providers/loginprovider.dart';
 
 import 'package:dialo/views/bottomnavigationbar.dart';
 
@@ -57,7 +58,10 @@ setState(() {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [ ChangeNotifierProvider(create: (_)=>LeadProvider()),],
+      providers: [ 
+        ChangeNotifierProvider(create: (_)=>LeadProvider()),
+      ChangeNotifierProvider(create :(_)=>LoginProvider())
+      ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Leads CRM',
