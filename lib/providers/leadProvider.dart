@@ -17,42 +17,61 @@ class LeadProvider extends ChangeNotifier {
 
   List<String> statusList = [];
   List<LeadDetailsModel> additionalLeadDetailsList = [];
-  List<Map<String, dynamic>> selectedLeadsFilters = [];
-
+  
+  Map<String, dynamic> selectedLeadsFilters = {};
 
   String? selectedStatus;
 
+
   FirebaseFirestore fdb = FirebaseFirestore.instance;
 
-
-  void addNewLead() {
+  Future<void> addNewLead() async {
     DateTime now = DateTime.now();
     String id = now.millisecondsSinceEpoch.toString();
-    Map<String, dynamic> additionalData = {};
-    for (var element in selectedLeadsFilters) {
-      additionalData.addAll(element);
-      print("$element");
+
+
+    String tempAgentId = "";
+
+    try {
+
+      final agentSnapshot = await fdb.collection("AGENT").get();
+
+
+      final leadsSnapshot = await fdb.collection("LEADS").get();
+      int leadCount = leadsSnapshot.docs.length;
+
+      if (agentSnapshot.docs.isNotEmpty) {
+        int index = (leadCount ~/ 5) % agentSnapshot.docs.length;
+
+        tempAgentId = agentSnapshot.docs[index].id;
+      }
+    } catch (e) {
+      print("Agent fetch error: $e");
     }
+
     final lead = {
       "NAME": nameController.text,
       "PLACE": placeController.text,
       "PHONE": phoneController.text,
       "EMAIL": emailController.text,
       "LEAD_ID": id,
-      "ADDED_BY_ID": "",
-      "ADDED_TIME":now,
-      "STATUS": selectedStatus ?? "NEW",
-      "SOURCE":sourceController.text,
 
-      "FOLLOW_UP_DATE":now.add(Duration(days: 3)),
-      "FOLLOW_UP_TIME":"",
-      "PRIORITY":'Medium',
-      "ASSIGNED_AGENT":"",
-      "FOLLOW_UP_STATUS":"pending",
-      "ADDITIONAL_DETAILS": additionalData,
+
+      "ADDED_BY_ID": tempAgentId,
+      "ASSIGNED_AGENT_ID": tempAgentId,
+
+      "ADDED_TIME": now,
+      "STATUS": selectedStatus ?? "NEW",
+      "SOURCE": sourceController.text,
+
+      "FOLLOW_UP_DATE": now.add(const Duration(days: 3)),
+      "FOLLOW_UP_TIME": "",
+      "PRIORITY": 'Medium',
+
+      "FOLLOW_UP_STATUS": "pending",
     };
 
-    fdb.collection("LEADS").doc(id).set(lead);
+    await fdb.collection("LEADS").doc(id).set(lead);
 
     clearData();
   }
@@ -109,4 +128,3 @@ class LeadProvider extends ChangeNotifier {
     });
   }
 }
-
