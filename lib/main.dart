@@ -6,6 +6,7 @@ import 'package:dialo/loginpage.dart';
 import 'package:dialo/providers/leadProvider.dart';
 import 'package:dialo/views/bottomnavigationbar.dart';
 import 'package:dialo/views/leads/addlead.dart';
+import 'package:dialo/views/leads/leads_screen.dart';
 
 
 import 'package:flutter/material.dart';
