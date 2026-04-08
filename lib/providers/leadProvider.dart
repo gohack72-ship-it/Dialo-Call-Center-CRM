@@ -17,7 +17,7 @@ class LeadProvider extends ChangeNotifier {
 
   List<String> statusList = [];
   List<LeadDetailsModel> additionalLeadDetailsList = [];
-  List<Map<String, dynamic>> selectedLeadsFilters = [];
+  Map<String, dynamic> selectedLeadsFilters = {};
 
   String? selectedStatus;
 
