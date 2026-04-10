@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -22,9 +23,19 @@ class _LeadsScreenState extends State<LeadsScreen> {
   // STEP 1: Create a variable to hold the currently selected filter
   String selectedStatus = "All";
 
+  void _refreshLeads(BuildContext context) {
+    final pro = Provider.of<LeadProvider>(context, listen: false);
+    pro.selectedLeadsFilters.clear();
+    setState(() {
+      selectedStatus = "All";
+    });
+    pro.notifyListeners();
+    pro.fetchAdditionalLeadDetails();
+  }
+
   @override
   Widget build(BuildContext context) {
-    LeadProvider pro = Provider.of<LeadProvider>(context);
+    final pro = Provider.of<LeadProvider>(context);
     return Scaffold(
       backgroundColor: Colors.white,
 
@@ -85,11 +96,20 @@ class _LeadsScreenState extends State<LeadsScreen> {
                     ),
                   ),
                 ),
+                IconButton(
+                  icon: const Icon(Icons.refresh),
+                  onPressed: () {
+                    _refreshLeads(context);
+                  },
+                ),
                 Builder(
                   builder: (context) => IconButton(
                     icon: const Icon(Icons.tune),
                     onPressed: () {
-                      pro.fetchAdditionalLeadDetails();
+                      Provider.of<LeadProvider>(
+                        context,
+                        listen: false,
+                      ).fetchAdditionalLeadDetails();
                       Scaffold.of(context).openEndDrawer();
                     },
                   ),
@@ -124,14 +144,13 @@ class _LeadsScreenState extends State<LeadsScreen> {
                 StatusChip(
                   text: "Accepted",
                   isSelected: selectedStatus == "ACCEPTED",
-                  onTap: () => setState(() => selectedStatus = "ACCEPTED"),
+                  onTap: () => setState(() => selectedStatus = "Accepted"),
                 ),
                 StatusChip(
                   text: "Rejected",
                   isSelected: selectedStatus == "REJECTED",
                   onTap: () => setState(() => selectedStatus = "REJECTED"),
                 ),
-
               ],
             ),
           ),
@@ -139,79 +158,86 @@ class _LeadsScreenState extends State<LeadsScreen> {
           const SizedBox(height: 10),
 
           Expanded(
-  child: StreamBuilder<QuerySnapshot>(
-    stream: (() {
-      Query query = FirebaseFirestore.instance.collection("LEADS");
+            child: StreamBuilder<QuerySnapshot>(
+              stream: (() {
+                Query query = FirebaseFirestore.instance.collection("LEADS");
 
-      // ✅ Status filter
-      if (selectedStatus != "All") {
-        query = query.where("STATUS", isEqualTo: selectedStatus);
-      }
+                // ✅ Status filter
+                if (selectedStatus != "All") {
+                  query = query.where("STATUS", isEqualTo: selectedStatus);
+                }
 
-      // ✅ Drawer filters
-      pro.selectedLeadsFilters.forEach((key, value) {
-        if (value != null) {
-          query = query.where(key, isEqualTo: value);
-        }
-      });
+                // ✅ Drawer filters
+                pro.selectedLeadsFilters.forEach((key, value) {
+                  if (value != null) {
+                    query = query.where(key, isEqualTo: value);
+                  }
+                });
 
-      // ✅ Order
-      query = query.orderBy("ADDED_TIME", descending: true);
+                // ✅ Order
+                query = query.orderBy("ADDED_TIME", descending: true);
 
-      return query.snapshots();
-    })(),
+                return query.snapshots();
+              })(),
 
-    builder: (context, snapshot) {
-      if (snapshot.hasError) {
-        return Center(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Text(
-              "Error: ${snapshot.error}\n\nCheck your console for the Index link!",
-              textAlign: TextAlign.center,
-              style: const TextStyle(color: Colors.red),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  print(snapshot.error);
+                  return Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Text(
+                        "Something went wrong! Contact your service team.",
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(color: Colors.red),
+                      ),
+                    ),
+                  );
+                }
+
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                  return const Center(child: Text("No Leads Found"));
+                }
+
+                final leads = snapshot.data!.docs;
+
+                return RefreshIndicator(
+                  onRefresh: () async {
+                    _refreshLeads(context);
+                  },
+
+                  child: ListView.builder(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    itemCount: leads.length,
+                    itemBuilder: (context, index) {
+                      var data = leads[index].data() as Map<String, dynamic>;
+
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => LeadProfileScreen(leadData: data),
+                            ),
+                          );
+                        },
+                        child: LeadCard(
+                          name: data["NAME"] ?? "",
+                          phone: data["PHONE"] ?? "",
+                          city: data["PLACE"] ?? "",
+                          status: data["STATUS"] ?? "New",
+                        ),
+                      );
+                    },
+                  ),
+                );
+              },
             ),
           ),
-        );
-      }
-
-      if (snapshot.connectionState == ConnectionState.waiting) {
-        return const Center(child: CircularProgressIndicator());
-      }
-
-      if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-        return const Center(child: Text("No Leads Found"));
-      }
-
-      final leads = snapshot.data!.docs;
-
-      return ListView.builder(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        itemCount: leads.length,
-        itemBuilder: (context, index) {
-          var data = leads[index].data() as Map<String, dynamic>;
-
-          return GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => LeadProfileScreen(leadData: data),
-                ),
-              );
-            },
-            child: LeadCard(
-              name: data["NAME"] ?? "",
-              phone: data["PHONE"] ?? "",
-              city: data["PLACE"] ?? "",
-              status: data["STATUS"] ?? "New",
-            ),
-          );
-        },
-      );
-    },
-  ),
-),
         ],
       ),
     );
@@ -270,7 +296,7 @@ class LeadCard extends StatelessWidget {
 
   Color getStatusColor() {
     switch (status) {
-      case "Accepted":
+      case "ACCEPTED":
         return Colors.green;
       case "Contacted":
         return Colors.orange;
