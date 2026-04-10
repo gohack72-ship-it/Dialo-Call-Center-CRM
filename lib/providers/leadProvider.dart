@@ -5,6 +5,7 @@ import 'package:dialo/models/lead_details_Model.dart';
 
 
 import 'package:flutter/cupertino.dart';
+import 'package:url_launcher/url_launcher.dart';
 // import 'package:provider/provider.dart';
 
 class LeadProvider extends ChangeNotifier {
@@ -126,5 +127,15 @@ class LeadProvider extends ChangeNotifier {
         notifyListeners();
       }
     });
+
+  }
+  Future<void> _makePhoneCall(String phoneNumber) async {
+    final Uri url = Uri(scheme: 'tel', path: phoneNumber);
+
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 }
