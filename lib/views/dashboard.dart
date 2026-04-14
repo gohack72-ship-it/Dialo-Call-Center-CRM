@@ -1,9 +1,6 @@
 
 import 'package:dialo/views/settingspage.dart';
 import 'package:flutter/material.dart';
-
-
-
 import '../constants/app_colors.dart';
 import '../constants/app_textstyle.dart';
 import 'leads/lead_details.dart';

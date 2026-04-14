@@ -17,7 +17,7 @@ class LeadProvider extends ChangeNotifier {
 
   List<String> statusList = [];
   List<LeadDetailsModel> additionalLeadDetailsList = [];
-  List<Map<String, dynamic>> selectedLeadsFilters = [];
+  Map<String, dynamic> selectedLeadsFilters = {};
 
   String? selectedStatus;
 
@@ -68,6 +68,7 @@ class LeadProvider extends ChangeNotifier {
       "PRIORITY": 'Medium',
 
       "FOLLOW_UP_STATUS": "pending",
+      "ADDITIONAL_LEAD_DETAILS": selectedLeadsFilters,
     };
 
     await fdb.collection("LEADS").doc(id).set(lead);
@@ -127,4 +128,3 @@ class LeadProvider extends ChangeNotifier {
     });
   }
 }
-

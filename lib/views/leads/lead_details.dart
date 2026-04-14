@@ -23,8 +23,7 @@ class _LeadProfileScreenState extends State<LeadProfileScreen> {
   Widget build(BuildContext context) {
 
     Map<String, dynamic> extra =
-        widget.leadData["ADDITIONAL_DETAILS"] ??
-            widget.leadData["ADDITIONAL_DATA"] ?? {};
+        widget.leadData["ADDITIONAL_LEAD_DETAILS"] ?? {};
     return Scaffold(
       backgroundColor: Colors.white,
 
@@ -142,7 +141,7 @@ class _LeadProfileScreenState extends State<LeadProfileScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(e.key),
-                    _buildEditableTile(Icons.info, e.value.toString()),
+                    _buildEditableTile(Icons.read_more_rounded, e.value.toString()),
                     const SizedBox(height: 10),
 
                   ],
