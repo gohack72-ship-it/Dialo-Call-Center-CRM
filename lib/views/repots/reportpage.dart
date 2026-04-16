@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 
 class Reportpage extends StatefulWidget {
   final Function(bool) changeTheme;
-  const Reportpage({super.key,required this.changeTheme});
+  const Reportpage({super.key, required this.changeTheme});
 
   @override
   State<Reportpage> createState() => _ReportpageState();
@@ -19,16 +19,14 @@ class _ReportpageState extends State<Reportpage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.whitetext,
-       drawer: SettingsDrawer(changeTheme:widget.changeTheme),
-       
+      drawer: SettingsDrawer(changeTheme: widget.changeTheme),
+
       appBar: AppBar(
-
-
         title: const Text(
           "Reports",
           style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
         ),
-        
+
         leading: IconButton(
           icon: const Icon(Icons.menu),
           onPressed: () {
@@ -36,7 +34,7 @@ class _ReportpageState extends State<Reportpage> {
               context,
               MaterialPageRoute(
                 builder: (context) =>
-                     SettingsDrawer(changeTheme:widget.changeTheme),
+                    SettingsDrawer(changeTheme: widget.changeTheme),
               ),
             );
           },
@@ -51,16 +49,13 @@ class _ReportpageState extends State<Reportpage> {
               TextFormField(
                 cursorColor: AppColors.whitetext,
                 decoration: InputDecoration(
+                  hintText: "Search Leads",
+                  prefixIcon: const Icon(Icons.search),
                   filled: true,
-                  fillColor: AppColors.themeColor,
-                  hintText: "search leads",
-                  hintStyle: TextStyle(color: AppColors.whitetext),
-                  prefixIcon: const Icon(
-                    Icons.search,
-                    color: AppColors.whitetext,
-                  ),
+                  fillColor: Colors.white,
+                  contentPadding: const EdgeInsets.symmetric(vertical: 0),
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(30),
                     borderSide: BorderSide.none,
                   ),
                 ),

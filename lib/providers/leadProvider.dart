@@ -13,7 +13,8 @@ class LeadProvider extends ChangeNotifier {
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController sourceController = TextEditingController();
-
+   TextEditingController searchController = TextEditingController();
+   String searchText = "";
 
   List<String> statusList = [];
   List<LeadDetailsModel> additionalLeadDetailsList = [];
