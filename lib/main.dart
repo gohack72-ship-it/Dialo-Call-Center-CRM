@@ -1,18 +1,9 @@
 import 'package:dialo/loginpage.dart';
-
-
-
-
+import 'package:dialo/providers/apiexample.dart';
 import 'package:dialo/providers/leadProvider.dart';
-<<<<<<< HEAD
 import 'package:dialo/providers/loginprovider.dart';
-
-=======
->>>>>>> 697860ed4e07663acb3edf88ec0c99f8ad384ef8
 import 'package:dialo/views/bottomnavigationbar.dart';
 import 'package:dialo/views/leads/addlead.dart';
-
-
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
@@ -64,7 +55,6 @@ class _MyAppState extends State<MyApp> {
     return MultiProvider(
       providers: [ 
         ChangeNotifierProvider(create: (_)=>LeadProvider()),
-      ChangeNotifierProvider(create :(_)=>LoginProvider())
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -101,7 +91,7 @@ class _MyAppState extends State<MyApp> {
           ),
         ),
         themeMode: isDarkMode?ThemeMode.dark:ThemeMode.light,
-        home: BottomnavPage(changeTheme: (bool p1) {  },),
+        home: Loginpage(),
       ),
     );
   }

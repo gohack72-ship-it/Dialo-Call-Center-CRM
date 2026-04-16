@@ -13,16 +13,16 @@ class LeadProvider extends ChangeNotifier {
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController sourceController = TextEditingController();
-
+ 
 
   List<String> statusList = [];
   List<LeadDetailsModel> additionalLeadDetailsList = [];
   List<Map<String, dynamic>> selectedLeadsFilters = [];
 
   String? selectedStatus;
+  
 
-
-  FirebaseFirestore fdb = FirebaseFirestore.instance;
+  FirebaseFirestore fdb = FirebaseFirestore.instance; 
 
   Future<void> addNewLead() async {
     DateTime now = DateTime.now();

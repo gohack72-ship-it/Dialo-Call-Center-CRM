@@ -2,6 +2,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 
 class Loginprovider extends ChangeNotifier {
 bool remeberme = false;
@@ -9,15 +11,13 @@ bool remeberme = false;
 TextEditingController emailController=TextEditingController();
 TextEditingController passwordController=TextEditingController();
 
-  Future<User?> signInWithGoogle() async {
+  Future<User?> signInWithGoogle() async{
     try {
-      final GoogleSignInAccount? googleUser =
-          await GoogleSignIn().signIn();
+      final GoogleSignInAccount? googleUser =await GoogleSignIn().signIn();
 
       if (googleUser == null) return null;
 
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
+      final GoogleSignInAuthentication googleAuth =await googleUser.authentication;
 
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
@@ -25,7 +25,7 @@ TextEditingController passwordController=TextEditingController();
       );
 
       
-      UserCredential userCredential =
+      UserCredential userCredential = 
           await FirebaseAuth.instance.signInWithCredential(credential);
 
       return userCredential.user;
