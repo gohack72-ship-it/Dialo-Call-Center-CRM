@@ -1,9 +1,6 @@
 
 import 'package:dialo/views/settingspage.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
-
 import '../constants/app_colors.dart';
 import '../constants/app_textstyle.dart';
 import 'leads/lead_details.dart';
@@ -17,7 +14,7 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DbState extends State<Dashboard> {
-  int _currentIndex=0;
+  int currentIndex=0;
 
   @override
   Widget build(BuildContext context) {
@@ -263,7 +260,7 @@ class FollowUpCard extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const LeadProfileScreen(),
+            builder: (context) =>  LeadProfileScreen(leadData: {},),
           ),
 
         );

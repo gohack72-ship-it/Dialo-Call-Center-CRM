@@ -1,5 +1,14 @@
+import 'dart:io';
+import 'dart:math';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dialo/providers/leadProvider.dart';
 import 'package:dialo/views/settingspage.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import 'addlead.dart';
+import 'lead_details.dart';
 
 class LeadsScreen extends StatefulWidget {
   final Function(bool) changeTheme;
@@ -10,14 +19,36 @@ class LeadsScreen extends StatefulWidget {
 }
 
 class _LeadsScreenState extends State<LeadsScreen> {
-  int _currentIndex = 1;
+  int currentIndex = 1;
+  // STEP 1: Create a variable to hold the currently selected filter
+  String selectedStatus = "All";
+
+  void _refreshLeads(BuildContext context) {
+    final pro = Provider.of<LeadProvider>(context, listen: false);
+    pro.selectedLeadsFilters.clear();
+    setState(() {
+      selectedStatus = "All";
+    });
+    pro.notifyListeners();
+    pro.fetchAdditionalLeadDetails();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final pro = Provider.of<LeadProvider>(context);
+    TextField(
+      controller: pro.searchController,
+      onChanged: (value) {
+        pro.searchText = value.trim();
+        pro.notifyListeners();
+      },
+    );
     return Scaffold(
       backgroundColor: Colors.white,
 
       drawer: SettingsDrawer(changeTheme: widget.changeTheme),
+
+      endDrawer: const FilterDrawer(),
 
       appBar: AppBar(
         title: const Text(
@@ -27,35 +58,49 @@ class _LeadsScreenState extends State<LeadsScreen> {
         actions: [
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blue,
+              backgroundColor: Color(0xFF3F5FBF),
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(30),
               ),
             ),
-            onPressed: () {},
-            child: const Text("Add Lead"),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const NewLeadPage()),
+              );
+            },
+            child: const Text(
+              "Add Lead",
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: Colors.white,
+              ),
+            ),
           ),
-          const SizedBox(width: 10), // ✅ FIXED
+          const SizedBox(width: 10),
         ],
       ),
-
       body: Column(
         children: [
-          // 🔍 SEARCH
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Row(
               children: [
                 Expanded(
                   child: TextField(
+                    onChanged: (value) {
+                      pro.searchText = value.trim();
+                      pro.notifyListeners();
+                      setState(() {});
+                    },
                     decoration: InputDecoration(
                       hintText: "Search Leads",
                       prefixIcon: const Icon(Icons.search),
                       filled: true,
                       fillColor: Colors.white,
-                      contentPadding:
-                      const EdgeInsets.symmetric(vertical: 0),
+                      contentPadding: const EdgeInsets.symmetric(vertical: 0),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30),
                         borderSide: BorderSide.none,
@@ -64,113 +109,208 @@ class _LeadsScreenState extends State<LeadsScreen> {
                   ),
                 ),
                 IconButton(
-                      icon: const Icon(Icons.tune),
-                      onPressed: () {
-                        Scaffold.of(context).openEndDrawer();
-                      },
-                    ),
+                  icon: const Icon(Icons.refresh),
+                  onPressed: () {
+                    _refreshLeads(context);
+                  },
+                ),
+                Builder(
+                  builder: (context) => IconButton(
+                    icon: const Icon(Icons.tune),
+                    onPressed: () {
+                      Provider.of<LeadProvider>(
+                        context,
+                        listen: false,
+                      ).fetchAdditionalLeadDetails();
+                      Scaffold.of(context).openEndDrawer();
+                    },
+                  ),
+                ),
               ],
             ),
           ),
       
           const SizedBox(height: 10),
-      
+
+          // STEP 2: Update the Chips to react to taps
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Row(
-              children: const [
-                StatusChip(text: "New"),
-                StatusChip(text: "Contacted"),
-                StatusChip(text: "Accepted"),
-                StatusChip(text: "Rejected"),
-                StatusChip(text: "Joined"),
+              children: [
+                StatusChip(
+                  text: "All",
+                  isSelected: selectedStatus == "All",
+                  onTap: () => setState(() => selectedStatus = "All"),
+                ),
+                StatusChip(
+                  text: "New",
+                  isSelected: selectedStatus == "NEW",
+                  onTap: () => setState(() => selectedStatus = "NEW"),
+                ),
+                StatusChip(
+                  text: "Converted",
+                  isSelected: selectedStatus == "CONVERTED",
+                  onTap: () => setState(() => selectedStatus = "CONVERTED"),
+                ),
+                StatusChip(
+                  text: "Accepted",
+                  isSelected: selectedStatus == "ACCEPTED",
+                  onTap: () => setState(() => selectedStatus = "ACCEPTED"),
+                ),
+                StatusChip(
+                  text: "Rejected",
+                  isSelected: selectedStatus == "REJECTED",
+                  onTap: () => setState(() => selectedStatus = "REJECTED"),
+                ),
               ],
             ),
           ),
       
           const SizedBox(height: 10),
-      
+
+          // 📋 LIST
           Expanded(
-            child: ListView(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              children: const [
-                LeadCard(
-                  name: "John",
-                  phone: "+1 (555) 123-4567",
-                  city: "New York",
-                  status: "Accepted",
-                ),
-                LeadCard(
-                  name: "Emily",
-                  phone: "+1 (555) 123-4568",
-                  city: "Los Angeles",
-                  status: "Contacted",
-                ),
-                LeadCard(
-                  name: "Sarah",
-                  phone: "+1 (555) 123-4568",
-                  city: "UK",
-                  status: "New",
-                ),
-                LeadCard(
-                  name: "Michael",
-                  phone: "+1 (555) 123-4568",
-                  city: "New York",
-                  status: "Rejected",
-                ),
-                LeadCard(
-                  name: "Mathew",
-                  phone: "+1 (555) 123-4568",
-                  city: "UK",
-                  status: "Joined",
-                ),
-              ],
+            child: StreamBuilder<QuerySnapshot>(
+              stream: (() {
+                Query query = FirebaseFirestore.instance.collection("LEADS");
+
+                // ✅ Status filter
+                if (selectedStatus != "All") {
+                  query = query.where("STATUS", isEqualTo: selectedStatus);
+                }
+
+                // ✅ Drawer filters
+                pro.selectedLeadsFilters.forEach((key, value) {
+                  if (value != null) {
+                    query = query.where(key, isEqualTo: value);
+                  }
+                });
+
+                // ✅ Order
+                query = query.orderBy("ADDED_TIME", descending: true);
+
+                return query.snapshots();
+              })(),
+
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  print(snapshot.error);
+                  return Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Text(
+                        "Something went wrong! Contact your service team.",
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(color: Colors.red),
+                      ),
+                    ),
+                  );
+                }
+
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                  return const Center(child: Text("No Leads Found"));
+                }
+
+                final leads = snapshot.data!.docs.where((doc) {
+                  var data = doc.data() as Map<String, dynamic>;
+
+                  final name = (data["NAME"] ?? "").toString().toLowerCase();
+                  final phone = (data["PHONE"] ?? "").toString();
+                  final place = (data["PLACE"] ?? "").toString().toLowerCase();
+                  final search = pro.searchText.toLowerCase();
+                  print("name $name");
+                  print("phone $phone");
+                  print("place $place");
+                  print("search $search");
+                  if (search.isEmpty) return true;
+                  return name.contains(search) ||
+                      phone.contains(search) ||
+                      place.contains(search);
+                }).toList();
+
+                return RefreshIndicator(
+                  onRefresh: () async {
+                    _refreshLeads(context);
+                  },
+
+                  child: ListView.builder(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    itemCount: leads.length,
+                    itemBuilder: (context, index) {
+                      var data = leads[index].data() as Map<String, dynamic>;
+
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => LeadProfileScreen(leadData: data),
+                            ),
+                          );
+                        },
+                        child: LeadCard(
+                          name: data["NAME"] ?? "",
+                          phone: data["PHONE"] ?? "",
+                          city: data["PLACE"] ?? "",
+                          status: data["STATUS"] ?? "New",
+                        ),
+                      );
+                    },
+                  ),
+                );
+              },
             ),
           ),
         ],
       ),
-
-      // bottomNavigationBar: BottomNavigationBar(
-      //   currentIndex: _currentIndex,
-      //   type: BottomNavigationBarType.fixed,
-      //   selectedItemColor: Colors.black,
-      //   unselectedItemColor: Colors.grey,
-      //   onTap: (index) {
-      //     setState(() => _currentIndex = index);
-      //   },
-      //   // items: const [
-      //   BottomNavigationBarItem(icon: Icon(Icons.dashboard), label: 'Dashboard'),
-      //   BottomNavigationBarItem(icon: Icon(Icons.people_outline_rounded), label: 'Leads'),
-      //   BottomNavigationBarItem(icon: Icon(Icons.add_outlined), label: 'Add leads'),
-      //   BottomNavigationBarItem(icon: Icon(Icons.bar_chart_rounded), label: 'Reports'),
-      // ],
     );
   }
 }
 
+// 🔘 UPDATED STATUS CHIP
 class StatusChip extends StatelessWidget {
   final String text;
-  const StatusChip({super.key, required this.text});
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const StatusChip({
+    super.key,
+    required this.text,
+    required this.isSelected,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(right: 8),
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-      decoration: BoxDecoration(
-        color: const Color(0xFFEAF0F4),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Text(
-        text,
-        style: const TextStyle(fontWeight: FontWeight.w500),
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: const EdgeInsets.only(right: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        decoration: BoxDecoration(
+          // If selected, show blue. If not, show light grey.
+          color: isSelected ? Colors.blue : const Color(0xFFEAF0F4),
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Text(
+          text,
+          style: TextStyle(
+            fontWeight: FontWeight.w500,
+            // If selected, show white text.
+            color: isSelected ? Colors.white : Colors.black,
+          ),
+        ),
       ),
     );
   }
 }
 
-// 📋 LEAD CARD
+// 📋 LEAD CARD (No changes needed here for filtering)
 class LeadCard extends StatelessWidget {
   final String name, phone, city, status;
 
@@ -184,14 +324,14 @@ class LeadCard extends StatelessWidget {
 
   Color getStatusColor() {
     switch (status) {
-      case "Accepted":
+      case "ACCEPTED":
         return Colors.green;
-      case "Contacted":
-        return Colors.orange;
-      case "Rejected":
-        return Colors.red;
-      case "Joined":
+      case "CONVERTED":
         return Colors.blue;
+      case "REJECTED":
+        return Colors.red;
+      case "NEW":
+        return Colors.orange;
       default:
         return Colors.grey;
     }
@@ -205,9 +345,7 @@ class LeadCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: const [
-          BoxShadow(color: Colors.black12, blurRadius: 4),
-        ],
+        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 4)],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -231,7 +369,7 @@ class LeadCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
-                  status,
+                  status[0] + status.substring(1).toLowerCase(),
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 12,
@@ -242,31 +380,28 @@ class LeadCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 8),
-
           Row(
-            children: const [
-              Icon(Icons.phone, size: 16),
-              SizedBox(width: 6),
+            children: [
+              const Icon(Icons.phone, size: 16),
+              const SizedBox(width: 6),
+              Text(phone),
             ],
           ),
-          Text(phone),
-
           const SizedBox(height: 4),
-
           Row(
-            children: const [
-              Icon(Icons.location_on, size: 16),
-              SizedBox(width: 6),
+            children: [
+              const Icon(Icons.location_on, size: 16),
+              const SizedBox(width: 6),
+              Text(city),
             ],
           ),
-          Text(city),
         ],
       ),
     );
   }
 }
 
-// 🎛 FILTER DRAWER
+// 🎛 FILTER DRAWER (Kept the same for now)
 class FilterDrawer extends StatefulWidget {
   const FilterDrawer({super.key});
 
@@ -275,52 +410,132 @@ class FilterDrawer extends StatefulWidget {
 }
 
 class _FilterDrawerState extends State<FilterDrawer> {
-  String status = "All Status";
-  String course = "All Courses";
-  String city = "All Cities";
+  Map<int, bool> checkedItems = {};
+  Map<int, String?> selectedDropdownValues = {};
 
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      child: Container(
+      child: Padding(
         padding: const EdgeInsets.all(16),
-        child: ListView(
+        child: Column(
           children: [
-            const Text("Status",
-                style: TextStyle(fontWeight: FontWeight.w500)),
-            const SizedBox(height: 6),
-            _dropdown(status, [
-              "All Status",
-              "New",
-              "Contacted",
-              "Accepted",
-              "Rejected",
-              "Joined",
-            ], (v) => setState(() => status = v!)),
-
+            const Text(
+              "Filters",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 20),
+            Expanded(
+              child: Consumer<LeadProvider>(
+                builder: (context, val, child) {
+                  return ListView.builder(
+                    itemCount: val.additionalLeadDetailsList.length,
+                    itemBuilder: (context, index) {
+                      var item = val.additionalLeadDetailsList[index];
+                      return Column(
+                        children: [
+                          Row(
+                            children: [
+                              if (item.sub.isEmpty)
+                                Checkbox(
+                                  value: checkedItems[index] ?? false,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      checkedItems[index] = value!;
+                                    });
+                                    if (value == true) {
+                                      val.selectedLeadsFilters[item.title] =
+                                          "YES";
+                                    } else {
+                                      val.selectedLeadsFilters.remove(
+                                        item.title,
+                                      );
+                                    }
+                                  },
+                                ),
+                              Text(
+                                item.title,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+                          if (item.sub.isNotEmpty)
+                            _dropdown(selectedDropdownValues[index], item.sub, (
+                              v,
+                            ) {
+                              setState(() {
+                                selectedDropdownValues[index] = v;
+                              });
+                              if (v == null || v.isEmpty) {
+                                val.selectedLeadsFilters.remove(item.title);
+                              } else {
+                                val.selectedLeadsFilters[item.title] = v;
+                              }
+                            }),
+                          const SizedBox(height: 20),
+                        ],
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                SizedBox(
+                  width: 120,
+                  child: OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      backgroundColor: Color(0xFF3F5FBF),
+                      side: BorderSide.none,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        checkedItems.clear();
+                        selectedDropdownValues.clear();
+                      });
+                      Provider.of<LeadProvider>(
+                        context,
+                        listen: false,
+                      ).selectedLeadsFilters.clear();
+                    },
+                    child: const Text("Reset"),
+                  ),
+                ),
+                SizedBox(width: 10),
 
-            const Text("Course",
-                style: TextStyle(fontWeight: FontWeight.w500)),
-            const SizedBox(height: 6),
-            _dropdown(course, [
-              "All Courses",
-              "Flutter",
-              "Python",
-            ], (v) => setState(() => course = v!)),
-
-            const SizedBox(height: 20),
-
-            const Text("City",
-                style: TextStyle(fontWeight: FontWeight.w500)),
-            const SizedBox(height: 6),
-            _dropdown(city, [
-              "All Cities",
-              "New York",
-              "Los Angeles",
-              "UK",
-              "India",
-            ], (v) => setState(() => city = v!)),
+                SizedBox(
+                  width: 120,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xFF3F5FBF),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
+                    onPressed: () {
+                      Provider.of<LeadProvider>(
+                        context,
+                        listen: false,
+                      ).notifyListeners();
+                      Navigator.pop(context);
+                    },
+                    child: const Text(
+                      "Apply",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
       ),
@@ -328,7 +543,10 @@ class _FilterDrawerState extends State<FilterDrawer> {
   }
 
   Widget _dropdown(
-      String value, List<String> items, ValueChanged<String?> onChanged) {
+    String? value,
+    List<String> items,
+    ValueChanged<String?> onChanged,
+  ) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12),
       decoration: BoxDecoration(
@@ -337,6 +555,7 @@ class _FilterDrawerState extends State<FilterDrawer> {
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
+          hint: const Text("Select", style: TextStyle(color: Colors.grey)),
           value: value,
           isExpanded: true,
           icon: const Icon(Icons.keyboard_arrow_down),
