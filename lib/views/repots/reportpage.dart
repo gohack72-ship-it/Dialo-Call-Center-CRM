@@ -1,6 +1,7 @@
 import 'package:dialo/constants/app_colors.dart';
 import 'package:dialo/constants/app_textstyle.dart';
-import 'package:dialo/views/reportsum.dart';
+
+import 'package:dialo/views/repots/reportsum.dart';
 import 'package:dialo/views/settingspage.dart';
 import 'package:flutter/material.dart';
 
@@ -20,14 +21,14 @@ class _ReportpageState extends State<Reportpage> {
       backgroundColor: AppColors.whitetext,
        drawer: SettingsDrawer(changeTheme:widget.changeTheme),
       appBar: AppBar(
-        
-       
+
+
         title: const Text(
           "Reports",
           style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
         ),
         actions: [
-          
+
         ],
         leading: IconButton(
           icon: const Icon(Icons.menu),
