@@ -18,6 +18,8 @@ class LeadProvider extends ChangeNotifier {
   int dueToday = 0;
   int thisWeek = 0;
 
+   TextEditingController searchController = TextEditingController();
+   String searchText = "";
 
   List<String> statusList = [];
   List<LeadDetailsModel> additionalLeadDetailsList = [];
@@ -44,7 +46,7 @@ class LeadProvider extends ChangeNotifier {
       int leadCount = leadsSnapshot.docs.length;
 
       if (agentSnapshot.docs.isNotEmpty) {
-        int index = (leadCount ~/ 5) % agentSnapshot.docs.length;
+        int index = (leadCount ~/ 2) % agentSnapshot.docs.length;
 
         tempAgentId = agentSnapshot.docs[index].id;
       }

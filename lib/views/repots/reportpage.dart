@@ -26,7 +26,7 @@ class _ReportpageState extends State<Reportpage> {
 
         title: const Text(
           "Reports",
-          style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
         ),
         
         leading: IconButton(
@@ -43,7 +43,6 @@ class _ReportpageState extends State<Reportpage> {
         ),
       ),
       body: SingleChildScrollView(
-
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15),
           child: Column(
@@ -53,12 +52,12 @@ class _ReportpageState extends State<Reportpage> {
                 cursorColor: AppColors.whitetext,
                 decoration: InputDecoration(
                   filled: true,
-                  fillColor: AppColors.overdue,
+                  fillColor: AppColors.themeColor,
                   hintText: "search leads",
-                  hintStyle: TextStyle(color: AppColors.textColor),
+                  hintStyle: TextStyle(color: AppColors.whitetext),
                   prefixIcon: const Icon(
                     Icons.search,
-                    color: AppColors.textColor,
+                    color: AppColors.whitetext,
                   ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(20),
@@ -165,7 +164,7 @@ class _ReportpageState extends State<Reportpage> {
                           ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [Text("Lost"), Text("5")],
+                            children: [Text("Conversion"), Text("5")],
                           ),
                         ],
                       ),
@@ -174,7 +173,7 @@ class _ReportpageState extends State<Reportpage> {
                 ),
               ),
               const SizedBox(height: 50),
-              Text("Report feed", style:TextStyle(fontSize: 17,fontWeight: FontWeight.bold)),
+              Text("Report feed", style: AppTextstyle.title),
               const SizedBox(height: 50),
               Column(
                 children: [
@@ -243,7 +242,29 @@ class _ReportpageState extends State<Reportpage> {
                             Text("Handle Time:"),
                             Text("5m 20s"),
                             Spacer(),
-
+                            Container(
+                              height: 25,
+                              width: 50,
+                              decoration: BoxDecoration(
+                                color: AppColors.redColor,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.call_end,
+                                    color: AppColors.whitetext,
+                                    size: 20,
+                                  ),
+                                  Text(
+                                    "Call",
+                                    style: TextStyle(
+                                      color: AppColors.whitetext,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ],
                         ),
                       ],
@@ -310,7 +331,30 @@ class _ReportpageState extends State<Reportpage> {
                             Text("Handle time:"),
                             Text("3m 32s"),
                             Spacer(),
+                            Container(
+                              height: 25,
+                              width: 50,
+                              decoration: BoxDecoration(
+                                color: AppColors.greenColor,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.call_end,
+                                    color: AppColors.whitetext,
+                                    size: 20,
+                                  ),
 
+                                  Text(
+                                    "Call",
+                                    style: TextStyle(
+                                      color: AppColors.whitetext,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ],
                         ),
                       ],

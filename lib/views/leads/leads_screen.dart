@@ -36,6 +36,13 @@ class _LeadsScreenState extends State<LeadsScreen> {
   @override
   Widget build(BuildContext context) {
     final pro = Provider.of<LeadProvider>(context);
+    TextField(
+      controller: pro.searchController,
+      onChanged: (value) {
+        pro.searchText = value.trim();
+        pro.notifyListeners();
+      },
+    );
     return Scaffold(
       backgroundColor: Colors.white,
 
@@ -83,6 +90,11 @@ class _LeadsScreenState extends State<LeadsScreen> {
               children: [
                 Expanded(
                   child: TextField(
+                    onChanged: (value) {
+                      pro.searchText = value.trim();
+                      pro.notifyListeners();
+                      setState(() {});
+                    },
                     decoration: InputDecoration(
                       hintText: "Search Leads",
                       prefixIcon: const Icon(Icons.search),
@@ -144,7 +156,7 @@ class _LeadsScreenState extends State<LeadsScreen> {
                 StatusChip(
                   text: "Accepted",
                   isSelected: selectedStatus == "ACCEPTED",
-                  onTap: () => setState(() => selectedStatus = "Accepted"),
+                  onTap: () => setState(() => selectedStatus = "ACCEPTED"),
                 ),
                 StatusChip(
                   text: "Rejected",
@@ -203,7 +215,22 @@ class _LeadsScreenState extends State<LeadsScreen> {
                   return const Center(child: Text("No Leads Found"));
                 }
 
-                final leads = snapshot.data!.docs;
+                final leads = snapshot.data!.docs.where((doc) {
+                  var data = doc.data() as Map<String, dynamic>;
+
+                  final name = (data["NAME"] ?? "").toString().toLowerCase();
+                  final phone = (data["PHONE"] ?? "").toString();
+                  final place = (data["PLACE"] ?? "").toString().toLowerCase();
+                  final search = pro.searchText.toLowerCase();
+                  print("name $name");
+                  print("phone $phone");
+                  print("place $place");
+                  print("search $search");
+                  if (search.isEmpty) return true;
+                  return name.contains(search) ||
+                      phone.contains(search) ||
+                      place.contains(search);
+                }).toList();
 
                 return RefreshIndicator(
                   onRefresh: () async {
@@ -298,12 +325,12 @@ class LeadCard extends StatelessWidget {
     switch (status) {
       case "ACCEPTED":
         return Colors.green;
-      case "Contacted":
-        return Colors.orange;
-      case "Rejected":
-        return Colors.red;
-      case "Joined":
+      case "CONVERTED":
         return Colors.blue;
+      case "REJECTED":
+        return Colors.red;
+      case "NEW":
+        return Colors.orange;
       default:
         return Colors.grey;
     }
@@ -341,7 +368,7 @@ class LeadCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
-                  status,
+                  status[0] + status.substring(1).toLowerCase(),
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 12,
@@ -417,7 +444,7 @@ class _FilterDrawerState extends State<FilterDrawer> {
                                     });
                                     if (value == true) {
                                       val.selectedLeadsFilters[item.title] =
-                                          true;
+                                          "YES";
                                     } else {
                                       val.selectedLeadsFilters.remove(
                                         item.title,
