@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class Loginpage extends StatefulWidget {
-  const Loginpage({super.key});
+  const Loginpage({super.key, required Null Function(bool p1) changeTheme});
 
   @override
   State<Loginpage> createState() => _LoginpageState();

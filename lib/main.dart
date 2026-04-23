@@ -149,7 +149,7 @@ class _MyAppState extends State<MyApp> {
           ),
         ),
         themeMode: isDarkMode?ThemeMode.dark:ThemeMode.light,
-        home: BottomnavPage(changeTheme: (bool p1) {  },),
+        home: Loginpage(changeTheme: (bool p1) {  },),
       ),
     );
   }
