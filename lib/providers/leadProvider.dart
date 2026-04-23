@@ -13,7 +13,10 @@ class LeadProvider extends ChangeNotifier {
   final TextEditingController placeController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
+  final TextEditingController noteController = TextEditingController();
   final TextEditingController sourceController = TextEditingController();
+  int dueToday = 0;
+  int thisWeek = 0;
 
 
   List<String> statusList = [];
@@ -66,6 +69,7 @@ class LeadProvider extends ChangeNotifier {
 
       "FOLLOW_UP_DATE": now.add(const Duration(days: 3)),
       "FOLLOW_UP_TIME": "",
+      "LAST_CONTACTED_DATE": now,
       "PRIORITY": 'Medium',
 
       "FOLLOW_UP_STATUS": "pending",
@@ -81,6 +85,8 @@ class LeadProvider extends ChangeNotifier {
     nameController.clear();
     placeController.clear();
     phoneController.clear();
+    emailController.clear();
+
 
     //  DON'T CLEAR statusList
 
@@ -101,11 +107,79 @@ class LeadProvider extends ChangeNotifier {
     });
   }
 
+  Future<void> calculateWorkload() async {
+    DateTime now = DateTime.now();
+
+    DateTime startOfDay = DateTime(now.year, now.month, now.day);
+    DateTime endOfDay = startOfDay.add(Duration(days: 1));
+
+    DateTime startOfWeek = startOfDay.subtract(Duration(days: now.weekday - 1));
+    DateTime endOfWeek = startOfWeek.add(Duration(days: 7));
+
+    try {
+      final snapshot = await fdb.collection("LEADS").get();
+
+      int todayCount = 0;
+      int weekCount = 0;
+
+      for (var doc in snapshot.docs) {
+        final data = doc.data();
+
+        if (data["FOLLOW_UP_DATE"] != null &&
+            data["FOLLOW_UP_STATUS"] == "pending") {
+
+          DateTime followUpDate =
+          (data["FOLLOW_UP_DATE"] as Timestamp).toDate();
+
+          // Due today
+          if (followUpDate.isAfter(startOfDay) &&
+              followUpDate.isBefore(endOfDay)) {
+            todayCount++;
+          }
+
+          // This week
+          if (followUpDate.isAfter(startOfWeek) &&
+              followUpDate.isBefore(endOfWeek)) {
+            weekCount++;
+          }
+        }
+      }
+
+      dueToday = todayCount;
+      thisWeek = weekCount;
+
+      notifyListeners();
+
+    } catch (e) {
+      print("Workload error: $e");
+    }
+  }
   void changeStatus(String status) {
     selectedStatus = status;
     notifyListeners();
   }
+  Future<void> updateReminder({
+    required String leadId,
+    required DateTime lastCallDate,
+    required DateTime followUpDate,
+    required String note,
+  }) async {
+    try {
+      await fdb.collection("LEADS").doc(leadId).update({
+        "LAST_CONTACTED_DATE": lastCallDate,
+        "FOLLOW_UP_DATE": followUpDate,
+        "NOTE": note,
+      });
 
+      print("✅ Reminder Updated for Lead: $leadId");
+      print("Last Call: $lastCallDate");
+      print("Follow Up: $followUpDate");
+      print("Note: $note");
+
+    } catch (e) {
+      print("❌ Error updating reminder: $e");
+    }
+  }
   Future<void> fetchAdditionalLeadDetails() async {
     await fdb.collection("LEAD_SETTINGS").doc("categories").get().then((value) {
       if (value.exists) {

@@ -1,7 +1,6 @@
 import 'package:dialo/views/reminderpage.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 import '../../constants/app_colors.dart';
 
 
@@ -52,7 +51,7 @@ class _LeadProfileScreenState extends State<LeadProfileScreen> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const ReminderPage(),
+                  MaterialPageRoute(builder: (context) => const ReminderPage(leadId: '',),
                   ),
                 );
               },
@@ -65,8 +64,11 @@ class _LeadProfileScreenState extends State<LeadProfileScreen> {
                 ),
                 padding: const EdgeInsets.symmetric(horizontal: 12),
               ),
-              icon: const Icon(Icons.notifications_active, size: 16),
-              label: const Text("set reminder", style: TextStyle(fontSize: 12)),
+              icon: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: const Icon(Icons.notifications_active, size: 16),
+              ),
+              label: const Text("set reminder", style: TextStyle(fontSize: 11)),
             ),
           ),
           IconButton(
@@ -94,6 +96,14 @@ class _LeadProfileScreenState extends State<LeadProfileScreen> {
                     Icons.phone_in_talk,
                     "Call Now",
                     Colors.black,
+                        () {
+                      String phone = widget.leadData["PHONE"] ?? "";
+                      if (phone.isNotEmpty) {
+                        makePhoneCall(phone);
+                      } else {
+                        print("No phone number");
+                      }
+                    },
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -102,6 +112,16 @@ class _LeadProfileScreenState extends State<LeadProfileScreen> {
                     Icons.chat_bubble,
                     "Whatsapp",
                     Colors.green,
+                        () async {
+                      String phone = widget.leadData["PHONE"] ?? "";
+                      final url = Uri.parse("https://wa.me/$phone");
+
+                      if (await canLaunchUrl(url)) {
+                        await launchUrl(url);
+                      } else {
+                        print("WhatsApp not available");
+                      }
+                    },
                   ),
                 ),
               ],
@@ -256,30 +276,47 @@ class _LeadProfileScreenState extends State<LeadProfileScreen> {
       ),
     );
   }
-
-  Widget _buildPillButton(IconData icon, String label, Color color) {
-    return Container(
-      height: 45,
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey.shade300),
-        borderRadius: BorderRadius.circular(30),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, color: color, size: 20),
-          const SizedBox(width: 8),
-          Text(
-            label,
-            style: const TextStyle(
-              fontWeight: FontWeight.w500,
-              color: Colors.black87,
+  Widget _buildPillButton(
+      IconData icon,
+      String label,
+      Color color,
+  VoidCallback onTap
+      ) {
+    return GestureDetector(
+      onTap: onTap, // 👈 handle click
+      child: Container(
+        height: 45,
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey.shade300),
+          borderRadius: BorderRadius.circular(30),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, color: color, size: 20),
+            const SizedBox(width: 8),
+            Text(
+              label,
+              style: const TextStyle(
+                fontWeight: FontWeight.w500,
+                color: Colors.black87,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
+  Future<void> makePhoneCall(String phoneNumber) async {
+    final Uri url = Uri(scheme: 'tel', path: phoneNumber);
+
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url);
+    } else {
+      print("Could not launch $url");
+    }
+  }
+
 
   Widget _buildHeader(String title, {double padding = 8.0}) {
     return Padding(
@@ -303,3 +340,6 @@ class _LeadProfileScreenState extends State<LeadProfileScreen> {
     );
   }
 }
+
+
+
