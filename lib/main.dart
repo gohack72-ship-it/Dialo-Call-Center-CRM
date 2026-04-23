@@ -8,6 +8,7 @@ import 'package:dialo/providers/leadProvider.dart';
 import 'package:dialo/BottomnavPage.dart';
 import 'package:dialo/notification_service.dart';
 import 'package:dialo/providers/leadProvider.dart';
+import 'package:dialo/splashScreen.dart';
 import 'package:dialo/views/bottomnavigationbar.dart';
 import 'package:dialo/views/leads/addlead.dart';
 import 'package:dialo/views/leads/leads_screen.dart';
@@ -139,7 +140,7 @@ class _MyAppState extends State<MyApp> {
           scaffoldBackgroundColor: const Color(0xff121212),
 
           appBarTheme: const AppBarTheme(
-            backgroundColor: Color(0xff1E1E1E),
+            backgroundColor: Color.fromARGB(255, 231, 201, 201),
             foregroundColor: Colors.white,
             elevation: 0,
           ),
