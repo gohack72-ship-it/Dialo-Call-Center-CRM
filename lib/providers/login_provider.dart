@@ -25,7 +25,7 @@ class Loginprovider extends ChangeNotifier{
           .get();
 
       if (querySnapshot.docs.isNotEmpty) {
-        Map<String, dynamic> userMap =querySnapshot.docs.first.data() as Map<String, dynamic>;
+        Map<String, dynamic> userMap =querySnapshot.docs.first.data();
 
         print("Login Success: ${emailController.text}");
 
