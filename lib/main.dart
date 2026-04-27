@@ -1,9 +1,14 @@
 // import 'package:dialo/loginpage.dart';
 import 'package:dialo/loginpage.dart';
-import 'package:dialo/providers/login_provider.dart';
+
 import 'package:dialo/providers/leadProvider.dart';
-import 'package:dialo/splashScreen.dart';
+
+
+import 'package:dialo/notification_service.dart';
+import 'package:dialo/providers/leadProvider.dart';
+import 'package:dialo/providers/loginprovider.dart';
 import 'package:dialo/views/bottomnavigationbar.dart';
+import 'package:dialo/views/leads/addlead.dart';
 
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -55,9 +60,9 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => LeadProvider()),
-        ChangeNotifierProvider(create: (_) => Loginprovider()), // ✅ IMPORTANT
+      providers: [ 
+        ChangeNotifierProvider(create: (_)=>LeadProvider()),
+        ChangeNotifierProvider(create: (_)=>Loginprovider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

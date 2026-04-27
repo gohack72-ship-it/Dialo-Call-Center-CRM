@@ -21,9 +21,9 @@ class LeadProvider extends ChangeNotifier {
   Map<String, dynamic> selectedLeadsFilters = {};
 
   String? selectedStatus;
+  
 
-
-  FirebaseFirestore fdb = FirebaseFirestore.instance;
+  FirebaseFirestore fdb = FirebaseFirestore.instance; 
 
   Future<void> addNewLead() async {
     DateTime now = DateTime.now();
