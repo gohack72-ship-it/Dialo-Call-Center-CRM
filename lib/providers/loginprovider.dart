@@ -63,7 +63,7 @@ TextEditingController passwordController=TextEditingController();
         await prefs.setString('name', userMap['NAME'] ?? '');
         await prefs.setString('image', userMap['IMAGE'] ?? '');
 
-        await fetchUsers();
+        // await fetchUsers();
 
         return true;
       } else {

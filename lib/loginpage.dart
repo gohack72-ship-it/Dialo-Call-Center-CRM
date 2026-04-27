@@ -1,10 +1,17 @@
+// 
+// import 'package:dialo/providers/login_provider.dart';
+import 'package:dialo/views/bottomnavigationbar.dart';
+import 'package:dialo/views/dashboard.dart';
+import 'package:flutter/cupertino.dart';
+
 import 'package:dialo/providers/loginprovider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class Loginpage extends StatefulWidget {
-  const Loginpage({super.key});
+  final Function(bool) changeTheme;
+  const Loginpage({super.key, required this.changeTheme});
 
   @override
   State<Loginpage> createState() => _LoginpageState();
@@ -13,8 +20,9 @@ class Loginpage extends StatefulWidget {
 class _LoginpageState extends State<Loginpage> {
   
   bool obscuretext = true;
+
   final _formkey = GlobalKey<FormState>();
-  
+
   @override
   Widget build(BuildContext context) {
     Loginprovider logPro = Provider.of<Loginprovider>(context,listen: false);
@@ -135,34 +143,50 @@ class _LoginpageState extends State<Loginpage> {
           ),
           const SizedBox(height: 15),
           SizedBox(
-            height: 45,
-            width: 350,
-        child:ElevatedButton(
-           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color.fromARGB(255, 21, 115, 192),
-            padding: const EdgeInsets.symmetric(vertical:12),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            )
-           ),
+                      width: 200,
+                      height: 45,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          print("🔥 Button Clicked");
 
-            onPressed: (){
-                if (_formkey.currentState!.validate()){
-                  
-                  logPro.login().then((success){
-                    if (success){
-                      print("login successful");
-                    }else{
-                      print("login failed");
-                    }
-                  }
-                  );
-                }else {
-                  print("Validation error");
-                }
-              }, child:const Text("Log in",style:TextStyle(fontSize:16,fontWeight:FontWeight.bold,color:  Colors.white),)),
+                          if (_formkey.currentState!.validate()) {
+                            print(" Form Valid");
+                            context.read<Loginprovider>().login().then((success) {
+                              if (success) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text("Login Successful"),
+                                    duration: Duration(seconds: 2),
+                                  ),
+                                );
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        BottomnavPage(changeTheme: widget.changeTheme),
+                                  ),
+                                );
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text("Login Failed"),
+                                    duration: Duration(seconds: 2),
+                                  ),
+                                );
+                              }
+                            });
+                          } else {
+                            print(" Form Invalid");
+                          }
+                          // Navigator.push(context, MaterialPageRoute(builder: (context) =>  BottomnavPage(changeTheme: widget.changeTheme)));
 
-          ),
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue,
+                        ),
+                        child: const Text("Login"),
+                      ),
+                    ),
               SizedBox(
                 height: 15,
               ),
@@ -189,6 +213,7 @@ class _LoginpageState extends State<Loginpage> {
             ),
 ],
           )),
+      
     );
   }
 }
