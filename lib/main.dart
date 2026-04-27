@@ -5,7 +5,7 @@ import 'package:dialo/loginpage.dart';
 
 import 'package:dialo/providers/leadProvider.dart';
 
-import 'package:dialo/BottomnavPage.dart';
+
 import 'package:dialo/notification_service.dart';
 import 'package:dialo/providers/leadProvider.dart';
 import 'package:dialo/splashScreen.dart';
@@ -150,7 +150,7 @@ class _MyAppState extends State<MyApp> {
           ),
         ),
         themeMode: isDarkMode?ThemeMode.dark:ThemeMode.light,
-        home: Loginpage(changeTheme: (bool p1) {  },),
+        home: Loginpage(changeTheme: changeTheme,),
       ),
     );
   }
