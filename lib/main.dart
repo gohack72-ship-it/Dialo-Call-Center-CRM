@@ -1,7 +1,11 @@
 import 'package:dialo/loginpage.dart';
 import 'package:dialo/providers/apiexample.dart';
 import 'package:dialo/providers/leadProvider.dart';
+<<<<<<< HEAD
 import 'package:dialo/providers/loginprovider.dart';
+=======
+import 'package:dialo/splashScreen.dart';
+>>>>>>> 2a0cdb74f49ce5e8b545d58fb1dfb62405d578c1
 import 'package:dialo/views/bottomnavigationbar.dart';
 import 'package:dialo/views/leads/addlead.dart';
 import 'package:flutter/material.dart';
@@ -82,7 +86,7 @@ class _MyAppState extends State<MyApp> {
           scaffoldBackgroundColor: const Color(0xff121212),
 
           appBarTheme: const AppBarTheme(
-            backgroundColor: Color(0xff1E1E1E),
+            backgroundColor: Color.fromARGB(255, 231, 201, 201),
             foregroundColor: Colors.white,
             elevation: 0,
           ),
@@ -92,7 +96,11 @@ class _MyAppState extends State<MyApp> {
           ),
         ),
         themeMode: isDarkMode?ThemeMode.dark:ThemeMode.light,
+<<<<<<< HEAD
         home: Loginpage(),
+=======
+        home: Splashscreen(changeTheme: (bool p1) {  },),
+>>>>>>> 2a0cdb74f49ce5e8b545d58fb1dfb62405d578c1
       ),
     );
   }
