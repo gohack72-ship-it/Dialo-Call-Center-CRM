@@ -13,11 +13,12 @@ class LeadProvider extends ChangeNotifier {
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController sourceController = TextEditingController();
- 
+   TextEditingController searchController = TextEditingController();
+   String searchText = "";
 
   List<String> statusList = [];
   List<LeadDetailsModel> additionalLeadDetailsList = [];
-  List<Map<String, dynamic>> selectedLeadsFilters = [];
+  Map<String, dynamic> selectedLeadsFilters = {};
 
   String? selectedStatus;
   
@@ -40,7 +41,7 @@ class LeadProvider extends ChangeNotifier {
       int leadCount = leadsSnapshot.docs.length;
 
       if (agentSnapshot.docs.isNotEmpty) {
-        int index = (leadCount ~/ 5) % agentSnapshot.docs.length;
+        int index = (leadCount ~/ 2) % agentSnapshot.docs.length;
 
         tempAgentId = agentSnapshot.docs[index].id;
       }
@@ -68,6 +69,7 @@ class LeadProvider extends ChangeNotifier {
       "PRIORITY": 'Medium',
 
       "FOLLOW_UP_STATUS": "pending",
+      "ADDITIONAL_LEAD_DETAILS": selectedLeadsFilters,
     };
 
     await fdb.collection("LEADS").doc(id).set(lead);

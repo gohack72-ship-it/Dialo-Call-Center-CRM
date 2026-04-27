@@ -148,7 +148,15 @@ class _LoginpageState extends State<Loginpage> {
 
             onPressed: (){
                 if (_formkey.currentState!.validate()){
-                  print("Login successful");
+                  
+                  logPro.login().then((success){
+                    if (success){
+                      print("login successful");
+                    }else{
+                      print("login failed");
+                    }
+                  }
+                  );
                 }else {
                   print("Validation error");
                 }
@@ -172,8 +180,6 @@ class _LoginpageState extends State<Loginpage> {
                     Text("Login with Google",
                           style: TextStyle(fontSize:16, fontWeight:FontWeight.bold ),
                           ),
-                          
-
                   ],
                 ),
               ),
@@ -181,7 +187,6 @@ class _LoginpageState extends State<Loginpage> {
         ]
             )
             ),
-           
 ],
           )),
     );

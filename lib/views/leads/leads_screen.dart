@@ -1,3 +1,6 @@
+import 'dart:io';
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dialo/providers/leadProvider.dart';
 import 'package:dialo/views/settingspage.dart';
@@ -20,9 +23,26 @@ class _LeadsScreenState extends State<LeadsScreen> {
   // STEP 1: Create a variable to hold the currently selected filter
   String selectedStatus = "All";
 
+  void _refreshLeads(BuildContext context) {
+    final pro = Provider.of<LeadProvider>(context, listen: false);
+    pro.selectedLeadsFilters.clear();
+    setState(() {
+      selectedStatus = "All";
+    });
+    pro.notifyListeners();
+    pro.fetchAdditionalLeadDetails();
+  }
+
   @override
   Widget build(BuildContext context) {
-    LeadProvider pro = Provider.of<LeadProvider>(context, listen: false);
+    final pro = Provider.of<LeadProvider>(context);
+    TextField(
+      controller: pro.searchController,
+      onChanged: (value) {
+        pro.searchText = value.trim();
+        pro.notifyListeners();
+      },
+    );
     return Scaffold(
       backgroundColor: Colors.white,
 
@@ -70,6 +90,11 @@ class _LeadsScreenState extends State<LeadsScreen> {
               children: [
                 Expanded(
                   child: TextField(
+                    onChanged: (value) {
+                      pro.searchText = value.trim();
+                      pro.notifyListeners();
+                      setState(() {});
+                    },
                     decoration: InputDecoration(
                       hintText: "Search Leads",
                       prefixIcon: const Icon(Icons.search),
@@ -83,11 +108,20 @@ class _LeadsScreenState extends State<LeadsScreen> {
                     ),
                   ),
                 ),
+                IconButton(
+                  icon: const Icon(Icons.refresh),
+                  onPressed: () {
+                    _refreshLeads(context);
+                  },
+                ),
                 Builder(
                   builder: (context) => IconButton(
                     icon: const Icon(Icons.tune),
                     onPressed: () {
-                      pro.fetchAdditionalLeadDetails();
+                      Provider.of<LeadProvider>(
+                        context,
+                        listen: false,
+                      ).fetchAdditionalLeadDetails();
                       Scaffold.of(context).openEndDrawer();
                     },
                   ),
@@ -111,28 +145,23 @@ class _LeadsScreenState extends State<LeadsScreen> {
                 ),
                 StatusChip(
                   text: "New",
-                  isSelected: selectedStatus == "New",
-                  onTap: () => setState(() => selectedStatus = "New"),
+                  isSelected: selectedStatus == "NEW",
+                  onTap: () => setState(() => selectedStatus = "NEW"),
                 ),
                 StatusChip(
-                  text: "Contacted",
-                  isSelected: selectedStatus == "Contacted",
-                  onTap: () => setState(() => selectedStatus = "Contacted"),
+                  text: "Converted",
+                  isSelected: selectedStatus == "CONVERTED",
+                  onTap: () => setState(() => selectedStatus = "CONVERTED"),
                 ),
                 StatusChip(
                   text: "Accepted",
-                  isSelected: selectedStatus == "Accepted",
-                  onTap: () => setState(() => selectedStatus = "Accepted"),
+                  isSelected: selectedStatus == "ACCEPTED",
+                  onTap: () => setState(() => selectedStatus = "ACCEPTED"),
                 ),
                 StatusChip(
                   text: "Rejected",
-                  isSelected: selectedStatus == "Rejected",
-                  onTap: () => setState(() => selectedStatus = "Rejected"),
-                ),
-                StatusChip(
-                  text: "Joined",
-                  isSelected: selectedStatus == "Joined",
-                  onTap: () => setState(() => selectedStatus = "Joined"),
+                  isSelected: selectedStatus == "REJECTED",
+                  onTap: () => setState(() => selectedStatus = "REJECTED"),
                 ),
               ],
             ),
@@ -142,24 +171,35 @@ class _LeadsScreenState extends State<LeadsScreen> {
 
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
-              // STEP 3: Update the Stream to filter based on 'selectedStatus'
-              stream: selectedStatus == "All"
-                  ? FirebaseFirestore.instance
-                      .collection("LEADS")
-                      .orderBy("ADDED_TIME", descending: true)
-                      .snapshots()
-                  : FirebaseFirestore.instance
-                      .collection("LEADS")
-                      .where("STATUS", isEqualTo: selectedStatus)
-                      .orderBy("ADDED_TIME", descending: true)
-                      .snapshots(),
+              stream: (() {
+                Query query = FirebaseFirestore.instance.collection("LEADS");
+
+                // ✅ Status filter
+                if (selectedStatus != "All") {
+                  query = query.where("STATUS", isEqualTo: selectedStatus);
+                }
+
+                // ✅ Drawer filters
+                pro.selectedLeadsFilters.forEach((key, value) {
+                  if (value != null) {
+                    query = query.where(key, isEqualTo: value);
+                  }
+                });
+
+                // ✅ Order
+                query = query.orderBy("ADDED_TIME", descending: true);
+
+                return query.snapshots();
+              })(),
+
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
+                  print(snapshot.error);
                   return Center(
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: Text(
-                        "Error: ${snapshot.error}\n\nCheck your console for the Index link!",
+                        "Something went wrong! Contact your service team.",
                         textAlign: TextAlign.center,
                         style: const TextStyle(color: Colors.red),
                       ),
@@ -175,33 +215,52 @@ class _LeadsScreenState extends State<LeadsScreen> {
                   return const Center(child: Text("No Leads Found"));
                 }
 
-                final leads = snapshot.data!.docs;
+                final leads = snapshot.data!.docs.where((doc) {
+                  var data = doc.data() as Map<String, dynamic>;
 
-                return ListView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  itemCount: leads.length,
-                  itemBuilder: (context, index) {
-                    var data = leads[index].data() as Map<String, dynamic>;
+                  final name = (data["NAME"] ?? "").toString().toLowerCase();
+                  final phone = (data["PHONE"] ?? "").toString();
+                  final place = (data["PLACE"] ?? "").toString().toLowerCase();
+                  final search = pro.searchText.toLowerCase();
+                  print("name $name");
+                  print("phone $phone");
+                  print("place $place");
+                  print("search $search");
+                  if (search.isEmpty) return true;
+                  return name.contains(search) ||
+                      phone.contains(search) ||
+                      place.contains(search);
+                }).toList();
 
-                    return GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => LeadProfileScreen(
-                              leadData: data
-                            ),
-                          ),
-                        );
-                      },
-                      child: LeadCard(
-                        name: data["NAME"] ?? "",
-                        phone: data["PHONE"] ?? "",
-                        city: data["PLACE"] ?? "",
-                        status: data["STATUS"] ?? "New",
-                      ),
-                    );
+                return RefreshIndicator(
+                  onRefresh: () async {
+                    _refreshLeads(context);
                   },
+
+                  child: ListView.builder(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    itemCount: leads.length,
+                    itemBuilder: (context, index) {
+                      var data = leads[index].data() as Map<String, dynamic>;
+
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => LeadProfileScreen(leadData: data),
+                            ),
+                          );
+                        },
+                        child: LeadCard(
+                          name: data["NAME"] ?? "",
+                          phone: data["PHONE"] ?? "",
+                          city: data["PLACE"] ?? "",
+                          status: data["STATUS"] ?? "New",
+                        ),
+                      );
+                    },
+                  ),
                 );
               },
             ),
@@ -264,14 +323,14 @@ class LeadCard extends StatelessWidget {
 
   Color getStatusColor() {
     switch (status) {
-      case "Accepted":
+      case "ACCEPTED":
         return Colors.green;
-      case "Contacted":
-        return Colors.orange;
-      case "Rejected":
-        return Colors.red;
-      case "Joined":
+      case "CONVERTED":
         return Colors.blue;
+      case "REJECTED":
+        return Colors.red;
+      case "NEW":
+        return Colors.orange;
       default:
         return Colors.grey;
     }
@@ -309,7 +368,7 @@ class LeadCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
-                  status,
+                  status[0] + status.substring(1).toLowerCase(),
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 12,
@@ -351,6 +410,7 @@ class FilterDrawer extends StatefulWidget {
 
 class _FilterDrawerState extends State<FilterDrawer> {
   Map<int, bool> checkedItems = {};
+  Map<int, String?> selectedDropdownValues = {};
 
   @override
   Widget build(BuildContext context) {
@@ -382,18 +442,37 @@ class _FilterDrawerState extends State<FilterDrawer> {
                                     setState(() {
                                       checkedItems[index] = value!;
                                     });
+                                    if (value == true) {
+                                      val.selectedLeadsFilters[item.title] =
+                                          "YES";
+                                    } else {
+                                      val.selectedLeadsFilters.remove(
+                                        item.title,
+                                      );
+                                    }
                                   },
                                 ),
                               Text(
                                 item.title,
-                                style: const TextStyle(fontWeight: FontWeight.w500),
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                ),
                               ),
                             ],
                           ),
                           const SizedBox(height: 10),
                           if (item.sub.isNotEmpty)
-                            _dropdown(null, item.sub, (v) {
-                              val.selectedLeadsFilters.add({item.title: v});
+                            _dropdown(selectedDropdownValues[index], item.sub, (
+                              v,
+                            ) {
+                              setState(() {
+                                selectedDropdownValues[index] = v;
+                              });
+                              if (v == null || v.isEmpty) {
+                                val.selectedLeadsFilters.remove(item.title);
+                              } else {
+                                val.selectedLeadsFilters[item.title] = v;
+                              }
                             }),
                           const SizedBox(height: 20),
                         ],
@@ -420,6 +499,7 @@ class _FilterDrawerState extends State<FilterDrawer> {
                     onPressed: () {
                       setState(() {
                         checkedItems.clear();
+                        selectedDropdownValues.clear();
                       });
                       Provider.of<LeadProvider>(
                         context,
@@ -441,11 +521,10 @@ class _FilterDrawerState extends State<FilterDrawer> {
                       ),
                     ),
                     onPressed: () {
-                      final provider = Provider.of<LeadProvider>(
+                      Provider.of<LeadProvider>(
                         context,
                         listen: false,
-                      );
-                      print(provider.selectedLeadsFilters);
+                      ).notifyListeners();
                       Navigator.pop(context);
                     },
                     child: const Text(

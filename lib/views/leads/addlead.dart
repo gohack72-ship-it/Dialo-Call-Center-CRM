@@ -159,15 +159,13 @@ class _NewLeadPageState extends State<NewLeadPage> {
                                       items: item.sub,
                                       value: null,
                                       onChanged: (v) {
-                                        val.selectedLeadsFilters.removeWhere(
-                                                (e) => e.containsKey(item.title));
+                                        if (v == null || v.isEmpty) {
+                                     val.selectedLeadsFilters.remove(item.title);
+                                    } else {
+                                        val.selectedLeadsFilters[item.title] = v;
+                                                }
 
-                                        val.selectedLeadsFilters.add({
-                                          item.title: v,
-                                        });
-
-                                        print("DROPDOWN: ${val.selectedLeadsFilters}");
-
+                                 print("DROPDOWN: ${val.selectedLeadsFilters}");
                                       },
                                     )
                                         : Builder(
@@ -176,12 +174,11 @@ class _NewLeadPageState extends State<NewLeadPage> {
                                         final controller = TextEditingController();
 
                                         controller.addListener(() {
-                                          val.selectedLeadsFilters.removeWhere(
-                                                  (e) => e.containsKey(item.title));
-
-                                          val.selectedLeadsFilters.add({
-                                            item.title: controller.text,
-                                          });
+                                           if (controller.text.isEmpty) {
+                                       val.selectedLeadsFilters.remove(item.title);
+                                                     } else {
+                                           val.selectedLeadsFilters[item.title] = controller.text;
+                                                    }
 
                                           print("TEXT: ${val.selectedLeadsFilters}");
                                         });
