@@ -6,8 +6,7 @@ class Loginprovider extends ChangeNotifier{
   bool isChecked = false;
   bool isPasswordHidden = true;
 
-  final TextEditingController emailController = TextEditingController();
-final TextEditingController passwordController = TextEditingController();
+  
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   // List<Usermodel> userList = [];
