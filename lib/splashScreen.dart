@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:dialo/loginpage.dart';
 import 'package:dialo/views/bottomnavigationbar.dart';
 // import 'package:dialo/views/dashboard.dart';
 
@@ -62,7 +63,7 @@ class _SplashscreenState extends State<Splashscreen> {
               setState(() {
                 showSecond = true;
                 Future.delayed(Duration(seconds: 1),(){
-                  Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => BottomnavPage(changeTheme: widget.changeTheme),));
+                  Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => Loginpage(changeTheme: widget.changeTheme),));
                 });
               });
             });

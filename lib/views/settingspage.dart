@@ -25,6 +25,17 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
     super.initState();
     loadTheme();
   }
+    void logout(BuildContext context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    await prefs.clear();
+
+    Navigator.pushNamedAndRemoveUntil(
+      context,
+      '/login',
+      (route) => false,
+    );
+  }
 
   void loadTheme()async{
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -96,10 +107,18 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
                  }),
            ),
             SettingsDrawer._item("Help & About", Icons.help),
-            SettingsDrawer._item("Logout", Icons.logout),
+            
+           ListTile(
+  leading: const Icon(Icons.logout, size: 22, color: AppColors.textColor),
+  title: const Text("Logout"),
+  onTap: () {
+    logout(context);
+  },
+),
           ],
         ),
       ),
     );
   }
 }
+

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -12,9 +13,9 @@ bool remeberme = false;
 TextEditingController emailController=TextEditingController();
 TextEditingController passwordController=TextEditingController();
 
-  get isChecked => null;
+  bool isChecked = false;
   
-  get _firestore => null;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   Future<User?> signInWithGoogle() async{
     try {
@@ -49,6 +50,8 @@ TextEditingController passwordController=TextEditingController();
           .where('PASSWORD', isEqualTo: passwordController.text.trim())
           .where('ROLE', isEqualTo: 'AGENT')
           .get();
+
+          print("Query Result: ${querySnapshot.docs.length} documents found for email: ${emailController.text.trim()}");
 
       if (querySnapshot.docs.isNotEmpty) {
         Map<String, dynamic> userMap =

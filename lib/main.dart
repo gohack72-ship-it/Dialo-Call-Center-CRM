@@ -7,6 +7,7 @@ import 'package:dialo/providers/leadProvider.dart';
 import 'package:dialo/notification_service.dart';
 import 'package:dialo/providers/leadProvider.dart';
 import 'package:dialo/providers/loginprovider.dart';
+import 'package:dialo/splashScreen.dart';
 import 'package:dialo/views/bottomnavigationbar.dart';
 import 'package:dialo/views/leads/addlead.dart';
 
@@ -15,6 +16,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'firebase_options.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -45,6 +47,7 @@ class _MyAppState extends State<MyApp> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       isDarkMode = prefs.getBool('isDarkMode') ?? false;
+       
     });
   }
 
@@ -67,8 +70,13 @@ class _MyAppState extends State<MyApp> {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
-        home: Loginpage(changeTheme: changeTheme),
+         routes: {
+        '/login': (context) => LoginPage(),
+      },
+        home: Splashscreen(changeTheme: changeTheme),
       ),
     );
   }
+  
+  LoginPage() {}
 }
