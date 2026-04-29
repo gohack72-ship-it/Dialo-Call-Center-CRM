@@ -129,7 +129,7 @@ class _LeadsScreenState extends State<LeadsScreen> {
               ],
             ),
           ),
-
+      
           const SizedBox(height: 10),
 
           // STEP 2: Update the Chips to react to taps
@@ -166,9 +166,10 @@ class _LeadsScreenState extends State<LeadsScreen> {
               ],
             ),
           ),
-
+      
           const SizedBox(height: 10),
 
+          // 📋 LIST
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
               stream: (() {
