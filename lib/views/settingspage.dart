@@ -1,10 +1,12 @@
 import 'package:dialo/constants/app_colors.dart';
+import 'package:dialo/loginpage.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+
 class SettingsDrawer extends StatefulWidget {
-  final Function(bool)changeTheme;
-  const SettingsDrawer({super.key,required this.changeTheme});
+  final Function(bool) changeTheme;
+  const SettingsDrawer({super.key, required this.changeTheme});
   @override
   State<SettingsDrawer> createState() => _SettingsDrawerState();
 
@@ -21,34 +23,61 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
   bool isDarkMode = false;
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
     loadTheme();
   }
-    void logout(BuildContext context) async {
+
+  void logout(BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     await prefs.clear();
 
-    Navigator.pushNamedAndRemoveUntil(
-      context,
-      '/login',
-      (route) => false,
-    );
+    Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
   }
 
-  void loadTheme()async{
+  void loadTheme() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       isDarkMode = prefs.getBool('isDarkMode') ?? false;
     });
   }
 
-  void saveTheme(bool value)async {
+  void saveTheme(bool value) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setBool("darkMode", value);
+    prefs.setBool("isDarkMode", value);
   }
 
+  void showLogoutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: const Text("Logout"),
+          content: const Text("Are you sure you want to logout?"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(dialogContext);
+              },
+              child: const Text("No"),
+            ),
+TextButton(
+  onPressed: () async {
+    Navigator.pop(dialogContext);
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+
+    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => Loginpage(changeTheme: widget.changeTheme)), (route) => false);
+  },
+  child: const Text("Yes"),
+),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -80,7 +109,7 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
                 backgroundColor: AppColors.themeColor,
                 child: Icon(
                   Icons.person_outline,
-                  color:AppColors.textColor ,
+                  color: AppColors.textColor,
                   size: 28,
                 ),
               ),
@@ -93,26 +122,30 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
             SizedBox(height: 10),
             const Divider(),
             SettingsDrawer._item("Notifications", Icons.notifications),
-           ListTile(
-             leading: const Icon(Icons.dark_mode,
-                 size: 22,color: AppColors.textColor,),
-             title: const Text("Mode Change"),
-             trailing: Switch(value: isDarkMode,
-                 activeColor: AppColors.themeColor,
-                 onChanged: (value){
-               setState((){
-                 isDarkMode=value;
-               });
-               widget.changeTheme(value);
-                 }),
-           ),
-            SettingsDrawer._item("Help & About", Icons.help),
-            
-           ListTile(
+            ListTile(
+              leading: const Icon(
+                Icons.dark_mode,
+                size: 22,
+                color: AppColors.textColor,
+              ),
+              title: const Text("Mode Change"),
+              trailing: Switch(
+                value: isDarkMode,
+                activeThumbColor: AppColors.themeColor,
+                onChanged: (value) {
+                  setState(() {
+                    isDarkMode = value;
+                  });
+                  widget.changeTheme(value);
+                },
+              ),
+            ),
+SettingsDrawer._item("Help & About", Icons.help),
+ListTile(
   leading: const Icon(Icons.logout, size: 22, color: AppColors.textColor),
   title: const Text("Logout"),
   onTap: () {
-    logout(context);
+    showLogoutDialog(context);
   },
 ),
           ],
@@ -121,4 +154,6 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
     );
   }
 }
+
+
 

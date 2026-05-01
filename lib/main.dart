@@ -1,15 +1,10 @@
 // import 'package:dialo/loginpage.dart';
-import 'package:dialo/loginpage.dart';
 
 import 'package:dialo/providers/leadProvider.dart';
 
 
-import 'package:dialo/notification_service.dart';
-import 'package:dialo/providers/leadProvider.dart';
 import 'package:dialo/providers/loginprovider.dart';
 import 'package:dialo/splashScreen.dart';
-import 'package:dialo/views/bottomnavigationbar.dart';
-import 'package:dialo/views/leads/addlead.dart';
 
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -68,15 +63,13 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider(create: (_)=>Loginprovider()),
       ],
       child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
-         routes: {
-        '/login': (context) => LoginPage(),
-      },
-        home: Splashscreen(changeTheme: changeTheme),
-      ),
+  debugShowCheckedModeBanner: false,
+  
+  themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
+  home: Splashscreen(changeTheme: changeTheme),
+)
     );
   }
   
-  LoginPage() {}
+ 
 }

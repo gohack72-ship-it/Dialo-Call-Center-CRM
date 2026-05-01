@@ -14,7 +14,7 @@ class Reportpage extends StatefulWidget {
 }
 
 class _ReportpageState extends State<Reportpage> {
-  int _currentIndex = 0;
+  final int _currentIndex = 0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(

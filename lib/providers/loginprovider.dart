@@ -55,7 +55,7 @@ TextEditingController passwordController=TextEditingController();
 
       if (querySnapshot.docs.isNotEmpty) {
         Map<String, dynamic> userMap =
-        querySnapshot.docs.first.data() as Map<String, dynamic>;
+        querySnapshot.docs.first.data();
 
         print("Login Success: ${emailController.text}");
 
@@ -67,7 +67,7 @@ TextEditingController passwordController=TextEditingController();
         await prefs.setString('image', userMap['IMAGE'] ?? '');
 
         // await fetchUsers();
-
+        clearLoginPage();
         return true;
       } else {
         print("Login Failed: Invalid credentials");
@@ -78,8 +78,34 @@ TextEditingController passwordController=TextEditingController();
       return false;
     }
   }
-  Future<void> fetchUsers() async {
-}
+
+  // void toggleRememberMe(bool value) {
+  //   isChecked = value;
+  //   notifyListeners();
+  //   SharedPreferences.getInstance().then((prefs) {
+  //     prefs.setBool('remember', value);
+  //     remeberme = value;
+  //     notifyListeners();
+  //   });
+  // }
+
+  void loadRememberMe() {
+    SharedPreferences.getInstance().then((prefs) {
+      bool remember = prefs.getBool('remember') ?? false;
+      emailController.text = remember ? (prefs.getString('email') ?? '') : '';
+      passwordController.text = remember ? (prefs.getString('password') ?? '') : '';
+      isChecked = remember;
+      remeberme = remember;
+      notifyListeners();
+    });
+  }
+
+  clearLoginPage() {
+    emailController.clear();
+    passwordController.clear();
+    remeberme = false;
+    notifyListeners();
+  }
 
 }
 
