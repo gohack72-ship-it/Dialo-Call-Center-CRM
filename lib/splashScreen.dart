@@ -1,9 +1,11 @@
 import 'dart:async';
-import 'package:dialo/loginpage.dart';
+import 'package:dialo/providers/leadProvider.dart';
+import 'package:dialo/views/bottomnavigationbar.dart';
 // import 'package:dialo/views/dashboard.dart';
 
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:provider/provider.dart';
 
 class Splashscreen extends StatefulWidget {
   final Function(bool) changeTheme;
@@ -15,16 +17,17 @@ class Splashscreen extends StatefulWidget {
 
 class _SplashscreenState extends State<Splashscreen> {
 
-  bool showSecond = false;
+  
   
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    print("ggggggggggggggg");
-    if (showSecond){
-
-    }
+    // print("ggggggggggggggg");
+    context.read<LeadProvider>().loadDashboardCounts();
+  Future.delayed(Duration(seconds: 3),(){
+                  Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => BottomnavPage(changeTheme: widget.changeTheme),));
+                });
 
   }
 
@@ -34,9 +37,9 @@ class _SplashscreenState extends State<Splashscreen> {
       backgroundColor: Colors.white,
       body: Center(
 
-        child: showSecond
-
-            ? Column(
+        child: 
+        // showSecond?
+         Column(
           mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Image.asset(
@@ -51,18 +54,18 @@ class _SplashscreenState extends State<Splashscreen> {
 
               ],
             )
-            : Lottie.asset(
-          'assets/Loading animation blue.json',
-          height: 200,
-          width: 200,
-          repeat: false,
+        //     : Lottie.asset(
+        //   'assets/Loading animation blue.json',
+        //   height: 200,
+        //   width: 200,
+        //   repeat: false,
           
           onLoaded: (composition) {
             Future.delayed(composition.duration, () {
               setState(() {
                 showSecond = true;
                 Future.delayed(Duration(seconds: 1),(){
-                  Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => Loginpage(changeTheme: widget.changeTheme),));
+                  Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => BottomnavPage(changeTheme: widget.changeTheme),));
                 });
               });
             });
