@@ -21,7 +21,6 @@ class LeadProvider extends ChangeNotifier {
 
   String? selectedStatus;
 
-
   FirebaseFirestore fdb = FirebaseFirestore.instance;
   int totalLeads = 0;
   int followUps = 0;
@@ -66,7 +65,7 @@ class LeadProvider extends ChangeNotifier {
       "FOLLOW_UP_TIME": "",
       "PRIORITY": 'Medium',
 
-      "FOLLOW_UP_STATUS": "pending",
+      "FOLLOW_UP_STATUS": "PENDING",
       "ADDITIONAL_LEAD_DETAILS": selectedLeadsFilters,
     };
 
@@ -89,18 +88,20 @@ class LeadProvider extends ChangeNotifier {
     fdb.collection("LEAD_SETTINGS").doc("call_status").get().then((value) {
       statusList.clear();
       if (value.exists) {
-        
-          Map<String, dynamic> statusMap = value.data() as Map<String, dynamic>;
-          statusList.addAll(statusMap["callStatus"]);
-        
+        Map<String, dynamic> statusMap = value.data() as Map<String, dynamic>;
+        List<dynamic> dynamicList = statusMap["callStatusList"];
+        statusList = dynamicList.map((e) => e.toString()).toList();
       }
+      print("Status List: $statusList");
       notifyListeners();
     });
   }
+
   void changeStatus(String status) {
     selectedStatus = status;
     notifyListeners();
   }
+
   Future<void> fetchAdditionalLeadDetails() async {
     await fdb.collection("LEAD_SETTINGS").doc("categories").get().then((value) {
       if (value.exists) {
@@ -129,10 +130,11 @@ class LeadProvider extends ChangeNotifier {
     final db = FirebaseFirestore.instance;
 
     final totalSnap = await db.collection("LEADS").count().get();
+    totalLeads = totalSnap.count!;
 
     final followSnap = await db
         .collection("LEADS")
-        .where("FOLLOW_UP_STATUS", isEqualTo: "pending")
+        .where("FOLLOW_UP_STATUS", isEqualTo: "PENDING")
         .count()
         .get();
     print("follow snap finished ${followSnap.count!}");
@@ -151,8 +153,8 @@ class LeadProvider extends ChangeNotifier {
 
     final overdueSnap = await db
         .collection("LEADS")
-        .where("FOLLOW_UP_DATE", isLessThan: now)
-        .where("FOLLOW_UP_STATUS", isEqualTo: "pending")
+        .where("FOLLOW_UP_DATE", isLessThan: start)
+        .where("FOLLOW_UP_STATUS", isEqualTo: "PENDING")
         .count()
         .get();
     print("overdue finished");
