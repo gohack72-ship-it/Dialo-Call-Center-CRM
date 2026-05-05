@@ -119,9 +119,7 @@ class LeadProvider extends ChangeNotifier {
             ),
           );
         }
-        print(additionalLea
-
-  void loadDashboardCounts() {}dDetailsList.length);
+        print(additionalLeadDetailsList.length);
         notifyListeners();
       }
     });
