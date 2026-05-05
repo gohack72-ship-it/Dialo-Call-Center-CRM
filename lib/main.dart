@@ -8,6 +8,7 @@ import 'package:dialo/notification_service.dart';
 import 'package:dialo/providers/leadProvider.dart';
 import 'package:dialo/providers/loginprovider.dart';
 import 'package:dialo/views/bottomnavigationbar.dart';
+import 'package:dialo/views/dashboard.dart';
 import 'package:dialo/views/leads/addlead.dart';
 
 import 'package:flutter/material.dart';
@@ -67,7 +68,7 @@ class _MyAppState extends State<MyApp> {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
-        home: Loginpage(changeTheme: changeTheme),
+        home: BottomnavPage(changeTheme: changeTheme),
       ),
     );
   }
