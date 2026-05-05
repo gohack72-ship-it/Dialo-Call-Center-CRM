@@ -60,17 +60,18 @@ class _SplashscreenState extends State<Splashscreen> {
         //   width: 200,
         //   repeat: false,
           
-          onLoaded: (composition) {
-            Future.delayed(composition.duration, () {
-              setState(() {
-                showSecond = true;
-                Future.delayed(Duration(seconds: 1),(){
-                  Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => BottomnavPage(changeTheme: widget.changeTheme),));
-                });
-              });
-            });
-          },
-        ),
+        //   onLoaded: (composition) {
+        //     Future.delayed(composition.duration, () {
+        //       context.read<LeadProvider>().loadDashboardCounts();
+        //       setState(() {
+        //         showSecond = true;
+        //         Future.delayed(Duration(seconds: 1),(){
+        //           Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => Loginpage(changeTheme: widget.changeTheme),));
+        //         });
+        //       });
+        //     });
+        //   },
+        // ),
       ),
     );
   }
