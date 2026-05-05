@@ -21,8 +21,7 @@ class _NewLeadPageState extends State<NewLeadPage> {
 
     // ✅ LOAD DROPDOWN DATA
     Future.microtask(() {
-      context.read<LeadProvider>().fetchAdditionalLeadDetails();
-      context.read<LeadProvider>().getLeadStatus();
+      
     });
   }
 

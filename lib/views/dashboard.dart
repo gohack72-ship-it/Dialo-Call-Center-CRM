@@ -22,6 +22,10 @@ class _DbState extends State<Dashboard> {
   void initState() {
     super.initState();
     
+    Future.microtask(() {
+    Provider.of<LeadProvider>(context, listen: false)
+        .loadDashboardCounts();
+  });
   }
 
   @override
