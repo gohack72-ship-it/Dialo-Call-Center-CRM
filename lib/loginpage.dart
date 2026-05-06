@@ -1,5 +1,5 @@
 // 
-// import 'package:dialo/providers/login_provider.dart';
+import 'package:dialo/providers/login_provider.dart';
 import 'package:dialo/views/bottomnavigationbar.dart';
 import 'package:dialo/views/dashboard.dart';
 import 'package:flutter/cupertino.dart';
@@ -8,6 +8,8 @@ import 'package:dialo/providers/loginprovider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_core/firebase_core.dart';
+
 
 class Loginpage extends StatefulWidget {
   final Function(bool) changeTheme;

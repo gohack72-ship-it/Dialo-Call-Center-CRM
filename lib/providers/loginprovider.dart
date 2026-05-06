@@ -4,17 +4,18 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Loginprovider extends ChangeNotifier {
 bool remeberme = false;
 
 TextEditingController emailController=TextEditingController();
 TextEditingController passwordController=TextEditingController();
+final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+bool get isChecked => remeberme;
 
-  get isChecked => null;
-  
-  get _firestore => null;
+  // get isChecked => null;
+  // get _firestore => null;
 
   Future<User?> signInWithGoogle() async{
     try {
@@ -43,6 +44,10 @@ TextEditingController passwordController=TextEditingController();
     final prefs = await SharedPreferences.getInstance();
 
     try {
+      print("🔥 Login Function Called");
+      print("🔥 Email: ${emailController.text}");
+      print("🔥 Password: ${passwordController.text}");
+
       final querySnapshot = await _firestore
           .collection('AGENT')
           .where('EMAIL', isEqualTo: emailController.text.trim())
@@ -52,7 +57,8 @@ TextEditingController passwordController=TextEditingController();
 
       if (querySnapshot.docs.isNotEmpty) {
         Map<String, dynamic> userMap =
-        querySnapshot.docs.first.data() as Map<String, dynamic>;
+        querySnapshot.docs.first.data();
+
 
         print("Login Success: ${emailController.text}");
 

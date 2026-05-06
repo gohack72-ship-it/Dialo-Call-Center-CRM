@@ -1,4 +1,5 @@
-// import 'package:dialo/loginpage.dart';
+import 'package:dialo/loginpage.dart';
+import 'package:dialo/home_page.dart';
 import 'package:dialo/loginpage.dart';
 
 import 'package:dialo/providers/leadProvider.dart';
@@ -68,7 +69,7 @@ class _MyAppState extends State<MyApp> {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
-        home: BottomnavPage(changeTheme: changeTheme),
+        home: Loginpage(changeTheme: changeTheme,)
       ),
     );
   }
