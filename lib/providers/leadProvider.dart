@@ -23,6 +23,8 @@ class LeadProvider extends ChangeNotifier {
 
   List<String> statusList = [];
   List<LeadDetailsModel> additionalLeadDetailsList = [];
+  List<Map<String, dynamic>> _todaysLeadsList = [];
+  List<Map<String, dynamic>> get todaysLeadsList => _todaysLeadsList;
   Map<String, dynamic> selectedLeadsFilters = {};
 
   String? selectedStatus;
@@ -81,6 +83,28 @@ class LeadProvider extends ChangeNotifier {
     await fdb.collection("LEADS").doc(id).set(lead);
 
     clearData();
+  }
+  Future<void> fetchTodaysWorkload() async {
+    DateTime now = DateTime.now();
+    DateTime startOfDay = DateTime(now.year, now.month, now.day);
+    DateTime endOfDay = startOfDay.add(const Duration(days: 1));
+
+    try {
+      // Filter LEADS where FOLLOW_UP_DATE is between today 00:00 and 23:59
+      final snapshot = await fdb.collection("LEADS")
+          .where("FOLLOW_UP_DATE", isGreaterThanOrEqualTo: startOfDay)
+          .where("FOLLOW_UP_DATE", isLessThan: endOfDay)
+          .get();
+
+      _todaysLeadsList = snapshot.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
+
+      // Update the counts for the dashboard while we are at it
+      dueToday = _todaysLeadsList.length;
+
+      notifyListeners();
+    } catch (e) {
+      print("Workload Fetch Error: $e");
+    }
   }
 
   void clearData() {

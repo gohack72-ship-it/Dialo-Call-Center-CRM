@@ -2,7 +2,7 @@ import 'package:dialo/constants/app_colors.dart';
 import 'package:dialo/constants/app_textstyle.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
+import 'package:intl/intl.dart';
 import '../providers/leadProvider.dart';
 
 class ReminderPage extends StatefulWidget {
@@ -19,7 +19,20 @@ class _ReminderPageState extends State<ReminderPage> {
   DateTime? selectedDate;
   TimeOfDay? selectedTime;
   TextEditingController noteController = TextEditingController();
+  String? selectedCallStatus;
 
+  List<String> callStatusList = [
+    "Interested",
+    "Not Interested",
+    "Busy",
+    "Call Later",
+    "Out of Coverage Area",
+  ];
+  List<String> leadstage = [
+    "Converted",
+    "Follow Up",
+    "Rejected",
+  ];
   // 📅 Pick Date
   Future<void> pickDate() async {
     DateTime? picked = await showDatePicker(
@@ -97,11 +110,105 @@ class _ReminderPageState extends State<ReminderPage> {
         centerTitle: true,
         title: Text("Set Reminder", style: AppTextstyle.title),
       ),
-      body: Padding(
-        padding: const EdgeInsets.fromLTRB(30, 90, 30, 10),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(25.0),
+          child:
+
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+
+                  const Text(
+                    "Called Date",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+
+                  const SizedBox(height: 8),
+
+                  TextFormField(
+                    readOnly: true,
+
+                    controller: TextEditingController(
+                      text: DateFormat('dd/MM/yyyy hh:mm a')
+                          .format(DateTime.now()),
+                    ),
+
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      suffixIcon: Icon(Icons.calendar_month),
+                    ),
+                  ),
+              SizedBox(height: 20,),
+                  const Text(
+                    "Call Status",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+
+                  const SizedBox(height: 8),
+
+                  DropdownButtonFormField<String>(
+                    value: selectedCallStatus,
+
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      hintText: "Select Call Status",
+                    ),
+
+                    items: callStatusList.map((status) {
+                      return DropdownMenuItem<String>(
+                        value: status,
+                        child: Text(status),
+                      );
+                    }).toList(),
+
+                    onChanged: (value) {
+                      setState(() {
+                        selectedCallStatus = value;
+                      });
+                    },
+                  ),
+
+                  SizedBox(height: 20,),
+                  const Text(
+                    "Lead Stage",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+
+                  const SizedBox(height: 8),
+
+                  DropdownButtonFormField<String>(
+                    value: leadstage,
+
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      hintText: "Select Lead Stage",
+                    ),
+
+                    items: callStatusList.map((status) {
+                      return DropdownMenuItem<String>(
+                        value: status,
+                        child: Text(status),
+                      );
+                    }).toList(),
+
+                    onChanged: (value) {
+                      setState(() {
+                        selectedCallStatus = value;
+                      });
+                    },
+                  ),
+                  SizedBox(height: 20,),
+
 
               // 📦 DATE & TIME BOX
               Container(

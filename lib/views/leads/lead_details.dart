@@ -65,10 +65,10 @@ class _LeadProfileScreenState extends State<LeadProfileScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 12),
               ),
               icon: Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(0.0),
                 child: const Icon(Icons.notifications_active, size: 16),
               ),
-              label: const Text("set reminder", style: TextStyle(fontSize: 11)),
+              label: const Text("Follow up", style: TextStyle(fontSize: 11)),
             ),
           ),
           IconButton(

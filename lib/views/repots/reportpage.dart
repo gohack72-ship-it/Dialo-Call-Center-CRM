@@ -1,9 +1,13 @@
 import 'package:dialo/constants/app_colors.dart';
 import 'package:dialo/constants/app_textstyle.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../providers/leadProvider.dart';
+
 
 import 'package:dialo/views/repots/reportsum.dart';
 import 'package:dialo/views/settingspage.dart';
-import 'package:flutter/material.dart';
+
 
 class Reportpage extends StatefulWidget {
   final Function(bool) changeTheme;
@@ -15,12 +19,23 @@ class Reportpage extends StatefulWidget {
 
 class _ReportpageState extends State<Reportpage> {
   int _currentIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+
+    Future.microtask(() {
+      Provider.of<LeadProvider>(context, listen: false)
+          .calculateWorkload();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.whitetext,
        drawer: SettingsDrawer(changeTheme:widget.changeTheme),
-       
+
       appBar: AppBar(
 
 
@@ -28,7 +43,7 @@ class _ReportpageState extends State<Reportpage> {
           "Reports",
           style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
         ),
-        
+
         leading: IconButton(
           icon: const Icon(Icons.menu),
           onPressed: () {
@@ -82,33 +97,102 @@ class _ReportpageState extends State<Reportpage> {
                       ),
                       child: Column(
                         children: [
-                          Text(
-                            "Today's workload",
-                            style: AppTextstyle.MiniText,
+
+                          // ... inside your Row's children, replace the first Container with this:
+
+                          Container(
+                            width: 200,
+                            padding: const EdgeInsets.all(15),
+                            decoration: BoxDecoration(
+                              color: AppColors.whitetext,
+                              border: Border.all(color: AppColors.textColor),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Column(
+                              children: [
+                                Text(
+                                  "Today's workload",
+                                  style: AppTextstyle.MiniText,
+                                ),
+                                const SizedBox(height: 10),
+
+                                // Dynamic Data Section
+                                Consumer<LeadProvider>(
+                                  builder: (context, provider, child) {
+                                    return Column(
+                                      children: [
+                                        Text(
+                                          "${provider.dueToday}",
+                                          style: const TextStyle(
+                                              fontSize: 24,
+                                              fontWeight: FontWeight.bold,
+                                              color: AppColors.themeColor
+                                          ),
+                                        ),
+                                        const Text("Leads Due Today", style: TextStyle(fontSize: 10)),
+                                      ],
+                                    );
+                                  },
+                                ),
+
+                                const SizedBox(height: 15),
+
+                                // Comparison Row
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    const Text("This week", style: TextStyle(fontSize: 12)),
+                                    Consumer<LeadProvider>(
+                                      builder: (context, provider, child) {
+                                        return Text(
+                                          "${provider.thisWeek}",
+                                          style: const TextStyle(fontWeight: FontWeight.bold),
+                                        );
+                                      },
+                                    ),
+                                    const CircleAvatar(
+                                      radius: 5,
+                                      backgroundColor: AppColors.themeColor,
+                                    ),
+                                  ],
+                                ),
+
+                                const SizedBox(height: 10),
+
+                                // View Button
+                                Container(
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.black12),
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                  child: InkWell(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) => const ReportSum(),
+                                        ),
+                                      );
+                                    },
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: const [
+                                        Padding(
+                                          padding: EdgeInsets.symmetric(vertical: 4),
+                                          child: Text(
+                                            "View detailed report",
+                                            style: TextStyle(fontSize: 10),
+                                          ),
+                                        ),
+                                        Icon(Icons.arrow_forward, size: 14),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                          const SizedBox(height: 10),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Text("Due today"),
-                              Text("23"),
-                              CircleAvatar(
-                                radius: 5,
-                                backgroundColor: AppColors.redColor,
-                              ),
-                            ],
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Text("This week"),
-                              Text("67"),
-                              CircleAvatar(
-                                radius: 5,
-                                backgroundColor: AppColors.themeColor,
-                              ),
-                            ],
-                          ),
+
                           const SizedBox(height: 5),
                           Container(
                             decoration: BoxDecoration(
