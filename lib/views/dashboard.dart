@@ -1,28 +1,40 @@
-
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dialo/providers/leadProvider.dart';
 import 'package:dialo/views/settingspage.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../constants/app_colors.dart';
 import '../constants/app_textstyle.dart';
 import 'leads/lead_details.dart';
 
 class Dashboard extends StatefulWidget {
   final Function(bool) changeTheme;
-  const Dashboard({super.key,required this.changeTheme});
+  const Dashboard({super.key, required this.changeTheme});
 
   @override
   State<Dashboard> createState() => _DbState();
 }
 
 class _DbState extends State<Dashboard> {
-  int currentIndex=0;
+  int currentIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+
+    Future.microtask(() {
+      Provider.of<LeadProvider>(context, listen: false).loadDashboardCounts();
+      Provider.of<LeadProvider>(context, listen: false).getLeadStatus();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        toolbarHeight:50 ,
-        backgroundColor:Colors.white ,
+        toolbarHeight: 50,
+        backgroundColor: Colors.white,
         leading: Builder(
           builder: (context) => IconButton(
             icon: const Icon(Icons.menu, color: Colors.black, size: 30),
@@ -66,7 +78,7 @@ class _DbState extends State<Dashboard> {
           ),
         ],
       ),
-      drawer: SettingsDrawer(changeTheme:widget.changeTheme),
+      drawer: SettingsDrawer(changeTheme: widget.changeTheme),
       body: SingleChildScrollView(
         child: Container(
           width: MediaQuery.of(context).size.width,
@@ -74,77 +86,77 @@ class _DbState extends State<Dashboard> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 5),
-                child: GridView.count(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 20,
-                  mainAxisSpacing: 20,
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  childAspectRatio: 1.3,
-                  children: const [
-                    DashboardCard(
-                      title: "TOTAL LEADS",
-                      value: "22",
-                      color: AppColors.totalLeads,
-                    ),
-                    DashboardCard(
-                      title: "UPCOMING",
-                      value: "12",
-                      color: AppColors.upcoming,
-                    ),
-                    DashboardCard(
-                      title: "TODAY'S CALLS",
-                      value: "08",
-                      color: AppColors.todayCalls,
-                    ),
-                    DashboardCard(
-                      title: "OVERDUE",
-                      value: "02",
-                      color: AppColors.overdue,
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 20),
-              const Text(
-                  "Lead Summary",
-                  style: AppTextstyle.SubTitle
-              ),
-              const SizedBox(height: 05),
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey.shade300),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Column(
-                  children: const [
-                    SummaryRow(title: "New", value: "03"),
-                    Divider(color: Color(0xffEAEAEA)),
-                    SummaryRow(title: "Contacted", value: "03"),
-                    Divider(color: Color(0xffEAEAEA)),
-                    SummaryRow(title: "Accepted", value: "03"),
-                    Divider(color: Color(0xffEAEAEA)),
-                    SummaryRow(title: "Joined", value: "03"),
-                    Divider(color: Color(0xffEAEAEA)),
-                    SummaryRow(title: "Rejected", value: "03"),
-                  ],
-                ),
+              Consumer<LeadProvider>(
+                builder: (context1, provider, child) {
+                  return GridView.count(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 20,
+                    mainAxisSpacing: 20,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    childAspectRatio: 1.3,
+                    children: [
+                      DashboardCard(
+                        title: "TOTAL LEADS",
+                        value: provider.totalLeads.toString(),
+                        color: AppColors.totalLeads,
+                      ),
+                      DashboardCard(
+                        title: "FOLLOW-UPS",
+                        value: provider.followUps.toString(),
+                        color: AppColors.followUps,
+                      ),
+                      DashboardCard(
+                        title: "TODAY'S CALLS",
+                        value: provider.todayCalls.toString(),
+                        color: AppColors.todayCalls,
+                      ),
+                      DashboardCard(
+                        title: "OVERDUE",
+                        value: provider.overdue.toString(),
+                        color: AppColors.overdue,
+                      ),
+                    ],
+                  );
+                },
               ),
 
               const SizedBox(height: 20),
-              const Text(
-                "Upcoming Follow-ups",
-                style: AppTextstyle.SubTitle,
+              const Text("Lead Summary", style: AppTextstyle.SubTitle),
+              const SizedBox(height: 05),
+              Consumer<LeadProvider>(
+                builder: (context, value, child) {
+                  return Container(
+                    height: MediaQuery.of(context).size.height / 2,
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey.shade300),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: ListView.separated(
+                      itemCount: value.statusList.length,
+                      itemBuilder: (context, index) {
+                        var status = value.statusList[index];
+                        print(status);
+                        return SummaryRow(title: status, value: "03");
+                      },
+
+                      separatorBuilder: (context, index) {
+                        return Divider(color: Color(0xffEAEAEA));
+                      },
+                    ),
+                  );
+                },
               ),
+
+              const SizedBox(height: 20),
+              const Text("Upcoming Follow-ups", style: AppTextstyle.SubTitle),
               const SizedBox(height: 15),
 
               const FollowUpCard(index: 0),
               const FollowUpCard(index: 1),
               const FollowUpCard(index: 1),
-             ],
+            ],
           ),
         ),
       ),
@@ -157,6 +169,7 @@ class _DbState extends State<Dashboard> {
       //   unselectedLabelStyle: const TextStyle(color: AppColors.themeColor),
       //   onTap: (index) {
       //     setState(() {
+
       //       _currentIndex = index;
       //     });
       //   },
@@ -202,20 +215,13 @@ class DashboardCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-              title,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: AppTextstyle.dashBoardCard
+            title,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: AppTextstyle.dashBoardCard,
           ),
           const SizedBox(height: 8),
-          Row(
-            children: [
-              Text(
-                  value,
-                  style:AppTextstyle.dashBoardCardNo
-              ),
-            ],
-          ),
+          Row(children: [Text(value, style: AppTextstyle.dashBoardCardNo)]),
           Padding(
             padding: EdgeInsets.only(left: 90),
             child: const Icon(Icons.trending_up),
@@ -260,9 +266,8 @@ class FollowUpCard extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) =>  LeadProfileScreen(leadData: {},),
+            builder: (context) => LeadProfileScreen(leadData: {}),
           ),
-
         );
       },
       child: Container(
@@ -282,17 +287,11 @@ class FollowUpCard extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
 
                 children: [
-                  const Text(
-                      "Mathew",
-                      style: AppTextstyle.NameText
-                  ),
+                  const Text("Mathew", style: AppTextstyle.NameText),
                   const SizedBox(height: 4),
                   const Text("Check on Proposal View"),
                   const SizedBox(height: 4),
-                  const Text(
-                      "Jan-16-2026",
-                      style:AppTextstyle.MicroText
-                  ),
+                  const Text("Jan-16-2026", style: AppTextstyle.MicroText),
                 ],
               ),
             ),
@@ -355,7 +354,6 @@ class FollowUpCard extends StatelessWidget {
 //     SharedPreferences prefs = await SharedPreferences.getInstance();
 //     prefs.setBool("darkMode", value);
 //   }
-
 
 //   @override
 //   Widget build(BuildContext context) {

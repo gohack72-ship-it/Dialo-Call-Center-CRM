@@ -3,7 +3,6 @@ import 'dart:core';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dialo/models/lead_details_Model.dart';
 
-
 import 'package:flutter/cupertino.dart';
 import 'package:url_launcher/url_launcher.dart';
 // import 'package:provider/provider.dart';
@@ -29,20 +28,19 @@ class LeadProvider extends ChangeNotifier {
 
   String? selectedStatus;
 
-
   FirebaseFirestore fdb = FirebaseFirestore.instance;
-
+  int totalLeads = 0;
+  int followUps = 0;
+  int todayCalls = 0;
+  int overdue = 0;
   Future<void> addNewLead() async {
     DateTime now = DateTime.now();
     String id = now.millisecondsSinceEpoch.toString();
 
-
     String tempAgentId = "";
 
     try {
-
       final agentSnapshot = await fdb.collection("AGENT").get();
-
 
       final leadsSnapshot = await fdb.collection("LEADS").get();
       int leadCount = leadsSnapshot.docs.length;
@@ -63,12 +61,11 @@ class LeadProvider extends ChangeNotifier {
       "EMAIL": emailController.text,
       "LEAD_ID": id,
 
-
       "ADDED_BY_ID": tempAgentId,
       "ASSIGNED_AGENT_ID": tempAgentId,
 
       "ADDED_TIME": now,
-      "STATUS": selectedStatus ?? "NEW",
+      "LEAD_STATUS": selectedStatus ?? "NEW",
       "SOURCE": sourceController.text,
 
       "FOLLOW_UP_DATE": now.add(const Duration(days: 3)),
@@ -76,7 +73,7 @@ class LeadProvider extends ChangeNotifier {
       "LAST_CONTACTED_DATE": now,
       "PRIORITY": 'Medium',
 
-      "FOLLOW_UP_STATUS": "pending",
+      "FOLLOW_UP_STATUS": "NEW",
       "ADDITIONAL_LEAD_DETAILS": selectedLeadsFilters,
     };
 
@@ -120,15 +117,14 @@ class LeadProvider extends ChangeNotifier {
   }
 
   void getLeadStatus() async {
-    fdb.collection("LEAD_STATUS").get().then((value) {
+    fdb.collection("LEAD_SETTINGS").doc("lead_status").get().then((value) {
       statusList.clear();
-      if (value.docs.isNotEmpty) {
-        for (var element in value.docs) {
-          Map<String, dynamic> statusMap = element.data();
-          statusList.add(statusMap["STATUS"]);
-        }
+      if (value.exists) {
+        Map<String, dynamic> statusMap = value.data() as Map<String, dynamic>;
+        List<dynamic> dynamicList = statusMap["leadStatusList"];
+        statusList = dynamicList.map((e) => e.toString()).toList();
       }
-
+      print("Status List: $statusList");
       notifyListeners();
     });
   }
@@ -237,5 +233,47 @@ class LeadProvider extends ChangeNotifier {
     } else {
       throw 'Could not launch $url';
     }
+  }
+
+  Future<void> loadDashboardCounts() async {
+    print("load count started");
+    final db = FirebaseFirestore.instance;
+
+    final totalSnap = await db.collection("LEADS").count().get();
+    totalLeads = totalSnap.count!;
+
+    final followSnap = await db
+        .collection("LEADS")
+        .where("FOLLOW_UP_STATUS", isEqualTo: "FOLLOW_UP")
+        .count()
+        .get();
+    print("follow snap finished ${followSnap.count!}");
+
+    DateTime now = DateTime.now();
+    DateTime start = DateTime(now.year, now.month, now.day);
+    DateTime end = start.add(Duration(days: 1));
+
+    final todaySnap = await db
+        .collection("LEADS")
+        .where("FOLLOW_UP_DATE", isGreaterThanOrEqualTo: start)
+        .where("FOLLOW_UP_DATE", isLessThan: end)
+        .count()
+        .get();
+    print("today snap finished");
+
+    final overdueSnap = await db
+        .collection("LEADS")
+        .where("FOLLOW_UP_DATE", isLessThan: start)
+        .where("FOLLOW_UP_STATUS", isEqualTo: "FOLLOW_UP")
+        .count()
+        .get();
+    print("overdue finished");
+
+    totalLeads = totalSnap.count!;
+    followUps = followSnap.count!;
+    todayCalls = todaySnap.count!;
+    overdue = overdueSnap.count!;
+
+    notifyListeners();
   }
 }

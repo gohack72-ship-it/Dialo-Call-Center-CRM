@@ -9,17 +9,16 @@ import 'leads/leads_screen.dart';
 
 class BottomnavPage extends StatefulWidget {
   final Function(bool) changeTheme;
-  const BottomnavPage({super.key,required this.changeTheme});
+  const BottomnavPage({super.key, required this.changeTheme});
 
   @override
   State<BottomnavPage> createState() => _BottomnavPageState();
 }
 
 class _BottomnavPageState extends State<BottomnavPage> {
-
   int _currentIndex = 0;
 
-  late final List<Widget>_pages;
+  late final List<Widget> _pages;
   @override
   void initState() {
     super.initState();
@@ -30,7 +29,6 @@ class _BottomnavPageState extends State<BottomnavPage> {
       Reportpage(changeTheme: widget.changeTheme),
     ];
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -45,27 +43,22 @@ class _BottomnavPageState extends State<BottomnavPage> {
         onTap: (index) {
           setState(() {
             _currentIndex = index;
-
           });
-          if(index == 2){
+          if (index == 2) {
             context.read<LeadProvider>().getLeadStatus();
             context.read<LeadProvider>().fetchAdditionalLeadDetails();
           }
-
+          if (index == 0) {
+            context.read<LeadProvider>().getLeadStatus();
+          }
         },
         items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: "Dashboard",
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Dashboard"),
           BottomNavigationBarItem(
             icon: Icon(Icons.groups_outlined),
             label: "Leads",
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.add),
-            label: "Add Lead",
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.add), label: "Add Lead"),
           BottomNavigationBarItem(
             icon: Icon(Icons.receipt_outlined),
             label: "Report",
