@@ -48,6 +48,9 @@ class _BottomnavPageState extends State<BottomnavPage> {
             context.read<LeadProvider>().getLeadStatus();
             context.read<LeadProvider>().fetchAdditionalLeadDetails();
           }
+          if (index == 0) {
+            context.read<LeadProvider>().getLeadStatus();
+          }
         },
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: "Dashboard"),

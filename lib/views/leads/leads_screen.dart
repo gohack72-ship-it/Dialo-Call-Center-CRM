@@ -139,27 +139,27 @@ class _LeadsScreenState extends State<LeadsScreen> {
             child: Row(
               children: [
                 StatusChip(
-                  text: "All",
-                  isSelected: selectedStatus == "All",
-                  onTap: () => setState(() => selectedStatus = "All"),
+                  text: "ALL",
+                  isSelected: selectedStatus == "ALL",
+                  onTap: () => setState(() => selectedStatus = "ALL"),
                 ),
                 StatusChip(
-                  text: "New",
+                  text: "NEW",
                   isSelected: selectedStatus == "NEW",
                   onTap: () => setState(() => selectedStatus = "NEW"),
                 ),
                 StatusChip(
-                  text: "Converted",
+                  text: "FOLLOW UPS",
+                  isSelected: selectedStatus == "FOLLOW UPS",
+                  onTap: () => setState(() => selectedStatus = "FOLLOW UPS"),
+                ),
+                StatusChip(   
+                  text: "CONVERTED",
                   isSelected: selectedStatus == "CONVERTED",
                   onTap: () => setState(() => selectedStatus = "CONVERTED"),
                 ),
                 StatusChip(
-                  text: "Accepted",
-                  isSelected: selectedStatus == "ACCEPTED",
-                  onTap: () => setState(() => selectedStatus = "ACCEPTED"),
-                ),
-                StatusChip(
-                  text: "Rejected",
+                  text: "REJECTED",
                   isSelected: selectedStatus == "REJECTED",
                   onTap: () => setState(() => selectedStatus = "REJECTED"),
                 ),
@@ -171,7 +171,8 @@ class _LeadsScreenState extends State<LeadsScreen> {
 
           // 📋 LIST
           Expanded(
-            child: StreamBuilder<QuerySnapshot>(
+            child: 
+            StreamBuilder<QuerySnapshot>(
               stream: (() {
                 Query query = FirebaseFirestore.instance.collection("LEADS");
 
@@ -324,9 +325,9 @@ class LeadCard extends StatelessWidget {
 
   Color getStatusColor() {
     switch (status) {
-      case "ACCEPTED":
-        return Colors.green;
       case "CONVERTED":
+        return Colors.green;
+      case "FOLLOW UPS":
         return Colors.blue;
       case "REJECTED":
         return Colors.red;

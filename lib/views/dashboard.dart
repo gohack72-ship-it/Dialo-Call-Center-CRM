@@ -21,11 +21,11 @@ class _DbState extends State<Dashboard> {
   @override
   void initState() {
     super.initState();
-    
+
     Future.microtask(() {
-    Provider.of<LeadProvider>(context, listen: false)
-        .loadDashboardCounts();
-  });
+      Provider.of<LeadProvider>(context, listen: false).loadDashboardCounts();
+      Provider.of<LeadProvider>(context, listen: false).getLeadStatus();
+    });
   }
 
   @override
@@ -124,25 +124,29 @@ class _DbState extends State<Dashboard> {
               const SizedBox(height: 20),
               const Text("Lead Summary", style: AppTextstyle.SubTitle),
               const SizedBox(height: 05),
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey.shade300),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Column(
-                  children: const [
-                    SummaryRow(title: "New", value: "03"),
-                    Divider(color: Color(0xffEAEAEA)),
-                    SummaryRow(title: "Contacted", value: "03"),
-                    Divider(color: Color(0xffEAEAEA)),
-                    SummaryRow(title: "Accepted", value: "03"),
-                    Divider(color: Color(0xffEAEAEA)),
-                    SummaryRow(title: "Joined", value: "03"),
-                    Divider(color: Color(0xffEAEAEA)),
-                    SummaryRow(title: "Rejected", value: "03"),
-                  ],
-                ),
+              Consumer<LeadProvider>(
+                builder: (context, value, child) {
+                  return Container(
+                    height: MediaQuery.of(context).size.height / 2,
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey.shade300),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: ListView.separated(
+                      itemCount: value.statusList.length,
+                      itemBuilder: (context, index) {
+                        var status = value.statusList[index];
+                        print(status);
+                        return SummaryRow(title: status, value: "03");
+                      },
+
+                      separatorBuilder: (context, index) {
+                        return Divider(color: Color(0xffEAEAEA));
+                      },
+                    ),
+                  );
+                },
               ),
 
               const SizedBox(height: 20),

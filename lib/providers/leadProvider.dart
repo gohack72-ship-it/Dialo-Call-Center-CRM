@@ -58,14 +58,14 @@ class LeadProvider extends ChangeNotifier {
       "ASSIGNED_AGENT_ID": tempAgentId,
 
       "ADDED_TIME": now,
-      "STATUS": selectedStatus ?? "NEW",
+      "LEAD_STATUS": selectedStatus ?? "NEW",
       "SOURCE": sourceController.text,
 
       "FOLLOW_UP_DATE": now.add(const Duration(days: 3)),
       "FOLLOW_UP_TIME": "",
       "PRIORITY": 'Medium',
 
-      "FOLLOW_UP_STATUS": "PENDING",
+      "FOLLOW_UP_STATUS": "NEW",
       "ADDITIONAL_LEAD_DETAILS": selectedLeadsFilters,
     };
 
@@ -85,11 +85,11 @@ class LeadProvider extends ChangeNotifier {
   }
 
   void getLeadStatus() async {
-    fdb.collection("LEAD_SETTINGS").doc("call_status").get().then((value) {
+    fdb.collection("LEAD_SETTINGS").doc("lead_status").get().then((value) {
       statusList.clear();
       if (value.exists) {
         Map<String, dynamic> statusMap = value.data() as Map<String, dynamic>;
-        List<dynamic> dynamicList = statusMap["callStatusList"];
+        List<dynamic> dynamicList = statusMap["leadStatusList"];
         statusList = dynamicList.map((e) => e.toString()).toList();
       }
       print("Status List: $statusList");
@@ -134,7 +134,7 @@ class LeadProvider extends ChangeNotifier {
 
     final followSnap = await db
         .collection("LEADS")
-        .where("FOLLOW_UP_STATUS", isEqualTo: "PENDING")
+        .where("FOLLOW_UP_STATUS", isEqualTo: "FOLLOW_UP")
         .count()
         .get();
     print("follow snap finished ${followSnap.count!}");
@@ -154,7 +154,7 @@ class LeadProvider extends ChangeNotifier {
     final overdueSnap = await db
         .collection("LEADS")
         .where("FOLLOW_UP_DATE", isLessThan: start)
-        .where("FOLLOW_UP_STATUS", isEqualTo: "PENDING")
+        .where("FOLLOW_UP_STATUS", isEqualTo: "FOLLOW_UP")
         .count()
         .get();
     print("overdue finished");
