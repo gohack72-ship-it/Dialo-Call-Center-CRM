@@ -145,23 +145,23 @@ class _LeadsScreenState extends State<LeadsScreen> {
                 ),
                 StatusChip(
                   text: "NEW",
-                  isSelected: selectedStatus == "NEW",
-                  onTap: () => setState(() => selectedStatus = "NEW"),
+                  isSelected: selectedStatus == "New",
+                  onTap: () => setState(() => selectedStatus = "New"),
                 ),
                 StatusChip(
-                  text: "FOLLOW UPS",
-                  isSelected: selectedStatus == "FOLLOW UPS",
-                  onTap: () => setState(() => selectedStatus = "FOLLOW UPS"),
+                  text: "FOLLOW UP",
+                  isSelected: selectedStatus == "Followup",
+                  onTap: () => setState(() => selectedStatus = "Followup"),
                 ),
                 StatusChip(   
                   text: "CONVERTED",
-                  isSelected: selectedStatus == "CONVERTED",
-                  onTap: () => setState(() => selectedStatus = "CONVERTED"),
+                  isSelected: selectedStatus == "Converted",
+                  onTap: () => setState(() => selectedStatus = "Converted"),
                 ),
                 StatusChip(
                   text: "REJECTED",
-                  isSelected: selectedStatus == "REJECTED",
-                  onTap: () => setState(() => selectedStatus = "REJECTED"),
+                  isSelected: selectedStatus == "Rejected",
+                  onTap: () => setState(() => selectedStatus = "Rejected"),
                 ),
               ],
             ),
@@ -178,7 +178,7 @@ class _LeadsScreenState extends State<LeadsScreen> {
 
                 // ✅ Status filter
                 if (selectedStatus != "All") {
-                  query = query.where("STATUS", isEqualTo: selectedStatus);
+                  query = query.where("LEAD_STATUS", isEqualTo: selectedStatus);
                 }
 
                 // ✅ Drawer filters
