@@ -10,7 +10,10 @@ class SettingsDrawer extends StatefulWidget {
 
   static Widget _item(String title, IconData icon) {
     return ListTile(
-      leading: Icon(icon, size: 22, color: AppColors.textColor),
+      leading: Icon(icon,
+        size: 22,
+          // color: AppColors.textColor
+      ),
       title: Text(title),
       onTap: () {},
     );
@@ -51,7 +54,9 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
               child: Row(
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.arrow_back, color: Colors.black),
+                    icon: const Icon(Icons.arrow_back,
+                        // color: Colors.black
+                    ),
                     onPressed: () => Navigator.pop(context),
                   ),
                   SizedBox(width: 8),
@@ -81,10 +86,13 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
             ),
             SizedBox(height: 10),
             const Divider(),
-            SettingsDrawer._item("Notifications", Icons.notifications),
+            SettingsDrawer._item("Notifications", Icons.notifications,),
            ListTile(
-             leading: const Icon(Icons.dark_mode,
-                 size: 22,color: AppColors.textColor,),
+             leading: const Icon(
+                 Icons.dark_mode,
+                 size: 22,
+               // color: AppColors.textColor,
+             ),
              title: const Text("Mode Change"),
              trailing: Switch(value: isDarkMode,
                  activeColor: AppColors.themeColor,

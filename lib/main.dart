@@ -69,6 +69,39 @@ class _MyAppState extends State<MyApp> {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
+        theme: ThemeData(
+          brightness:  Brightness.light,
+          primarySwatch: Colors.blue,
+        scaffoldBackgroundColor: Colors.white,
+
+          iconTheme: IconThemeData(
+            color: Colors.black
+          ),
+          // appBarTheme: const AppBarTheme(
+          //   backgroundColor: Colors.blue,
+          //   foregroundColor: Colors.white,
+          // ),
+        ),
+
+        darkTheme: ThemeData(
+          brightness: Brightness.dark,
+          primarySwatch: Colors.blue,
+          scaffoldBackgroundColor: Colors.black,
+            iconTheme: const IconThemeData(
+              color: Colors.white,
+            ),
+
+          textTheme: const TextTheme(
+            bodyLarge: TextStyle(color: Colors.white),
+            bodyMedium: TextStyle(color: Colors.white),
+            titleLarge: TextStyle(color: Colors.white),
+          ),
+
+          //   appBarTheme: const AppBarTheme(
+          //   backgroundColor: Colors.blue,
+          //   foregroundColor: Colors.white,
+          // )
+        ),
         home: Loginpage(changeTheme: changeTheme,)
       ),
     );
