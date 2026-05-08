@@ -1,11 +1,9 @@
 // 
 // import 'package:dialo/providers/login_provider.dart';
 import 'package:dialo/views/bottomnavigationbar.dart';
-import 'package:dialo/views/dashboard.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'package:dialo/providers/loginprovider.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -17,7 +15,17 @@ class Loginpage extends StatefulWidget {
   State<Loginpage> createState() => _LoginpageState();
 }
 
+
+
 class _LoginpageState extends State<Loginpage> {
+
+@override
+void initState() {
+  super.initState();
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    context.read<Loginprovider>().loadRememberMe();
+  });
+}
   
   bool obscuretext = true;
 
