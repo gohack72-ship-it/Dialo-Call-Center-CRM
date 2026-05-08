@@ -22,7 +22,7 @@ class Reportpage extends StatefulWidget {
 }
 
 class _ReportpageState extends State<Reportpage> {
-  final int _currentIndex = 0;
+  int currentIndex = 2;
   String selectedReportType = "Today's data";
 
 

@@ -12,11 +12,19 @@ class ReminderPage extends StatefulWidget {
 
   @override
   State<ReminderPage> createState() => _ReminderPageState();
+
 }
 
 class _ReminderPageState extends State<ReminderPage> {
 
+  @override
+  void initState() {
+    super.initState();
 
+    Future.microtask(() {
+      context.read<LeadProvider>().getCallStatusList();
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -85,9 +93,8 @@ class _ReminderPageState extends State<ReminderPage> {
                         }).toList(),
 
                         onChanged: (value) {
-                          setState(() {
-                            val.selectedCallStatus = value;
-                          });
+                          val.selectedCallStatus = value;
+                          val.notifyListeners();
                         },
                       );
                     }
