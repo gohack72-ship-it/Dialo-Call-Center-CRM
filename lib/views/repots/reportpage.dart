@@ -7,14 +7,69 @@ import 'package:flutter/material.dart';
 
 class Reportpage extends StatefulWidget {
   final Function(bool) changeTheme;
+
   const Reportpage({super.key, required this.changeTheme});
+
+
+  
 
   @override
   State<Reportpage> createState() => _ReportpageState();
 }
 
 class _ReportpageState extends State<Reportpage> {
-  int _currentIndex = 0;
+  final int _currentIndex = 0;
+  String selectedReportType = "Today's data";
+
+ 
+  Widget analyticsItem({
+    required String title,
+    required String count,
+    required Color color,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 20),
+      child: Column(
+        children: [
+
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+
+              Text(
+                count,
+                style: TextStyle(
+                  color: color,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 10),
+
+          ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: LinearProgressIndicator(
+              value: 0,
+              minHeight: 10,
+              backgroundColor: color.withOpacity(0.15),
+              valueColor: AlwaysStoppedAnimation(color),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -167,200 +222,255 @@ class _ReportpageState extends State<Reportpage> {
                   ],
                 ),
               ),
-              const SizedBox(height: 50),
-              Text("Report feed", style: AppTextstyle.title),
-              const SizedBox(height: 50),
-              Column(
-                children: [
-                  Container(
-                    width: double.infinity,
-                    padding: EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: AppColors.textColor),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Text("Alice cooper", style: AppTextstyle.SubTitle),
-                          ],
-                        ),
-                        const SizedBox(height: 10),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Container(
-                              height: 20,
-                              width: 80,
-                              decoration: BoxDecoration(
-                                color: AppColors.redColor,
-                              ),
-                              child: Row(
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        "Overdue",
-                                        style: TextStyle(
-                                          color: AppColors.whitetext,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(width: 4),
-                                  Icon(
-                                    Icons.warning_amber,
-                                    color: AppColors.whitetext,
-                                    size: 18,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Text("Priority:"),
-                            const SizedBox(width: 10),
-                            CircleAvatar(
-                              radius: 5,
-                              backgroundColor: AppColors.redColor,
-                            ),
-                            Text("High"),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Text("Handle Time:"),
-                            Text("5m 20s"),
-                            Spacer(),
-                            Container(
-                              height: 25,
-                              width: 50,
-                              decoration: BoxDecoration(
-                                color: AppColors.redColor,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Row(
-                                children: [
-                                  Icon(
-                                    Icons.call_end,
-                                    color: AppColors.whitetext,
-                                    size: 20,
-                                  ),
-                                  Text(
-                                    "Call",
-                                    style: TextStyle(
-                                      color: AppColors.whitetext,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              Column(
-                children: [
-                  Container(
-                    width: double.infinity,
-                    padding: EdgeInsets.all(15),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: AppColors.textColor),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Text("Swabirin", style: AppTextstyle.SubTitle),
-                            Spacer(),
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.check_box_outlined,
-                                  color: AppColors.greenColor,
-                                ),
-                                Text(
-                                  "Completed",
-                                  style: TextStyle(color: AppColors.greenColor),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            CircleAvatar(
-                              radius: 10,
-                              backgroundColor: AppColors.themeColor,
-                              child: CircleAvatar(
-                                radius: 5,
-                                backgroundColor: AppColors.whitetext,
-                              ),
-                            ),
-                            Text("Pending", style: AppTextstyle.MiniText),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Text("priority:"),
-                            CircleAvatar(
-                              radius: 5,
-                              backgroundColor: AppColors.redColor,
-                            ),
-                            Text("High"),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Text("Handle time:"),
-                            Text("3m 32s"),
-                            Spacer(),
-                            Container(
-                              height: 25,
-                              width: 50,
-                              decoration: BoxDecoration(
-                                color: AppColors.greenColor,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Row(
-                                children: [
-                                  Icon(
-                                    Icons.call_end,
-                                    color: AppColors.whitetext,
-                                    size: 20,
-                                  ),
+              SizedBox(height: 30),
+              
 
-                                  Text(
-                                    "Call",
-                                    style: TextStyle(
-                                      color: AppColors.whitetext,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+              Container(
+  width: double.infinity,
+  padding: const EdgeInsets.all(15),
+  decoration: BoxDecoration(
+    color: Colors.white,
+    borderRadius: BorderRadius.circular(20),
+  ),
+
+  child: Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+
+      
+      Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+
+          Container(
+            height: 50,
+            width: 50,
+            decoration: BoxDecoration(
+              color: Colors.blue.shade50,
+              borderRadius: BorderRadius.circular(15),
+            ),
+            child: Icon(
+              Icons.call,
+              color: AppColors.themeColor,
+            ),
+          ),
+
+          const SizedBox(width: 15),
+
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+
+                Text(
+                  "Call Status Report",
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textColor,
                   ),
-                ],
+                ),
+
+                const SizedBox(height: 8),
+
+                Row(
+                  children: [
+
+                    Icon(
+                      Icons.calendar_today_outlined,
+                      size: 16,
+                      color: Colors.blueGrey,
+                    ),
+
+                    const SizedBox(width: 5),
+
+                    Expanded(
+                      child: Text(
+                       "Showing $selectedReportType",
+                        style: TextStyle(
+                          color: Colors.blueGrey,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 8),
+
+               
+              ],
+            ),
+          ),
+
+          const SizedBox(width: 10),
+
+          Column(
+            children: [
+
+              Icon(
+                Icons.filter_alt_outlined,
+                color: AppColors.themeColor,
               ),
+
+              const SizedBox(height: 15),
+
+             
             ],
           ),
-        ),
+
+          const SizedBox(width: 10),
+
+          
+          PopupMenuButton<String>(
+  onSelected: (value) {
+    setState(() {
+      selectedReportType = value;
+    });
+  },
+
+  itemBuilder: (context) => [
+
+    const PopupMenuItem(
+      value: "Today's data",
+      child: Text("Today's data"),
+    ),
+
+    const PopupMenuItem(
+      value: "Weekly data",
+      child: Text("Weekly data"),
+    ),
+
+    const PopupMenuItem(
+      value: "Monthly data",
+      child: Text("Monthly data"),
+    ),
+  ],
+
+  child: CircleAvatar(
+    radius: 22,
+    backgroundColor: Colors.blue.shade100,
+    child: Icon(
+      Icons.more_vert,
+      color: AppColors.themeColor,
+    ),
+  ),
+),
+        ],
       ),
-    );
+    ],
+  ),
+),
+              const SizedBox(height: 20),
+  
+
+  Container(
+  width: double.infinity,
+  padding: const EdgeInsets.all(20),
+  decoration: BoxDecoration(
+    color: AppColors.whitetext,
+    borderRadius: BorderRadius.circular(25),
+    boxShadow: [
+      BoxShadow(
+        color: Colors.grey.shade200,
+        blurRadius: 10,
+        offset: const Offset(0, 4),
+      ),
+    ],
+  ),
+
+  child: Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+
+      /// Header
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+
+          Text(
+            "Response Analytics",
+            style: AppTextstyle.SubTitle,
+          ),
+
+          Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 15,
+              vertical: 8,
+            ),
+            decoration: BoxDecoration(
+              color: Colors.blue.shade50,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Text(
+              "Total: 0",
+              style: TextStyle(
+                color: AppColors.themeColor,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
+      ),
+
+      const SizedBox(height: 30),
+
+      analyticsItem(
+        title: "Connected",
+        count: "0",
+        color: Colors.blue,
+      ),
+
+      analyticsItem(
+        title: "Busy",
+        count: "0",
+        color: Colors.lightBlue,
+      ),
+
+      analyticsItem(
+        title: "Rejected",
+        count: "0",
+        color: Colors.red,
+      ),
+
+      analyticsItem(
+        title: "Switched off",
+        count: "0",
+        color: Colors.red,
+      ),
+
+      analyticsItem(
+        title: "Out of Coverage Area",
+        count: "0",
+        color: Colors.green,
+      ),
+
+      analyticsItem(
+        title: "Not Attended",
+        count: "0",
+        color: Colors.red,
+      ),
+
+      analyticsItem(
+        title: "No Status Updated",
+        count: "0",
+        color: Colors.purple,
+      ),
+
+      const SizedBox(height: 20),
+
+     
+    ],
+  ),
+),
+          
+                 
+               
+                
+          ]),
+      
+      ),
+    ));
   }
+  
 }

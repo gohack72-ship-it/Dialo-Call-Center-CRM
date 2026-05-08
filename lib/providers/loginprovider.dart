@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -14,8 +15,9 @@ TextEditingController passwordController=TextEditingController();
 final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 bool get isChecked => remeberme;
 
-  // get isChecked => null;
-  // get _firestore => null;
+  bool isChecked = false;
+
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   Future<User?> signInWithGoogle() async{
     try {
@@ -55,10 +57,11 @@ bool get isChecked => remeberme;
           .where('ROLE', isEqualTo: 'AGENT')
           .get();
 
+          print("Query Result: ${querySnapshot.docs.length} documents found for email: ${emailController.text.trim()}");
+
       if (querySnapshot.docs.isNotEmpty) {
         Map<String, dynamic> userMap =
         querySnapshot.docs.first.data();
-
 
 
         print("Login Success: ${emailController.text}");
@@ -71,7 +74,7 @@ bool get isChecked => remeberme;
         await prefs.setString('image', userMap['IMAGE'] ?? '');
 
         // await fetchUsers();
-
+        clearLoginPage();
         return true;
       } else {
         print("Login Failed: Invalid credentials");
@@ -82,8 +85,34 @@ bool get isChecked => remeberme;
       return false;
     }
   }
-  Future<void> fetchUsers() async {
-}
+
+  // void toggleRememberMe(bool value) {
+  //   isChecked = value;
+  //   notifyListeners();
+  //   SharedPreferences.getInstance().then((prefs) {
+  //     prefs.setBool('remember', value);
+  //     remeberme = value;
+  //     notifyListeners();
+  //   });
+  // }
+
+  void loadRememberMe() {
+    SharedPreferences.getInstance().then((prefs) {
+      bool remember = prefs.getBool('remember') ?? false;
+      emailController.text = remember ? (prefs.getString('email') ?? '') : '';
+      passwordController.text = remember ? (prefs.getString('password') ?? '') : '';
+      isChecked = remember;
+      remeberme = remember;
+      notifyListeners();
+    });
+  }
+
+  clearLoginPage() {
+    emailController.clear();
+    passwordController.clear();
+    remeberme = false;
+    notifyListeners();
+  }
 
 }
 
