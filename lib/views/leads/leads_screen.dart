@@ -137,29 +137,29 @@ class _LeadsScreenState extends State<LeadsScreen> {
             child: Row(
               children: [
                 StatusChip(
-                  text: "All",
-                  isSelected: selectedStatus == "All",
-                  onTap: () => setState(() => selectedStatus = "All"),
+                  text: "ALL",
+                  isSelected: selectedStatus == "ALL",
+                  onTap: () => setState(() => selectedStatus = "ALL"),
                 ),
                 StatusChip(
-                  text: "New",
-                  isSelected: selectedStatus == "NEW",
-                  onTap: () => setState(() => selectedStatus = "NEW"),
+                  text: "NEW",
+                  isSelected: selectedStatus == "New",
+                  onTap: () => setState(() => selectedStatus = "New"),
                 ),
                 StatusChip(
-                  text: "Converted",
-                  isSelected: selectedStatus == "CONVERTED",
-                  onTap: () => setState(() => selectedStatus = "CONVERTED"),
+                  text: "FOLLOW UP",
+                  isSelected: selectedStatus == "Followup",
+                  onTap: () => setState(() => selectedStatus = "Followup"),
+                ),
+                StatusChip(   
+                  text: "CONVERTED",
+                  isSelected: selectedStatus == "Converted",
+                  onTap: () => setState(() => selectedStatus = "Converted"),
                 ),
                 StatusChip(
-                  text: "Accepted",
-                  isSelected: selectedStatus == "ACCEPTED",
-                  onTap: () => setState(() => selectedStatus = "ACCEPTED"),
-                ),
-                StatusChip(
-                  text: "Rejected",
-                  isSelected: selectedStatus == "REJECTED",
-                  onTap: () => setState(() => selectedStatus = "REJECTED"),
+                  text: "REJECTED",
+                  isSelected: selectedStatus == "Rejected",
+                  onTap: () => setState(() => selectedStatus = "Rejected"),
                 ),
               ],
             ),
@@ -169,13 +169,14 @@ class _LeadsScreenState extends State<LeadsScreen> {
 
           // 📋 LIST
           Expanded(
-            child: StreamBuilder<QuerySnapshot>(
+            child: 
+            StreamBuilder<QuerySnapshot>(
               stream: (() {
                 Query query = FirebaseFirestore.instance.collection("LEADS");
 
                 // ✅ Status filter
                 if (selectedStatus != "All") {
-                  query = query.where("STATUS", isEqualTo: selectedStatus);
+                  query = query.where("LEAD_STATUS", isEqualTo: selectedStatus);
                 }
 
                 // ✅ Drawer filters
@@ -322,9 +323,9 @@ class LeadCard extends StatelessWidget {
 
   Color getStatusColor() {
     switch (status) {
-      case "ACCEPTED":
-        return Colors.green;
       case "CONVERTED":
+        return Colors.green;
+      case "FOLLOW UPS":
         return Colors.blue;
       case "REJECTED":
         return Colors.red;
