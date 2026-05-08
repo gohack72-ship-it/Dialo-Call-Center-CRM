@@ -4,6 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dialo/models/lead_details_Model.dart';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 // import 'package:provider/provider.dart';
 
@@ -14,6 +16,7 @@ class LeadProvider extends ChangeNotifier {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController noteController = TextEditingController();
   final TextEditingController sourceController = TextEditingController();
+  final TextEditingController followUpNoteController = TextEditingController();
   int dueToday = 0;
   int thisWeek = 0;
 
@@ -21,6 +24,8 @@ class LeadProvider extends ChangeNotifier {
    String searchText = "";
 
   List<String> statusList = [];
+  List<String> callStatusList = [];
+
   List<LeadDetailsModel> additionalLeadDetailsList = [];
   List<Map<String, dynamic>> _todaysLeadsList = [];
   List<Map<String, dynamic>> get todaysLeadsList => _todaysLeadsList;
@@ -81,6 +86,85 @@ class LeadProvider extends ChangeNotifier {
 
     clearData();
   }
+
+
+  DateTime? selectedDate;
+  TimeOfDay? selectedTime;
+
+  String? selectedCallStatus;
+
+
+  // 📅 Pick Date
+  Future<void> pickDate(BuildContext context) async {
+    DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2020),
+      lastDate: DateTime(2100),
+    );
+
+    if (picked != null) {
+
+        selectedDate = picked;
+    }
+    notifyListeners();
+  }
+
+  // ⏰ Pick Time
+  Future<void> pickTime(BuildContext context) async {
+    TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+
+    if (picked != null) {
+
+        selectedTime = picked;
+
+    }
+    notifyListeners();
+  }
+
+  void saveReminder(String leadId, BuildContext context) {
+
+    if (selectedDate == null || selectedTime == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Please select date & time")),
+      );
+      return;
+    }
+
+    // ✅ TODAY (current time)
+    DateTime lastCallDate = DateTime.now();
+
+    // ✅ USER SELECTED (follow-up)
+    DateTime followUpDate = DateTime(
+      selectedDate!.year,
+      selectedDate!.month,
+      selectedDate!.day,
+      selectedTime!.hour,
+      selectedTime!.minute,
+    );
+
+    // 🔍 DEBUG PRINT
+    print("Last Call (NOW): $lastCallDate");
+    print("Follow Up (SELECTED): $followUpDate");
+
+   updateReminder(
+      leadId: leadId,
+      lastCallDate: lastCallDate,
+      followUpDate: followUpDate,
+      note: noteController.text,
+    );
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Reminder Saved ✅")),
+    );
+
+    Navigator.pop(context);
+    print("Lead ID: ${leadId}");
+  }
+
   Future<void> fetchTodaysWorkload() async {
     DateTime now = DateTime.now();
     DateTime startOfDay = DateTime(now.year, now.month, now.day);
@@ -114,6 +198,19 @@ class LeadProvider extends ChangeNotifier {
     //  DON'T CLEAR statusList
 
     notifyListeners();
+  }
+
+  void getCallStatusList() async {
+    fdb.collection("LEAD_SETTINGS").doc("call_status").get().then((value) {
+      callStatusList.clear();
+      if (value.exists) {
+        Map<String, dynamic> statusMap = value.data() as Map<String, dynamic>;
+        List<dynamic> dynamicList = statusMap["callStatusList"];
+        callStatusList = dynamicList.map((e) => e.toString()).toList();
+      }
+      print("Status List: $callStatusList");
+      notifyListeners();
+    });
   }
 
   void getLeadStatus() async {

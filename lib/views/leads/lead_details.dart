@@ -1,7 +1,9 @@
 import 'package:dialo/views/reminderpage.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../constants/app_colors.dart';
+import '../../providers/leadProvider.dart';
 
 
 
@@ -49,6 +51,7 @@ class _LeadProfileScreenState extends State<LeadProfileScreen> {
             padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
             child: ElevatedButton.icon(
               onPressed: () {
+                context.read<LeadProvider>().getCallStatusList();
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const ReminderPage(leadId: '',),

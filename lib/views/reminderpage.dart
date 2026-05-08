@@ -16,92 +16,6 @@ class ReminderPage extends StatefulWidget {
 
 class _ReminderPageState extends State<ReminderPage> {
 
-  DateTime? selectedDate;
-  TimeOfDay? selectedTime;
-  TextEditingController noteController = TextEditingController();
-  String? selectedCallStatus;
-
-  List<String> callStatusList = [
-    "Interested",
-    "Not Interested",
-    "Busy",
-    "Call Later",
-    "Out of Coverage Area",
-  ];
-  List<String> leadstage = [
-    "Converted",
-    "Follow Up",
-    "Rejected",
-  ];
-  // 📅 Pick Date
-  Future<void> pickDate() async {
-    DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2020),
-      lastDate: DateTime(2100),
-    );
-
-    if (picked != null) {
-      setState(() {
-        selectedDate = picked;
-      });
-    }
-  }
-
-  // ⏰ Pick Time
-  Future<void> pickTime() async {
-    TimeOfDay? picked = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.now(),
-    );
-
-    if (picked != null) {
-      setState(() {
-        selectedTime = picked;
-      });
-    }
-  }
-
-  void saveReminder() {
-
-    if (selectedDate == null || selectedTime == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Please select date & time")),
-      );
-      return;
-    }
-
-    // ✅ TODAY (current time)
-    DateTime lastCallDate = DateTime.now();
-
-    // ✅ USER SELECTED (follow-up)
-    DateTime followUpDate = DateTime(
-      selectedDate!.year,
-      selectedDate!.month,
-      selectedDate!.day,
-      selectedTime!.hour,
-      selectedTime!.minute,
-    );
-
-    // 🔍 DEBUG PRINT
-    print("Last Call (NOW): $lastCallDate");
-    print("Follow Up (SELECTED): $followUpDate");
-
-    Provider.of<LeadProvider>(context, listen: false).updateReminder(
-      leadId: widget.leadId,
-      lastCallDate: lastCallDate,
-      followUpDate: followUpDate,
-      note: noteController.text,
-    );
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Reminder Saved ✅")),
-    );
-
-    Navigator.pop(context);
-    print("Lead ID: ${widget.leadId}");
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -153,26 +67,30 @@ class _ReminderPageState extends State<ReminderPage> {
 
                   const SizedBox(height: 8),
 
-                  DropdownButtonFormField<String>(
-                    value: selectedCallStatus,
+                  Consumer<LeadProvider>(
+                    builder: (context,val, child) {
+                      return DropdownButtonFormField<String>(
+                        value: val.selectedCallStatus,
 
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      hintText: "Select Call Status",
-                    ),
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          hintText: "Select Call Status",
+                        ),
 
-                    items: callStatusList.map((status) {
-                      return DropdownMenuItem<String>(
-                        value: status,
-                        child: Text(status),
+                        items: val.callStatusList.map((status) {
+                          return DropdownMenuItem<String>(
+                            value: status,
+                            child: Text(status),
+                          );
+                        }).toList(),
+
+                        onChanged: (value) {
+                          setState(() {
+                            val.selectedCallStatus = value;
+                          });
+                        },
                       );
-                    }).toList(),
-
-                    onChanged: (value) {
-                      setState(() {
-                        selectedCallStatus = value;
-                      });
-                    },
+                    }
                   ),
 
                   SizedBox(height: 20,),
@@ -186,26 +104,32 @@ class _ReminderPageState extends State<ReminderPage> {
 
                   const SizedBox(height: 8),
 
-                  DropdownButtonFormField<String>(
-                    value: leadstage,
+                  Consumer<LeadProvider>(
+                    builder: (context,value, child) {
+                      return DropdownButtonFormField<String>(
+                        value: value.selectedCallStatus,
 
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      hintText: "Select Lead Stage",
-                    ),
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          hintText: "Select Lead Stage",
+                        ),
 
-                    items: callStatusList.map((status) {
-                      return DropdownMenuItem<String>(
-                        value: status,
-                        child: Text(status),
+                        items: value.callStatusList.map((status) {
+                          return DropdownMenuItem<String>(
+                            value: status,
+                            child: Text(status),
+                          );
+                        }).toList(),
+
+                        onChanged: (val) {
+
+                            value.selectedCallStatus = val;
+
+
+
+                        },
                       );
-                    }).toList(),
-
-                    onChanged: (value) {
-                      setState(() {
-                        selectedCallStatus = value;
-                      });
-                    },
+                    }
                   ),
                   SizedBox(height: 20,),
 
@@ -225,7 +149,9 @@ class _ReminderPageState extends State<ReminderPage> {
 
                     // 📅 DATE
                     GestureDetector(
-                      onTap: pickDate,
+                      onTap: (){
+                        context.read<LeadProvider>().pickDate(context);
+                      },
                       child: Container(
                         padding: const EdgeInsets.all(15),
                         decoration: BoxDecoration(
@@ -236,10 +162,14 @@ class _ReminderPageState extends State<ReminderPage> {
                           children: [
                             const Icon(Icons.calendar_month, size: 20),
                             const SizedBox(width: 10),
-                            Text(
-                              selectedDate == null
-                                  ? "Pick Date"
-                                  : "${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}",
+                           Consumer<LeadProvider>(
+                              builder: (context,val,child) {
+                                return Text(
+                                 val.selectedDate == null
+                                      ? "Pick Date"
+                                      : "${val.selectedDate!.day}/${val.selectedDate!.month}/${val.selectedDate!.year}",
+                                );
+                              }
                             ),
                           ],
                         ),
@@ -250,7 +180,9 @@ class _ReminderPageState extends State<ReminderPage> {
 
                     // ⏰ TIME
                     GestureDetector(
-                      onTap: pickTime,
+                      onTap: (){
+                        context.read<LeadProvider>().pickTime(context);
+                      },
                       child: Container(
                         padding: const EdgeInsets.all(15),
                         decoration: BoxDecoration(
@@ -261,10 +193,14 @@ class _ReminderPageState extends State<ReminderPage> {
                           children: [
                             const Icon(Icons.access_time, size: 20),
                             const SizedBox(width: 10),
-                            Text(
-                              selectedTime == null
-                                  ? "Select Time"
-                                  : selectedTime!.format(context),
+                            Consumer<LeadProvider>(
+                              builder: (context,val,child) {
+                                return Text(
+                                  val.selectedTime == null
+                                      ? "Select Time"
+                                      : val.selectedTime!.format(context),
+                                );
+                              }
                             ),
                           ],
                         ),
@@ -289,12 +225,16 @@ class _ReminderPageState extends State<ReminderPage> {
                     Text("Reminder Note", style: AppTextstyle.dashBoardCard),
                     Padding(
                       padding: const EdgeInsets.all(10.0),
-                      child: TextField(
-                        controller: noteController,
-                        decoration: const InputDecoration(
-                          labelText: "What should you remember to do ?",
-                          border: OutlineInputBorder(),
-                        ),
+                      child: Consumer<LeadProvider>(
+                        builder: (context,val,child) {
+                          return TextField(
+                            controller: val.followUpNoteController,
+                            decoration: const InputDecoration(
+                              labelText: "What should you remember to do ?",
+                              border: OutlineInputBorder(),
+                            ),
+                          );
+                        }
                       ),
                     ),
                   ],
@@ -305,7 +245,9 @@ class _ReminderPageState extends State<ReminderPage> {
 
               // 🔘 BUTTON
               InkWell(
-                onTap: saveReminder,
+                onTap: (){
+                  context.read<LeadProvider>().saveReminder(widget.leadId, context);
+                },
                 child: Container(
                   padding: const EdgeInsets.all(10),
                   width: 200,
