@@ -15,6 +15,7 @@ class LeadProvider extends ChangeNotifier {
   TextEditingController searchController = TextEditingController();
   String searchText = "";
 
+  Map<String, int> statusCountMap = {};
   List<String> statusList = [];
   List<LeadDetailsModel> additionalLeadDetailsList = [];
   Map<String, dynamic> selectedLeadsFilters = {};
@@ -26,6 +27,31 @@ class LeadProvider extends ChangeNotifier {
   int followUps = 0;
   int todayCalls = 0;
   int overdue = 0;
+
+  LeadProvider() {
+    getLeadStatus();
+    Future.delayed(Duration(seconds: 1), () {
+      getStatusCounts();
+    });
+    
+  }
+
+  Future<void> getStatusCounts() async {
+    statusCountMap = {};
+    for (var status in statusList) {
+      final snap = await fdb
+          .collection("LEADS")
+          .where("FOLLOW_UP_STATUS", isEqualTo: status)
+          .count()
+          .get();
+
+      int count = snap.count ?? 0;
+      statusCountMap[status] = count;
+    }
+
+    notifyListeners();
+  }
+
   Future<void> addNewLead() async {
     DateTime now = DateTime.now();
     String id = now.millisecondsSinceEpoch.toString();
@@ -59,8 +85,8 @@ class LeadProvider extends ChangeNotifier {
 
       "ADDED_TIME": now,
       "LEAD_STATUS": selectedStatus ?? "NEW",
-      "LEAD_CATEGORY" :"",
-      "CALL_STATUS" :"",
+      "LEAD_CATEGORY": "",
+      "CALL_STATUS": "",
       "SOURCE": sourceController.text,
 
       "FOLLOW_UP_DATE": now.add(const Duration(days: 3)),
@@ -90,7 +116,9 @@ class LeadProvider extends ChangeNotifier {
   }
 
   void getLeadStatus() async {
-    fdb.collection("LEAD_SETTINGS").doc("lead_status").get().then((value) {
+    await fdb.collection("LEAD_SETTINGS").doc("lead_status").get().then((
+      value,
+    ) {
       statusList.clear();
       if (value.exists) {
         Map<String, dynamic> statusMap = value.data() as Map<String, dynamic>;
