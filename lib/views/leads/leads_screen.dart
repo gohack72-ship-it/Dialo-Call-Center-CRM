@@ -352,8 +352,9 @@ class LeadCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
-        // Colors.white,
+        color: Theme.of(context).brightness == Brightness.dark
+             ? Colors.grey.shade800
+             : Colors.white,
         borderRadius: BorderRadius.circular(16),
         boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 4)],
       ),

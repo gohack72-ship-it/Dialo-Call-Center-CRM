@@ -97,10 +97,10 @@ class _MyAppState extends State<MyApp> {
             titleLarge: TextStyle(color: Colors.white),
           ),
 
-          //   appBarTheme: const AppBarTheme(
-          //   backgroundColor: Colors.blue,
-          //   foregroundColor: Colors.white,
-          // )
+        //     appBarTheme: const AppBarTheme(
+        //     backgroundColor: Colors.white,
+        //     foregroundColor: Colors.blue,
+        //   )
         ),
         home: Loginpage(changeTheme: changeTheme,)
       ),

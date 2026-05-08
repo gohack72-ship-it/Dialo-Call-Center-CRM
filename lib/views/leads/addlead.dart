@@ -30,7 +30,7 @@ class _NewLeadPageState extends State<NewLeadPage> {
     return PopScope(
       canPop: true, // Changed to true so the back button works
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: SafeArea(
           child: Column(
             children: [
@@ -117,11 +117,11 @@ class _NewLeadPageState extends State<NewLeadPage> {
                         /// ✅ STATUS DROPDOWN
                         Consumer<LeadProvider>(
                           builder: (context, status, child) {
-                            if (status.statusList.isEmpty) {
-                              return const Center(
-                                child: CircularProgressIndicator(),
-                              );
-                            }
+                            // if (status.statusList.isEmpty) {
+                            //   return const Center(
+                            //     child: CircularProgressIndicator(),
+                            //   );
+                            // }
 
                             return _dropdown(
                               hint: "Status",
