@@ -6,6 +6,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class ApiExample extends StatefulWidget {
+  const ApiExample({super.key});
+
   @override
   _ApiExampleState createState() => _ApiExampleState();
 }

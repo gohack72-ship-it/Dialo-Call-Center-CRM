@@ -66,7 +66,7 @@ class _SplashscreenState extends State<Splashscreen> {
         //       setState(() {
         //         showSecond = true;
         //         Future.delayed(Duration(seconds: 1),(){
-        //           Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => BottomnavPage(changeTheme: widget.changeTheme),));
+        //           Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => Loginpage(changeTheme: widget.changeTheme),));
         //         });
         //       });
         //     });

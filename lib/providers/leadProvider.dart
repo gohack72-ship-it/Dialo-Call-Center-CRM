@@ -71,6 +71,8 @@ class LeadProvider extends ChangeNotifier {
 
       "ADDED_TIME": now,
       "LEAD_STATUS": selectedStatus ?? "NEW",
+      "LEAD_CATEGORY" :"",
+      "CALL_STATUS" :"",
       "SOURCE": sourceController.text,
 
       "FOLLOW_UP_DATE": now.add(const Duration(days: 3)),
@@ -78,7 +80,7 @@ class LeadProvider extends ChangeNotifier {
       "LAST_CONTACTED_DATE": now,
       "PRIORITY": 'Medium',
 
-      "FOLLOW_UP_STATUS": "NEW",
+      "FOLLOW_UP_STATUS": selectedStatus ?? "NEW",
       "ADDITIONAL_LEAD_DETAILS": selectedLeadsFilters,
     };
 
@@ -191,9 +193,12 @@ class LeadProvider extends ChangeNotifier {
   void clearData() {
     nameController.clear();
     placeController.clear();
+    emailController.clear();
     phoneController.clear();
     emailController.clear();
 
+    sourceController.clear();
+    selectedStatus = null;
 
     //  DON'T CLEAR statusList
 

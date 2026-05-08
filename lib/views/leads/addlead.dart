@@ -131,11 +131,11 @@ class _NewLeadPageState extends State<NewLeadPage> {
                                 status.changeStatus(st!);
                               },
                             );
+                            
                           },
                         ),
 
                         Consumer<LeadProvider>(
-
                           builder: (context, val, child) {
                             if (val.additionalLeadDetailsList.isEmpty) {
                               return const Center(
@@ -152,7 +152,7 @@ class _NewLeadPageState extends State<NewLeadPage> {
                                   children: [
                                     _label(item.title),
 
-                                    item.sub != null && item.sub.isNotEmpty
+                                    item.sub.isNotEmpty
                                         ? _dropdown(
                                       hint: item.title,
                                       items: item.sub,
@@ -321,7 +321,7 @@ class _NewLeadPageState extends State<NewLeadPage> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 14),
       child: DropdownButtonFormField<String>(
-        value: value,
+        initialValue: value,
         hint: Text(hint),
         items: items
             .map(
