@@ -65,7 +65,7 @@ class LeadProvider extends ChangeNotifier {
       "FOLLOW_UP_TIME": "",
       "PRIORITY": 'Medium',
 
-      "FOLLOW_UP_STATUS": "pending",
+      "FOLLOW_UP_STATUS": "PENDING",
       "ADDITIONAL_LEAD_DETAILS": selectedLeadsFilters,
     };
 
@@ -89,7 +89,7 @@ class LeadProvider extends ChangeNotifier {
       statusList.clear();
       if (value.exists) {
         Map<String, dynamic> statusMap = value.data() as Map<String, dynamic>;
-        List<dynamic> dynamicList = statusMap["callsStatus"];
+        List<dynamic> dynamicList = statusMap["callStatusList"];
         statusList = dynamicList.map((e) => e.toString()).toList();
       }
       print("Status List: $statusList");
@@ -134,7 +134,7 @@ class LeadProvider extends ChangeNotifier {
 
     final followSnap = await db
         .collection("LEADS")
-        .where("FOLLOW_UP_STATUS", isEqualTo: "pending")
+        .where("FOLLOW_UP_STATUS", isEqualTo: "PENDING")
         .count()
         .get();
     print("follow snap finished ${followSnap.count!}");
@@ -153,8 +153,8 @@ class LeadProvider extends ChangeNotifier {
 
     final overdueSnap = await db
         .collection("LEADS")
-        .where("FOLLOW_UP_DATE", isLessThan: now)
-        .where("FOLLOW_UP_STATUS", isEqualTo: "pending")
+        .where("FOLLOW_UP_DATE", isLessThan: start)
+        .where("FOLLOW_UP_STATUS", isEqualTo: "PENDING")
         .count()
         .get();
     print("overdue finished");
