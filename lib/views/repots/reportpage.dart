@@ -1,9 +1,12 @@
 import 'package:dialo/constants/app_colors.dart';
 import 'package:dialo/constants/app_textstyle.dart';
+import 'package:dialo/models/leadModel.dart';
 
 import 'package:dialo/views/repots/reportsum.dart';
 import 'package:dialo/views/settingspage.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 
 class Reportpage extends StatefulWidget {
   final Function(bool) changeTheme;
@@ -20,6 +23,129 @@ class Reportpage extends StatefulWidget {
 class _ReportpageState extends State<Reportpage> {
   final int _currentIndex = 0;
   String selectedReportType = "Today's data";
+  List<LeadModel> allLeads = [];
+
+Map<String, int> analyticsData = {};
+
+bool isLoading = false;
+
+int total = 0;
+Future<void> fetchLeads() async {
+
+  isLoading = true;
+
+  setState(() {});
+
+  try {
+
+    final snapshot = await FirebaseFirestore.instance
+        .collection("leads")
+        .get();
+
+    allLeads = snapshot.docs.map((doc) {
+      final data = doc.data();
+      return LeadModel(
+        name: data['name'] ?? '',
+        place: data['place'] ?? '',
+        phone: data['phone'] ?? 0,
+        education: data['education'] ?? '',
+        course: data['course'] ?? '',
+        callStatus: data['callStatus'],
+        followUpDate: data['followUpDate'],
+        followUpTime: data['followUpTime'],
+        followUpStatus: data['followUpStatus'] ?? '',
+        addedByid: data['addedByid'] ?? '',
+        addedTime: data['addedTime'] ?? '',
+        assignedAgentId: data['assignedAgentId'] ?? '',
+        email: data['email'] ?? '',
+        leadCategory: data['leadCategory'] ?? '',
+        createdAt: data['createdAt'] ?? '',
+      );
+    }).toList();
+
+    void generateAnalytics() {
+
+  analyticsData.clear();
+
+  List<LeadModel> filteredLeads = [];
+
+  if (selectedReportType == "Today's data") {
+
+    filteredLeads = allLeads.where((lead) {
+
+      DateTime date = DateTime.parse(lead.createdAt);
+
+      return date.day == DateTime.now().day &&
+          date.month == DateTime.now().month &&
+          date.year == DateTime.now().year;
+
+    }).toList();
+
+  }
+
+  else if (selectedReportType == "Weekly data") {
+
+    filteredLeads = allLeads.where((lead) {
+
+      DateTime date = DateTime.parse(lead.createdAt);
+
+      return DateTime.now()
+              .difference(date)
+              .inDays <= 7;
+
+    }).toList();
+
+  }
+
+  else {
+
+    filteredLeads = allLeads.where((lead) {
+
+      DateTime date = DateTime.parse(lead.createdAt);
+
+      return date.month == DateTime.now().month &&
+          date.year == DateTime.now().year;
+
+    }).toList();
+  }
+
+  total = filteredLeads.length;
+
+  for (var lead in filteredLeads) {
+
+    String status = lead.callStatus ?? "No Status Updated";
+    analyticsData[status] =
+        (analyticsData[status] ?? 0) + 1;
+  }
+
+  setState(() {});
+}
+
+    generateAnalytics();
+
+  } catch (e) {
+
+    debugPrint(e.toString());
+
+  }
+
+  isLoading = false;
+
+  setState(() {});
+}
+
+void generateAnalytics() {
+  analyticsData.clear();
+  total = 0;
+  
+  for (var lead in allLeads) {
+    String status = lead.callStatus ?? "No Status Updated";
+    analyticsData[status] = (analyticsData[status] ?? 0) + 1;
+    total++;
+  }
+  
+  setState(() {});
+}
 
  
   Widget analyticsItem({
@@ -307,22 +433,7 @@ class _ReportpageState extends State<Reportpage> {
 
           Column(
             children: [
-
-              Icon(
-                Icons.filter_alt_outlined,
-                color: AppColors.themeColor,
-              ),
-
-              const SizedBox(height: 15),
-
-             
-            ],
-          ),
-
-          const SizedBox(width: 10),
-
-          
-          PopupMenuButton<String>(
+                     PopupMenuButton<String>(
   onSelected: (value) {
     setState(() {
       selectedReportType = value;
@@ -351,11 +462,24 @@ class _ReportpageState extends State<Reportpage> {
     radius: 22,
     backgroundColor: Colors.blue.shade100,
     child: Icon(
-      Icons.more_vert,
+      Icons.filter_list,
       color: AppColors.themeColor,
     ),
   ),
 ),
+
+              
+
+              const SizedBox(height: 15),
+
+             
+            ],
+          ),
+
+          const SizedBox(width: 10),
+
+          
+   
         ],
       ),
     ],
