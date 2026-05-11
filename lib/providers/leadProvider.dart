@@ -87,8 +87,11 @@ class LeadProvider extends ChangeNotifier {
 
     await fdb.collection("LEADS").doc(id).set(lead);
 
+
     clearData();
+    notifyListeners();
   }
+
 
 
   DateTime? selectedDate;
