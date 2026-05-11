@@ -1,27 +1,31 @@
 import 'package:dialo/constants/app_colors.dart';
 import 'package:dialo/constants/app_textstyle.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../providers/leadProvider.dart';
+
 
 import 'package:dialo/views/repots/reportsum.dart';
 import 'package:dialo/views/settingspage.dart';
-import 'package:flutter/material.dart';
+
 
 class Reportpage extends StatefulWidget {
   final Function(bool) changeTheme;
 
-  const Reportpage({super.key, required this.changeTheme});
+  const Reportpage({super.key,required this.changeTheme});
 
 
-  
+
 
   @override
   State<Reportpage> createState() => _ReportpageState();
 }
 
 class _ReportpageState extends State<Reportpage> {
-  final int _currentIndex = 0;
+  int currentIndex = 2;
   String selectedReportType = "Today's data";
 
- 
+
   Widget analyticsItem({
     required String title,
     required String count,
@@ -70,13 +74,27 @@ class _ReportpageState extends State<Reportpage> {
     );
   }
 
+  int _currentIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+
+    Future.microtask(() {
+      Provider.of<LeadProvider>(context, listen: false)
+          .calculateWorkload();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      drawer: SettingsDrawer(changeTheme: widget.changeTheme),
+       drawer: SettingsDrawer(changeTheme:widget.changeTheme),
 
       appBar: AppBar(
+
+
         title: const Text(
           "Reports",
           style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
@@ -89,7 +107,7 @@ class _ReportpageState extends State<Reportpage> {
               context,
               MaterialPageRoute(
                 builder: (context) =>
-                    SettingsDrawer(changeTheme: widget.changeTheme),
+                     SettingsDrawer(changeTheme:widget.changeTheme),
               ),
             );
           },
@@ -104,15 +122,13 @@ class _ReportpageState extends State<Reportpage> {
               TextFormField(
                 cursorColor: AppColors.whitetext,
                 decoration: InputDecoration(
-                  hintText: "Search Leads",
-                  prefixIcon: const Icon(Icons.search),
                   filled: true,
                   fillColor:Theme.of(context).brightness == Brightness.dark
                           ? Colors.grey.shade800
                           : Colors.white,
                   contentPadding: const EdgeInsets.symmetric(vertical: 0),
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30),
+                    borderRadius: BorderRadius.circular(20),
                     borderSide: BorderSide.none,
                   ),
                 ),
@@ -140,35 +156,104 @@ class _ReportpageState extends State<Reportpage> {
                       ),
                       child: Column(
                         children: [
-                          Text(
-                            "Today's workload",
-                            style: AppTextstyle.MiniText.copyWith(
+
+                          // ... inside your Row's children, replace the first Container with this:
+
+                          Container(
+                            width: 200,
+                            padding: const EdgeInsets.all(15),
+                            decoration: BoxDecoration(
+                              color: AppColors.whitetext,
+                              border: Border.all(color: AppColors.textColor),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Column(
+                              children: [
+                                Text(
+                                  "Today's workload",
+                                  style: AppTextstyle.MiniText.copyWith(
                               color: Theme.of(context).textTheme.bodyLarge?.color
                             )
+                                ),
+                                const SizedBox(height: 10),
+
+                                // Dynamic Data Section
+                                Consumer<LeadProvider>(
+                                  builder: (context, provider, child) {
+                                    return Column(
+                                      children: [
+                                        Text(
+                                          "${provider.dueToday}",
+                                          style: const TextStyle(
+                                              fontSize: 24,
+                                              fontWeight: FontWeight.bold,
+                                              color: AppColors.themeColor
+                                          ),
+                                        ),
+                                        const Text("Leads Due Today", style: TextStyle(fontSize: 10)),
+                                      ],
+                                    );
+                                  },
+                                ),
+
+                                const SizedBox(height: 15),
+
+                                // Comparison Row
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    const Text("This week", style: TextStyle(fontSize: 12)),
+                                    Consumer<LeadProvider>(
+                                      builder: (context, provider, child) {
+                                        return Text(
+                                          "${provider.thisWeek}",
+                                          style: const TextStyle(fontWeight: FontWeight.bold),
+                                        );
+                                      },
+                                    ),
+                                    const CircleAvatar(
+                                      radius: 5,
+                                      backgroundColor: AppColors.themeColor,
+                                    ),
+                                  ],
+                                ),
+
+                                const SizedBox(height: 10),
+
+                                // View Button
+                                Container(
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.black12),
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                  child: InkWell(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) => const ReportSum(),
+                                        ),
+                                      );
+                                    },
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: const [
+                                        Padding(
+                                          padding: EdgeInsets.symmetric(vertical: 4),
+                                          child: Text(
+                                            "View detailed report",
+                                            style: TextStyle(fontSize: 10),
+                                          ),
+                                        ),
+                                        Icon(Icons.arrow_forward, size: 14),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                          const SizedBox(height: 10),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Text("Due today"),
-                              Text("23"),
-                              CircleAvatar(
-                                radius: 5,
-                                backgroundColor: AppColors.redColor,
-                              ),
-                            ],
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Text("This week"),
-                              Text("67"),
-                              CircleAvatar(
-                                radius: 5,
-                                backgroundColor: AppColors.themeColor,
-                              ),
-                            ],
-                          ),
+
                           const SizedBox(height: 5),
                           Container(
                             decoration: BoxDecoration(
@@ -244,7 +329,7 @@ class _ReportpageState extends State<Reportpage> {
                 ),
               ),
               SizedBox(height: 30),
-              
+
 
               Container(
   width: double.infinity,
@@ -260,7 +345,7 @@ class _ReportpageState extends State<Reportpage> {
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
 
-      
+
       Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -321,7 +406,7 @@ class _ReportpageState extends State<Reportpage> {
 
                 const SizedBox(height: 8),
 
-               
+
               ],
             ),
           ),
@@ -338,13 +423,13 @@ class _ReportpageState extends State<Reportpage> {
 
               const SizedBox(height: 15),
 
-             
+
             ],
           ),
 
           const SizedBox(width: 10),
 
-          
+
           PopupMenuButton<String>(
   onSelected: (value) {
     setState(() {
@@ -385,7 +470,7 @@ class _ReportpageState extends State<Reportpage> {
   ),
 ),
               const SizedBox(height: 20),
-  
+
 
   Container(
   width: double.infinity,
@@ -488,18 +573,18 @@ class _ReportpageState extends State<Reportpage> {
 
       const SizedBox(height: 20),
 
-     
+
     ],
   ),
 ),
-          
-                 
-               
-                
+
+
+
+
           ]),
-      
+
       ),
     ));
   }
-  
+
 }

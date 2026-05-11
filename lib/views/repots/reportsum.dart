@@ -228,7 +228,7 @@ appBar: AppBar(
                         ),
                         child: Row(
                           children: [
-                            Icon(Icons.call_end,color: AppColors.whitetext,size: 20,),
+                            Icon(Icons.call_end,color: AppColors.whitetext,size: 90,),
 
                             Text("Call",style: TextStyle(color: AppColors.whitetext),)
                           ],

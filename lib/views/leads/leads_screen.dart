@@ -1,3 +1,5 @@
+import 'dart:developer';
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dialo/providers/leadProvider.dart';
@@ -136,7 +138,7 @@ class _LeadsScreenState extends State<LeadsScreen> {
               ],
             ),
           ),
-      
+
           const SizedBox(height: 10),
 
           // STEP 2: Update the Chips to react to taps
@@ -147,8 +149,8 @@ class _LeadsScreenState extends State<LeadsScreen> {
               children: [
                 StatusChip(
                   text: "ALL",
-                  isSelected: selectedStatus == "ALL",
-                  onTap: () => setState(() => selectedStatus = "ALL"),
+                  isSelected: selectedStatus == "All",
+                  onTap: () => setState(() => selectedStatus = "All"),
                 ),
                 StatusChip(
                   text: "NEW",
@@ -160,7 +162,7 @@ class _LeadsScreenState extends State<LeadsScreen> {
                   isSelected: selectedStatus == "Followup",
                   onTap: () => setState(() => selectedStatus = "Followup"),
                 ),
-                StatusChip(   
+                StatusChip(
                   text: "CONVERTED",
                   isSelected: selectedStatus == "Converted",
                   onTap: () => setState(() => selectedStatus = "Converted"),
@@ -173,21 +175,22 @@ class _LeadsScreenState extends State<LeadsScreen> {
               ],
             ),
           ),
-      
+
           const SizedBox(height: 10),
 
           // 📋 LIST
           Expanded(
-            child: 
-            StreamBuilder<QuerySnapshot>(
+            child: StreamBuilder<QuerySnapshot>(
               stream: (() {
                 Query query = FirebaseFirestore.instance.collection("LEADS");
 
                 // ✅ Status filter
+                print("selectedStatus IS $selectedStatus");
                 if (selectedStatus != "All") {
                   query = query.where("LEAD_STATUS", isEqualTo: selectedStatus);
                 }
 
+                log("${pro.selectedLeadsFilters}");
                 // ✅ Drawer filters
                 pro.selectedLeadsFilters.forEach((key, value) {
                   if (value != null) {
@@ -195,9 +198,11 @@ class _LeadsScreenState extends State<LeadsScreen> {
                   }
                 });
 
+                final subquery = query;
+                print("${subquery.snapshots().length}");
+
                 // ✅ Order
                 query = query.orderBy("ADDED_TIME", descending: true);
-
                 return query.snapshots();
               })(),
 
@@ -265,7 +270,7 @@ class _LeadsScreenState extends State<LeadsScreen> {
                           name: data["NAME"] ?? "",
                           phone: data["PHONE"] ?? "",
                           city: data["PLACE"] ?? "",
-                          status: data["STATUS"] ?? "New",
+                          status: data["LEAD_STATUS"] ?? "New",
                         ),
                       );
                     },
