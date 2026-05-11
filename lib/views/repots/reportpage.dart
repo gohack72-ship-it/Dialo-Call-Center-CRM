@@ -160,15 +160,15 @@ class _ReportpageState extends State<Reportpage> {
 
                           // ... inside your Row's children, replace the first Container with this:
 
-                          Container(
-                            width: 200,
-                            padding: const EdgeInsets.all(15),
-                            decoration: BoxDecoration(
-                              color: AppColors.whitetext,
-                              border: Border.all(color: AppColors.textColor),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Column(
+                          // Container(
+                          //   width: 200,
+                          //   padding: const EdgeInsets.all(15),
+                          //   decoration: BoxDecoration(
+                          //     color: AppColors.whitetext,
+                          //     border: Border.all(color: AppColors.textColor),
+                          //     borderRadius: BorderRadius.circular(10),
+                          //   ),
+                             Column(
                               children: [
                                 Text(
                                   "Today's workload",
@@ -253,37 +253,37 @@ class _ReportpageState extends State<Reportpage> {
                                 ),
                               ],
                             ),
-                          ),
+                          // ),
 
                           const SizedBox(height: 5),
-                          Container(
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.black),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Text(
-                                  "View all reports",
-                                  style: TextStyle(
-                                      fontSize: 10,
-                                      color: Theme.of(context).textTheme.bodyLarge?.color
-                                  ),
-                                ),
-                                IconButton(
-                                  icon: Icon(Icons.arrow_forward),
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (_) => ReportSum(),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ],
-                            ),
-                          ),
+                          // Container(
+                          //   decoration: BoxDecoration(
+                          //     border: Border.all(color: Colors.black),
+                          //   ),
+                          //   child: Row(
+                          //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          //     children: [
+                          //       Text(
+                          //         "View all reports",
+                          //         style: TextStyle(
+                          //             fontSize: 10,
+                          //             color: Theme.of(context).textTheme.bodyLarge?.color
+                          //         ),
+                          //       ),
+                          //       IconButton(
+                          //         icon: Icon(Icons.arrow_forward),
+                          //         onPressed: () {
+                          //           Navigator.push(
+                          //             context,
+                          //             MaterialPageRoute(
+                          //               builder: (_) => ReportSum(),
+                          //             ),
+                          //           );
+                          //         },
+                          //       ),
+                          //     ],
+                          //   ),
+                          // ),
                         ],
                       ),
                     ),
