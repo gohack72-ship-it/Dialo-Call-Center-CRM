@@ -97,7 +97,7 @@ appBar: AppBar(
 
               ],
             ),
-          ),
+          ),SizedBox(height: 10,),
           Column(
             children: [
               Container(
@@ -169,7 +169,7 @@ appBar: AppBar(
                 ),
               ),
             ],
-          ),
+          ),SizedBox(height: 10,),
           Column(
             children: [
               Container(
@@ -228,11 +228,18 @@ appBar: AppBar(
                         ),
                         child: Row(
                           children: [
-                            Icon(Icons.call_end,color: AppColors.whitetext,size: 90,),
+                            Icon(Icons.call_end,color: AppColors.whitetext,size: 20,),
 
                             Text("Call",style: TextStyle(color: AppColors.whitetext),)
                           ],
                         ),
+                        // child: Row(
+                        //   children: [
+                        //     Icon(Icons.call_end,color: AppColors.whitetext,size: 90,),
+
+                        //     Text("Call",style: TextStyle(color: AppColors.whitetext),)
+                        //   ],
+                        // ),
 
                       )]
                     ),
