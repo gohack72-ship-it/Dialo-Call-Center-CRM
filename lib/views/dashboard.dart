@@ -31,13 +31,16 @@ class _DbState extends State<Dashboard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         toolbarHeight: 50,
-        backgroundColor: Colors.white,
+        backgroundColor:Theme.of(context).appBarTheme.backgroundColor,
         leading: Builder(
           builder: (context) => IconButton(
-            icon: const Icon(Icons.menu, color: Colors.black, size: 30),
+            icon:  Icon(Icons.menu,
+                color: Theme.of(context).iconTheme.color,
+                // color: Colors.black,
+                size: 30),
             onPressed: () {
               Scaffold.of(context).openDrawer();
             },
@@ -57,7 +60,10 @@ class _DbState extends State<Dashboard> {
         // ),
         actions: [
           PopupMenuButton<String>(
-            icon: const Icon(Icons.tune, color: Colors.black, size: 25),
+            icon:  Icon(
+              Icons.tune, color: Theme.of(context).iconTheme.color,
+                size: 25,
+            ),
             onSelected: (value) {
               if (value == "today") {
                 print("Today selected");
@@ -122,7 +128,9 @@ class _DbState extends State<Dashboard> {
               ),
 
               const SizedBox(height: 20),
-              const Text("Lead Summary", style: AppTextstyle.SubTitle),
+               Text("Lead Summary", style: Theme.of(context).textTheme.titleLarge
+              // AppTextstyle.SubTitle
+              ),
               const SizedBox(height: 05),
               Consumer<LeadProvider>(
                 builder: (context, value, child) {
@@ -150,7 +158,9 @@ class _DbState extends State<Dashboard> {
               ),
 
               const SizedBox(height: 20),
-              const Text("Upcoming Follow-ups", style: AppTextstyle.SubTitle),
+              Text("Upcoming Follow-ups", style: Theme.of(context).textTheme.titleLarge
+              // AppTextstyle.SubTitle
+              ),
               const SizedBox(height: 15),
 
               const FollowUpCard(index: 0),
@@ -224,7 +234,7 @@ class DashboardCard extends StatelessWidget {
           Row(children: [Text(value, style: AppTextstyle.dashBoardCardNo)]),
           Padding(
             padding: EdgeInsets.only(left: 90),
-            child: const Icon(Icons.trending_up),
+            child:  Icon(Icons.trending_up, color: Colors.black,),
           ),
         ],
       ),
@@ -246,8 +256,16 @@ class SummaryRow extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(title, style: AppTextstyle.normalText),
-          Text(value, style: AppTextstyle.normalText),
+          Text(title, style:TextStyle(
+            color: Theme.of(context).textTheme.bodyLarge?.color,
+          // AppTextstyle.normalText
+          ),
+          ),
+          Text(value, style: TextStyle(
+            color: Theme.of(context).textTheme.bodyLarge?.color,
+          // AppTextstyle.normalText
+          ),
+          ),
         ],
       ),
     );
@@ -287,11 +305,22 @@ class FollowUpCard extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
 
                 children: [
-                  const Text("Mathew", style: AppTextstyle.NameText),
+                   Text("Mathew", style:TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).textTheme.bodyLarge?.color,
+                  // AppTextstyle.NameText
+                  ),
+                  ),
                   const SizedBox(height: 4),
                   const Text("Check on Proposal View"),
                   const SizedBox(height: 4),
-                  const Text("Jan-16-2026", style: AppTextstyle.MicroText),
+                 Text("Jan-16-2026", style:TextStyle(
+                    fontSize: 12,
+                    color: Theme.of(context).textTheme.bodyLarge?.color,
+                  // AppTextstyle.MicroText
+                  ),
+                  ),
                 ],
               ),
             ),

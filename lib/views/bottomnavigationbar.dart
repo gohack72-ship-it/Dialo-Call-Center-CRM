@@ -38,8 +38,13 @@ class _BottomnavPageState extends State<BottomnavPage> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         type: BottomNavigationBarType.fixed,
-        selectedItemColor: AppColors.textColor,
-        unselectedItemColor: AppColors.themeColor,
+        selectedItemColor: Theme.of(context).brightness == Brightness.dark
+                         ? Colors.white
+                         : Colors.black,
+        unselectedItemColor: Theme.of(context).brightness == Brightness.dark
+                         ? Colors.white
+                         : AppColors.themeColor,
+
         onTap: (index) {
           setState(() {
             _currentIndex = index;

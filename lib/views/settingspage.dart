@@ -12,7 +12,10 @@ class SettingsDrawer extends StatefulWidget {
 
   static Widget _item(String title, IconData icon) {
     return ListTile(
-      leading: Icon(icon, size: 22, color: AppColors.textColor),
+      leading: Icon(icon,
+        size: 22,
+          // color: AppColors.textColor
+      ),
       title: Text(title),
       onTap: () {},
     );
@@ -91,7 +94,9 @@ TextButton(
               child: Row(
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.arrow_back, color: Colors.black),
+                    icon: const Icon(Icons.arrow_back,
+                        // color: Colors.black
+                    ),
                     onPressed: () => Navigator.pop(context),
                   ),
                   SizedBox(width: 8),
@@ -121,17 +126,16 @@ TextButton(
             ),
             SizedBox(height: 10),
             const Divider(),
-            SettingsDrawer._item("Notifications", Icons.notifications),
-            ListTile(
-              leading: const Icon(
-                Icons.dark_mode,
-                size: 22,
-                color: AppColors.textColor,
-              ),
-              title: const Text("Mode Change"),
-              trailing: Switch(
-                value: isDarkMode,
-                activeThumbColor: AppColors.themeColor,
+            SettingsDrawer._item("Notifications", Icons.notifications,),
+           ListTile(
+             leading: const Icon(
+                 Icons.dark_mode,
+                 size: 22,
+               // color: AppColors.textColor,
+             ),
+             title: const Text("Mode Change"),
+             trailing: Switch(value: isDarkMode,
+                 activeThumbColor: AppColors.themeColor,
                 onChanged: (value) {
                   setState(() {
                     isDarkMode = value;
@@ -142,7 +146,11 @@ TextButton(
             ),
 SettingsDrawer._item("Help & About", Icons.help),
 ListTile(
-  leading: const Icon(Icons.logout, size: 22, color: AppColors.textColor),
+  leading:  Icon(
+      Icons.logout, size: 22,
+      color: Theme.of(context).iconTheme.color,
+      // AppColors.textColor
+  ),
   title: const Text("Logout"),
   onTap: () {
     showLogoutDialog(context);

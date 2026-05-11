@@ -89,7 +89,7 @@ class _ReportpageState extends State<Reportpage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.whitetext,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
        drawer: SettingsDrawer(changeTheme:widget.changeTheme),
 
       appBar: AppBar(
@@ -123,13 +123,10 @@ class _ReportpageState extends State<Reportpage> {
                 cursorColor: AppColors.whitetext,
                 decoration: InputDecoration(
                   filled: true,
-                  fillColor: AppColors.themeColor,
-                  hintText: "search leads",
-                  hintStyle: TextStyle(color: AppColors.whitetext),
-                  prefixIcon: const Icon(
-                    Icons.search,
-                    color: AppColors.whitetext,
-                  ),
+                  fillColor:Theme.of(context).brightness == Brightness.dark
+                          ? Colors.grey.shade800
+                          : Colors.white,
+                  contentPadding: const EdgeInsets.symmetric(vertical: 0),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(20),
                     borderSide: BorderSide.none,
@@ -147,8 +144,14 @@ class _ReportpageState extends State<Reportpage> {
                       width: 200,
                       padding: EdgeInsets.all(15),
                       decoration: BoxDecoration(
-                        color: AppColors.whitetext,
-                        border: Border.all(color: AppColors.textColor),
+                        color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.grey.shade900
+                          : AppColors.whitetext,
+                        border: Border.all(
+                            color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.grey
+                          : AppColors.textColor
+                        ),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Column(
@@ -168,7 +171,9 @@ class _ReportpageState extends State<Reportpage> {
                               children: [
                                 Text(
                                   "Today's workload",
-                                  style: AppTextstyle.MiniText,
+                                  style: AppTextstyle.MiniText.copyWith(
+                              color: Theme.of(context).textTheme.bodyLarge?.color
+                            )
                                 ),
                                 const SizedBox(height: 10),
 
@@ -259,7 +264,10 @@ class _ReportpageState extends State<Reportpage> {
                               children: [
                                 Text(
                                   "View all reports",
-                                  style: TextStyle(fontSize: 10),
+                                  style: TextStyle(
+                                      fontSize: 10,
+                                      color: Theme.of(context).textTheme.bodyLarge?.color
+                                  ),
                                 ),
                                 IconButton(
                                   icon: Icon(Icons.arrow_forward),
@@ -283,15 +291,23 @@ class _ReportpageState extends State<Reportpage> {
                       width: 200,
                       padding: EdgeInsets.all(15),
                       decoration: BoxDecoration(
-                        color: AppColors.whitetext,
-                        border: Border.all(color: AppColors.textColor),
+                        color: Theme.of(context).brightness == Brightness.dark
+                             ? Colors.grey.shade900
+                             : Colors.white,
+                        border: Border.all(
+                            color: Theme.of(context).brightness == Brightness.dark
+                                 ? Colors.white
+                                 : Colors.black,
+                        ),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Column(
                         children: [
                           Text(
                             "Daily metric card",
-                            style: AppTextstyle.MiniText,
+                            style: AppTextstyle.MiniText.copyWith(
+                              color: Theme.of(context).textTheme.bodyLarge?.color,
+                            ),
                           ),
                           const SizedBox(height: 10),
                           Row(
@@ -319,7 +335,9 @@ class _ReportpageState extends State<Reportpage> {
   width: double.infinity,
   padding: const EdgeInsets.all(15),
   decoration: BoxDecoration(
-    color: Colors.white,
+    color: Theme.of(context).brightness ==Brightness.dark
+         ? Colors.grey.shade900
+         : AppColors.whitetext,
     borderRadius: BorderRadius.circular(20),
   ),
 
@@ -357,7 +375,7 @@ class _ReportpageState extends State<Reportpage> {
                   style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.textColor,
+                    color: Theme.of(context).textTheme.bodyLarge?.color,
                   ),
                 ),
 
@@ -458,11 +476,15 @@ class _ReportpageState extends State<Reportpage> {
   width: double.infinity,
   padding: const EdgeInsets.all(20),
   decoration: BoxDecoration(
-    color: AppColors.whitetext,
+    color: Theme.of(context).brightness == Brightness.dark
+         ? Colors.grey.shade900
+         : AppColors.whitetext,
     borderRadius: BorderRadius.circular(25),
     boxShadow: [
       BoxShadow(
-        color: Colors.grey.shade200,
+        color: Theme.of(context).brightness == Brightness.dark
+             ? Colors.black54
+             : Colors.grey.shade200,
         blurRadius: 10,
         offset: const Offset(0, 4),
       ),
@@ -480,7 +502,9 @@ class _ReportpageState extends State<Reportpage> {
 
           Text(
             "Response Analytics",
-            style: AppTextstyle.SubTitle,
+            style: AppTextstyle.SubTitle.copyWith(
+              color: Theme.of(context).textTheme.bodyLarge?.color,
+            )
           ),
 
           Container(
