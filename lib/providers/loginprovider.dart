@@ -15,10 +15,6 @@ TextEditingController passwordController=TextEditingController();
 final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 bool get isChecked => remeberme;
 
-  bool isChecked = false;
-
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
   Future<User?> signInWithGoogle() async{
     try {
       final GoogleSignInAccount? googleUser =await GoogleSignIn().signIn();
@@ -101,7 +97,6 @@ bool get isChecked => remeberme;
       bool remember = prefs.getBool('remember') ?? false;
       emailController.text = remember ? (prefs.getString('email') ?? '') : '';
       passwordController.text = remember ? (prefs.getString('password') ?? '') : '';
-      isChecked = remember;
       remeberme = remember;
       notifyListeners();
     });

@@ -146,7 +146,11 @@ TextButton(
             ),
 SettingsDrawer._item("Help & About", Icons.help),
 ListTile(
-  leading: const Icon(Icons.logout, size: 22, color: AppColors.textColor),
+  leading:  Icon(
+      Icons.logout, size: 22,
+      color: Theme.of(context).iconTheme.color,
+      // AppColors.textColor
+  ),
   title: const Text("Logout"),
   onTap: () {
     showLogoutDialog(context);

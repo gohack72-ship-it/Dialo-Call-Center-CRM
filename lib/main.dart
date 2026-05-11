@@ -81,10 +81,10 @@ class _MyAppState extends State<MyApp> {
           iconTheme: IconThemeData(
             color: Colors.black
           ),
-          // appBarTheme: const AppBarTheme(
-          //   backgroundColor: Colors.blue,
-          //   foregroundColor: Colors.white,
-          // ),
+          appBarTheme: const AppBarTheme(
+            backgroundColor: Colors.white,
+            foregroundColor: Colors.black,
+          ),
         ),
 
         darkTheme: ThemeData(
@@ -101,10 +101,10 @@ class _MyAppState extends State<MyApp> {
             titleLarge: TextStyle(color: Colors.white),
           ),
 
-        //     appBarTheme: const AppBarTheme(
-        //     backgroundColor: Colors.white,
-        //     foregroundColor: Colors.blue,
-        //   )
+            appBarTheme: const AppBarTheme(
+            backgroundColor: Colors.black,
+            foregroundColor: Colors.white,
+          )
         ),
         home: Loginpage(changeTheme: changeTheme,)
       ),

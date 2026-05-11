@@ -37,7 +37,8 @@ void initState() {
   Widget build(BuildContext context) {
     Loginprovider logPro = Provider.of<Loginprovider>(context,listen: false);
     return Scaffold(
-     backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+     backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+     // const Color.fromARGB(255, 255, 255, 255),
      body: Center(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -67,7 +68,12 @@ void initState() {
                     controller: log.emailController,
                                decoration: InputDecoration(
                                  hintText: "Enter Your Email",
-                                 prefixIcon: const Icon(Icons.email_outlined,color: Colors.blue),
+                                 hintStyle: TextStyle(
+                                   color: Theme.of(context).brightness == Brightness.dark
+                                        ? Colors.white
+                                        : Colors.black,
+                                 ),
+                                 prefixIcon: Icon(Icons.email_outlined,color: Colors.blue),
                                  border:OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                                  )
@@ -85,9 +91,13 @@ void initState() {
                  }
                ),
           const SizedBox(height: 20),
-          const Text(
+           Text(
             "Password",
-            style: TextStyle(fontWeight: FontWeight.bold),
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+              color: Theme.of(context).textTheme.bodyLarge?.color,
+
+            ),
           ),
           const SizedBox(height:8),
           Consumer<Loginprovider>(
@@ -138,7 +148,11 @@ void initState() {
           ),
           Row(
             children: [
-              Text("Remember Me",style: TextStyle(color:CupertinoColors.darkBackgroundGray),),
+              Text("Remember Me",style: TextStyle(
+                  color: Theme.of(context).textTheme.bodyLarge?.color,
+                  // CupertinoColors.darkBackgroundGray
+
+              ),),
               Consumer<Loginprovider>(
                 builder: (context3,log3,child) {
                   return Checkbox(value:log3.remeberme,
@@ -164,8 +178,17 @@ void initState() {
                             context.read<Loginprovider>().login().then((success) {
                               if (success) {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text("Login Successful"),
+                                   SnackBar(
+                                    backgroundColor: Theme.of(context).brightness == Brightness.dark
+                                                   ? Colors.grey.shade900
+                                                   : Colors.black,
+                                    content: Text(
+                                        "Login Successful",
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                    ),
                                     duration: Duration(seconds: 2),
                                   ),
                                 );
@@ -194,7 +217,14 @@ void initState() {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.blue,
                         ),
-                        child: const Text("Login"),
+                        child: const Text(
+                            "Login",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
                       ),
                     ),
               SizedBox(

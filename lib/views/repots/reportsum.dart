@@ -13,8 +13,11 @@ class ReportSum extends StatefulWidget {
 }
 
 class _ReportSumState extends State<ReportSum> {
+
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
 appBar: AppBar(
   centerTitle: true,
@@ -331,8 +334,10 @@ appBar: AppBar(
                     Container(
                       height: 20,
                       width: 80,
+
                       decoration: BoxDecoration(
                         color: AppColors.redColor,
+
                       ),
                       child: Row(
                         children: [

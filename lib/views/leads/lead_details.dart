@@ -315,8 +315,8 @@ class _LeadProfileScreenState extends State<LeadProfileScreen> {
              : Colors.white,
       border: Border.all(
           color: Theme.of(context).brightness == Brightness.dark
-              ? Colors.grey
-              : Colors.grey.shade300,
+              ? Colors.grey.shade700
+              : Colors.grey.shade300
       ),
       borderRadius: BorderRadius.circular(10),
     );
