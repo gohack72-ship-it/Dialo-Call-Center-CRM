@@ -27,20 +27,20 @@ class _LeadProfileScreenState extends State<LeadProfileScreen> {
     Map<String, dynamic> extra =
         widget.leadData["ADDITIONAL_LEAD_DETAILS"] ?? {};
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
 
       // --- APP BAR ---
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon:  Icon(Icons.arrow_back, color:Theme.of(context).iconTheme.color),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
         title: Text(widget.leadData["NAME"] ?? "Name", style: TextStyle(
-          color: Colors.black,
+          color: Theme.of(context).textTheme.bodyLarge?.color,
           fontWeight: FontWeight.bold,
           fontSize: 22,
         ),
@@ -75,7 +75,7 @@ class _LeadProfileScreenState extends State<LeadProfileScreen> {
             ),
           ),
           IconButton(
-            icon: const Icon(Icons.edit_square, color: Colors.black54),
+            icon:  Icon(Icons.edit_square, color:Theme.of(context).iconTheme.color),
             onPressed: () {},
           ),
         ],
@@ -98,7 +98,9 @@ class _LeadProfileScreenState extends State<LeadProfileScreen> {
                   child: _buildPillButton(
                     Icons.phone_in_talk,
                     "Call Now",
-                    Colors.black,
+                    Theme.of(context).brightness == Brightness.dark
+                      ? Colors.white
+                      : Colors.black,
                         () {
                       String phone = widget.leadData["PHONE"] ?? "";
                       if (phone.isNotEmpty) {
@@ -114,7 +116,7 @@ class _LeadProfileScreenState extends State<LeadProfileScreen> {
                   child: _buildPillButton(
                     Icons.chat_bubble,
                     "Whatsapp",
-                    Colors.green,
+                      Colors.green,
                         () async {
                       String phone = widget.leadData["PHONE"] ?? "";
                       final url = Uri.parse("https://wa.me/$phone");
@@ -130,7 +132,12 @@ class _LeadProfileScreenState extends State<LeadProfileScreen> {
               ],
             ),
            SizedBox(height: 10,),
-            Text("Name"),
+            Text(
+                "Name",
+              style: TextStyle(
+                color: Theme.of(context).textTheme.bodyLarge?.color,
+              ),
+            ),
             _buildEditableTile(
               Icons.person_outline_outlined,
               widget.leadData["NAME"] ?? "",
@@ -260,19 +267,22 @@ class _LeadProfileScreenState extends State<LeadProfileScreen> {
       decoration: _boxDecoration(),
       child: Row(
         children: [
-          Icon(icon, size: 20, color: Colors.black87),
+          Icon(icon, size: 20, color: Theme.of(context).iconTheme.color),
           const SizedBox(width: 16),
           // Using Expanded + TextField allows typing
           Expanded(
             child: TextField(
               decoration: InputDecoration(
                 hintText: hintText,
+                hintStyle: TextStyle(
+                  color: Theme.of(context).textTheme.bodyLarge?.color,
+                ),
                 border: InputBorder.none, // Removes the line under text
                 contentPadding: const EdgeInsets.symmetric(
                   vertical: 14,
                 ), // Centers text vertically
               ),
-              style: const TextStyle(fontSize: 15, color: Colors.black87),
+              style:  TextStyle(fontSize: 15, color: Theme.of(context).textTheme.bodyLarge?.color),
             ),
           ),
         ],
@@ -287,22 +297,26 @@ class _LeadProfileScreenState extends State<LeadProfileScreen> {
       ) {
     return GestureDetector(
       onTap: onTap, // 👈 handle click
-      child: Container(
-        height: 45,
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey.shade300),
-          borderRadius: BorderRadius.circular(30),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, color: color, size: 20),
-            const SizedBox(width: 8),
-            Text(
-              label,
-              style: const TextStyle(
-                fontWeight: FontWeight.w500,
-                color: Colors.black87,
+      child:Container(
+      height: 45,
+      decoration: BoxDecoration(
+        border: Border.all(
+            color: Theme.of(context).brightness == Brightness.dark
+                 ? Colors.grey.shade700
+                 : Colors.grey.shade300
+          ),
+        borderRadius: BorderRadius.circular(30),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, color: color, size: 20),
+          const SizedBox(width: 8),
+          Text(
+            label,
+            style: TextStyle(
+              fontWeight: FontWeight.w500,
+              color: Theme.of(context).textTheme.bodyLarge?.color,
               ),
             ),
           ],
@@ -326,10 +340,10 @@ class _LeadProfileScreenState extends State<LeadProfileScreen> {
       padding: EdgeInsets.only(bottom: padding),
       child: Text(
         title,
-        style: const TextStyle(
+        style:  TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.bold,
-          color: Colors.black,
+          color: Theme.of(context).textTheme.bodyLarge?.color,
         ),
       ),
     );
@@ -337,8 +351,14 @@ class _LeadProfileScreenState extends State<LeadProfileScreen> {
 
   BoxDecoration _boxDecoration() {
     return BoxDecoration(
-      color: Colors.white,
-      border: Border.all(color: Colors.grey.shade300),
+      color: Theme.of(context).brightness == Brightness.dark
+             ? const Color(0xFF1E1E1E)
+             : Colors.white,
+      border: Border.all(
+          color: Theme.of(context).brightness == Brightness.dark
+              ? Colors.grey.shade700
+              : Colors.grey.shade300
+      ),
       borderRadius: BorderRadius.circular(10),
     );
   }

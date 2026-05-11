@@ -16,10 +16,8 @@ bool remeberme = false;
 
 TextEditingController emailController=TextEditingController();
 TextEditingController passwordController=TextEditingController();
-
-  bool isChecked = false;
-  
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+bool get isChecked => remeberme;
 
 Future<auth.User?> signInWithGoogle() async {
     try {
@@ -48,6 +46,10 @@ Future<auth.User?> signInWithGoogle() async {
     final prefs = await SharedPreferences.getInstance();
 
     try {
+      print("🔥 Login Function Called");
+      print("🔥 Email: ${emailController.text}");
+      print("🔥 Password: ${passwordController.text}");
+
       final querySnapshot = await _firestore
           .collection('AGENT')
           .where('EMAIL', isEqualTo: emailController.text.trim())
@@ -60,6 +62,7 @@ Future<auth.User?> signInWithGoogle() async {
       if (querySnapshot.docs.isNotEmpty) {
         Map<String, dynamic> userMap =
         querySnapshot.docs.first.data();
+
 
         print("Login Success: ${emailController.text}");
 
@@ -98,7 +101,6 @@ Future<auth.User?> signInWithGoogle() async {
       bool remember = prefs.getBool('remember') ?? false;
       emailController.text = remember ? (prefs.getString('email') ?? '') : '';
       passwordController.text = remember ? (prefs.getString('password') ?? '') : '';
-      isChecked = remember;
       remeberme = remember;
       notifyListeners();
     });
