@@ -1,25 +1,30 @@
 import 'package:dialo/constants/app_colors.dart';
 import 'package:dialo/constants/app_textstyle.dart';
 import 'package:dialo/models/leadModel.dart';
+import 'package:dialo/providers/leadProvider.dart';
 
 import 'package:dialo/views/repots/reportsum.dart';
 import 'package:dialo/views/settingspage.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:provider/provider.dart';
+
 
 class Reportpage extends StatefulWidget {
   final Function(bool) changeTheme;
 
-  const Reportpage({super.key,required this.changeTheme});
+  const Reportpage({super.key, required this.changeTheme});
 
 
-
+  
 
   @override
   State<Reportpage> createState() => _ReportpageState();
 }
 
 class _ReportpageState extends State<Reportpage> {
-  int currentIndex = 2;
+
+  final int _currentIndex = 0;
   String selectedReportType = "Today's data";
   List<LeadModel> allLeads = [];
 
@@ -28,124 +33,15 @@ Map<String, int> analyticsData = {};
 bool isLoading = false;
 
 int total = 0;
-Future<void> fetchLeads() async {
 
-  isLoading = true;
+@override
+void initState() {
+  super.initState();
+ 
 
-  setState(() {});
-
-  try {
-
-    final snapshot = await FirebaseFirestore.instance
-        .collection("leads")
-        .get();
-
-    allLeads = snapshot.docs.map((doc) {
-      final data = doc.data();
-      return LeadModel(
-        name: data['name'] ?? '',
-        place: data['place'] ?? '',
-        phone: data['phone'] ?? 0,
-        education: data['education'] ?? '',
-        course: data['course'] ?? '',
-        callStatus: data['callStatus'],
-        followUpDate: data['followUpDate'],
-        followUpTime: data['followUpTime'],
-        followUpStatus: data['followUpStatus'] ?? '',
-        addedByid: data['addedByid'] ?? '',
-        addedTime: data['addedTime'] ?? '',
-        assignedAgentId: data['assignedAgentId'] ?? '',
-        email: data['email'] ?? '',
-        leadCategory: data['leadCategory'] ?? '',
-        createdAt: data['createdAt'] ?? '',
-      );
-    }).toList();
-
-    void generateAnalytics() {
-
-  analyticsData.clear();
-
-  List<LeadModel> filteredLeads = [];
-
-  if (selectedReportType == "Today's data") {
-
-    filteredLeads = allLeads.where((lead) {
-
-      DateTime date = DateTime.parse(lead.createdAt);
-
-      return date.day == DateTime.now().day &&
-          date.month == DateTime.now().month &&
-          date.year == DateTime.now().year;
-
-    }).toList();
-
-  }
-
-  else if (selectedReportType == "Weekly data") {
-
-    filteredLeads = allLeads.where((lead) {
-
-      DateTime date = DateTime.parse(lead.createdAt);
-
-      return DateTime.now()
-              .difference(date)
-              .inDays <= 7;
-
-    }).toList();
-
-  }
-
-  else {
-
-    filteredLeads = allLeads.where((lead) {
-
-      DateTime date = DateTime.parse(lead.createdAt);
-
-      return date.month == DateTime.now().month &&
-          date.year == DateTime.now().year;
-
-    }).toList();
-  }
-
-  total = filteredLeads.length;
-
-  for (var lead in filteredLeads) {
-
-    String status = lead.callStatus ?? "No Status Updated";
-    analyticsData[status] =
-        (analyticsData[status] ?? 0) + 1;
-  }
-
-  setState(() {});
-}
-
-    generateAnalytics();
-
-  } catch (e) {
-
-    debugPrint(e.toString());
-
-  }
-
-  isLoading = false;
-
-  setState(() {});
-}
-
-void generateAnalytics() {
-  analyticsData.clear();
-  total = 0;
   
-  for (var lead in allLeads) {
-    String status = lead.callStatus ?? "No Status Updated";
-    analyticsData[status] = (analyticsData[status] ?? 0) + 1;
-    total++;
-  }
-  
-  setState(() {});
 }
-
-
+ 
   Widget analyticsItem({
     required String title,
     required String count,
@@ -194,27 +90,13 @@ void generateAnalytics() {
     );
   }
 
-  int _currentIndex = 0;
-
-  @override
-  void initState() {
-    super.initState();
-
-    Future.microtask(() {
-      Provider.of<LeadProvider>(context, listen: false)
-          .calculateWorkload();
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.whitetext,
-       drawer: SettingsDrawer(changeTheme:widget.changeTheme),
+      drawer: SettingsDrawer(changeTheme: widget.changeTheme),
 
       appBar: AppBar(
-
-
         title: const Text(
           "Reports",
           style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
@@ -227,7 +109,7 @@ void generateAnalytics() {
               context,
               MaterialPageRoute(
                 builder: (context) =>
-                     SettingsDrawer(changeTheme:widget.changeTheme),
+                    SettingsDrawer(changeTheme: widget.changeTheme),
               ),
             );
           },
@@ -242,16 +124,13 @@ void generateAnalytics() {
               TextFormField(
                 cursorColor: AppColors.whitetext,
                 decoration: InputDecoration(
+                  hintText: "Search Leads",
+                  prefixIcon: const Icon(Icons.search),
                   filled: true,
-                  fillColor: AppColors.themeColor,
-                  hintText: "search leads",
-                  hintStyle: TextStyle(color: AppColors.whitetext),
-                  prefixIcon: const Icon(
-                    Icons.search,
-                    color: AppColors.whitetext,
-                  ),
+                  fillColor: Colors.white,
+                  contentPadding: const EdgeInsets.symmetric(vertical: 0),
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(30),
                     borderSide: BorderSide.none,
                   ),
                 ),
@@ -273,102 +152,33 @@ void generateAnalytics() {
                       ),
                       child: Column(
                         children: [
-
-                          // ... inside your Row's children, replace the first Container with this:
-
-                          Container(
-                            width: 200,
-                            padding: const EdgeInsets.all(15),
-                            decoration: BoxDecoration(
-                              color: AppColors.whitetext,
-                              border: Border.all(color: AppColors.textColor),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Column(
-                              children: [
-                                Text(
-                                  "Today's workload",
-                                  style: AppTextstyle.MiniText,
-                                ),
-                                const SizedBox(height: 10),
-
-                                // Dynamic Data Section
-                                Consumer<LeadProvider>(
-                                  builder: (context, provider, child) {
-                                    return Column(
-                                      children: [
-                                        Text(
-                                          "${provider.dueToday}",
-                                          style: const TextStyle(
-                                              fontSize: 24,
-                                              fontWeight: FontWeight.bold,
-                                              color: AppColors.themeColor
-                                          ),
-                                        ),
-                                        const Text("Leads Due Today", style: TextStyle(fontSize: 10)),
-                                      ],
-                                    );
-                                  },
-                                ),
-
-                                const SizedBox(height: 15),
-
-                                // Comparison Row
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    const Text("This week", style: TextStyle(fontSize: 12)),
-                                    Consumer<LeadProvider>(
-                                      builder: (context, provider, child) {
-                                        return Text(
-                                          "${provider.thisWeek}",
-                                          style: const TextStyle(fontWeight: FontWeight.bold),
-                                        );
-                                      },
-                                    ),
-                                    const CircleAvatar(
-                                      radius: 5,
-                                      backgroundColor: AppColors.themeColor,
-                                    ),
-                                  ],
-                                ),
-
-                                const SizedBox(height: 10),
-
-                                // View Button
-                                Container(
-                                  decoration: BoxDecoration(
-                                    border: Border.all(color: Colors.black12),
-                                    borderRadius: BorderRadius.circular(5),
-                                  ),
-                                  child: InkWell(
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (_) => const ReportSum(),
-                                        ),
-                                      );
-                                    },
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: const [
-                                        Padding(
-                                          padding: EdgeInsets.symmetric(vertical: 4),
-                                          child: Text(
-                                            "View detailed report",
-                                            style: TextStyle(fontSize: 10),
-                                          ),
-                                        ),
-                                        Icon(Icons.arrow_forward, size: 14),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
+                          Text(
+                            "Today's workload",
+                            style: AppTextstyle.MiniText,
                           ),
-
+                          const SizedBox(height: 10),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Text("Due today"),
+                              Text("23"),
+                              CircleAvatar(
+                                radius: 5,
+                                backgroundColor: AppColors.redColor,
+                              ),
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Text("This week"),
+                              Text("67"),
+                              CircleAvatar(
+                                radius: 5,
+                                backgroundColor: AppColors.themeColor,
+                              ),
+                            ],
+                          ),
                           const SizedBox(height: 5),
                           Container(
                             decoration: BoxDecoration(
@@ -433,7 +243,7 @@ void generateAnalytics() {
                 ),
               ),
               SizedBox(height: 30),
-
+              
 
               Container(
   width: double.infinity,
@@ -447,7 +257,7 @@ void generateAnalytics() {
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
 
-
+      
       Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -508,7 +318,7 @@ void generateAnalytics() {
 
                 const SizedBox(height: 8),
 
-
+               
               ],
             ),
           ),
@@ -517,22 +327,7 @@ void generateAnalytics() {
 
           Column(
             children: [
-
-              Icon(
-                Icons.filter_alt_outlined,
-                color: AppColors.themeColor,
-              ),
-
-              const SizedBox(height: 15),
-
-             
-            ],
-          ),
-
-          const SizedBox(width: 10),
-
-          
-          PopupMenuButton<String>(
+                     PopupMenuButton<String>(
   onSelected: (value) {
     setState(() {
       selectedReportType = value;
@@ -585,7 +380,7 @@ void generateAnalytics() {
   ),
 ),
               const SizedBox(height: 20),
-
+  
 
   Container(
   width: double.infinity,
@@ -638,62 +433,93 @@ void generateAnalytics() {
 
       const SizedBox(height: 30),
 
-      analyticsItem(
-        title: "Connected",
-        count: "0",
-        color: Colors.blue,
+      
+
+      SizedBox(
+        // height: 200,
+        child: Consumer<LeadProvider>(
+          builder: (context, pro, child) {
+            return Column(
+              children: pro.statusCounts.entries.map((entry) {
+                String title = entry.key;
+                int count = entry.value;
+
+                return analyticsItem(
+                  title: title,
+                  count: count.toString(),
+                  color: Colors.blue,
+                );
+              }).toList(),
+            
+          //   ListView.builder(
+          // itemCount: pro.statusCounts.length,
+          // shrinkWrap: true,
+          // physics: NeverScrollableScrollPhysics(),
+          // itemBuilder: (context, index) {
+        
+          //   String title = pro.statusCounts.keys.elementAt(index);
+          //   int count = pro.statusCounts.values.elementAt(index);
+        
+          //   return 
+        //     analyticsItem(
+        // title: title,
+        // count: count.toString(),
+        // color: Colors.blue,
+        //     )
+        //   },
+        );
+        }),
       ),
+      // analyticsItem(
+      //   title: "Busy",
+      //   count: "0",
+      //   color: Colors.lightBlue,
+      // ),
 
-      analyticsItem(
-        title: "Busy",
-        count: "0",
-        color: Colors.lightBlue,
-      ),
+      // analyticsItem(
+      //   title: "Rejected",
+      //   count: "0",
+      //   color: Colors.red,
+      // ),
 
-      analyticsItem(
-        title: "Rejected",
-        count: "0",
-        color: Colors.red,
-      ),
+      // analyticsItem(
+      //   title: "Switched off",
+      //   count: "0",
+      //   color: Colors.red,
+      // ),
 
-      analyticsItem(
-        title: "Switched off",
-        count: "0",
-        color: Colors.red,
-      ),
+      // analyticsItem(
+      //   title: "Out of Coverage Area",
+      //   count: "0",
+      //   color: Colors.green,
+      // ),
 
-      analyticsItem(
-        title: "Out of Coverage Area",
-        count: "0",
-        color: Colors.green,
-      ),
+      // analyticsItem(
+      //   title: "Not Attended",
+      //   count: "0",
+      //   color: Colors.red,
+      // ),
 
-      analyticsItem(
-        title: "Not Attended",
-        count: "0",
-        color: Colors.red,
-      ),
+      // analyticsItem(
+      //   title: "No Status Updated",
+      //   count: "0",
+      //   color: Colors.purple,
+      // ),
 
-      analyticsItem(
-        title: "No Status Updated",
-        count: "0",
-        color: Colors.purple,
-      ),
+      // const SizedBox(height: 20),
 
-      const SizedBox(height: 20),
-
-
+     
     ],
   ),
 ),
-
-
-
-
+          
+                 
+               
+                
           ]),
-
+      
       ),
     ));
   }
-
+  
 }

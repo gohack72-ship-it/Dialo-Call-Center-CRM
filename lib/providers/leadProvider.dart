@@ -38,6 +38,28 @@ class LeadProvider extends ChangeNotifier {
   int followUps = 0;
   int todayCalls = 0;
   int overdue = 0;
+
+  Map<String, int> statusCounts = {};
+  
+
+ fetchCallStatusCounts() async {
+
+  final snapshot = await FirebaseFirestore.instance
+      .collection("LEADS")
+      .get();
+
+  print("callStatusList: $callStatusList");
+
+  for (var status in callStatusList) {
+
+   final count = snapshot.docs.where((doc) => doc['CALL_STATUS'] == status).length;
+
+    statusCounts[status] = count;
+  }
+print(statusCounts);
+  notifyListeners();
+}
+
   Future<void> addNewLead() async {
     DateTime now = DateTime.now();
     String id = now.millisecondsSinceEpoch.toString();

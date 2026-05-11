@@ -51,6 +51,11 @@ class _BottomnavPageState extends State<BottomnavPage> {
           if (index == 0) {
             context.read<LeadProvider>().getLeadStatus();
           }
+          if (index == 3) {
+            context.read<LeadProvider>().getCallStatusList();
+            context.read<LeadProvider>().getLeadStatus();
+            context.read<LeadProvider>().fetchCallStatusCounts();
+          }
         },
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: "Dashboard"),
