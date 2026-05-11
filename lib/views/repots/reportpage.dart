@@ -93,13 +93,13 @@ void initState() {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-<<<<<<< HEAD
-      backgroundColor: AppColors.whitetext,
-      drawer: SettingsDrawer(changeTheme: widget.changeTheme),
-=======
+
+    
+
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
        drawer: SettingsDrawer(changeTheme:widget.changeTheme),
->>>>>>> e105e25ddcb719147d861ff915d90825aaa1a4ad
+
+
 
       appBar: AppBar(
         title: const Text(
@@ -132,13 +132,13 @@ void initState() {
                   hintText: "Search Leads",
                   prefixIcon: const Icon(Icons.search),
                   filled: true,
-<<<<<<< HEAD
-                  fillColor: Colors.white,
-=======
+
+                
+
                   fillColor:Theme.of(context).brightness == Brightness.dark
                           ? Colors.grey.shade800
                           : Colors.white,
->>>>>>> e105e25ddcb719147d861ff915d90825aaa1a4ad
+
                   contentPadding: const EdgeInsets.symmetric(vertical: 0),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(30),
@@ -153,51 +153,51 @@ void initState() {
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   children: [
-                    Container(
-                      width: 200,
-                      padding: EdgeInsets.all(15),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).brightness == Brightness.dark
-                          ? Colors.grey.shade900
-                          : AppColors.whitetext,
-                        border: Border.all(
-                            color: Theme.of(context).brightness == Brightness.dark
-                          ? Colors.grey
-                          : AppColors.textColor
-                        ),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Column(
+                    // Container(
+                    //   width: 200,
+                    //   padding: EdgeInsets.all(15),
+                    //   decoration: BoxDecoration(
+                    //     color: Theme.of(context).brightness == Brightness.dark
+                    //       ? Colors.grey.shade900
+                    //       : AppColors.whitetext,
+                    //     border: Border.all(
+                    //         color: Theme.of(context).brightness == Brightness.dark
+                    //       ? Colors.grey
+                    //       : AppColors.textColor
+                    //     ),
+                    //     borderRadius: BorderRadius.circular(10),
+                    //   ),
+                      Column(
                         children: [
-<<<<<<< HEAD
-                          Text(
-                            "Today's workload",
-                            style: AppTextstyle.MiniText,
-                          ),
-                          const SizedBox(height: 10),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Text("Due today"),
-                              Text("23"),
-                              CircleAvatar(
-                                radius: 5,
-                                backgroundColor: AppColors.redColor,
-                              ),
-                            ],
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Text("This week"),
-                              Text("67"),
-                              CircleAvatar(
-                                radius: 5,
-                                backgroundColor: AppColors.themeColor,
-                              ),
-                            ],
-=======
 
+                          // Text(
+                          //   "Today's workload",
+                          //   style: AppTextstyle.MiniText,
+                          // ),
+                          const SizedBox(height: 10),
+                          // Row(
+                          //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          //   children: [
+                          //     Text("Due today"),
+                          //     Text("23"),
+                          //     CircleAvatar(
+                          //       radius: 5,
+                          //       backgroundColor: AppColors.redColor,
+                          //     ),
+                          //   ],
+                          // ),
+                          // Row(
+                          //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          //   children: [
+                          //     Text("This week"),
+                          //     Text("67"),
+                          //     CircleAvatar(
+                          //       radius: 5,
+                          //       backgroundColor: AppColors.themeColor,
+                          //     ),
+                          //   ],
+
+                          // ),
                           // ... inside your Row's children, replace the first Container with this:
 
                           Container(
@@ -293,40 +293,40 @@ void initState() {
                                 ),
                               ],
                             ),
->>>>>>> e105e25ddcb719147d861ff915d90825aaa1a4ad
+
                           ),
                           const SizedBox(height: 5),
-                          Container(
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.black),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Text(
-                                  "View all reports",
-                                  style: TextStyle(
-                                      fontSize: 10,
-                                      color: Theme.of(context).textTheme.bodyLarge?.color
-                                  ),
-                                ),
-                                IconButton(
-                                  icon: Icon(Icons.arrow_forward),
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (_) => ReportSum(),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ],
-                            ),
-                          ),
+                          // Container(
+                          //   decoration: BoxDecoration(
+                          //     border: Border.all(color: Colors.black),
+                          //   ),
+                          //   child: Row(
+                          //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          //     children: [
+                          //       Text(
+                          //         "View all reports",
+                          //         style: TextStyle(
+                          //             fontSize: 10,
+                          //             color: Theme.of(context).textTheme.bodyLarge?.color
+                          //         ),
+                          //       ),
+                          //       IconButton(
+                          //         icon: Icon(Icons.arrow_forward),
+                          //         onPressed: () {
+                          //           Navigator.push(
+                          //             context,
+                          //             MaterialPageRoute(
+                          //               builder: (_) => ReportSum(),
+                          //             ),
+                          //           );
+                          //         },
+                          //       ),
+                          //     ],
+                          //   ),
+                          // ),
                         ],
                       ),
-                    ),
+                    // ),
                     const SizedBox(width: 30),
                     Container(
                       width: 200,
