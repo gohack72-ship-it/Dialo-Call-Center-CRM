@@ -173,7 +173,7 @@ class _ReportpageState extends State<Reportpage> {
                                 Text(
                                   "Today's workload",
                                   style: AppTextstyle.MiniText.copyWith(
-                              color: Theme.of(context).textTheme.bodyLarge?.color
+                              color: Theme.of(context).textTheme.bodyLarge?.color,
                             )
                                 ),
                                 const SizedBox(height: 10),
