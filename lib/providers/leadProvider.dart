@@ -22,6 +22,7 @@ class LeadProvider extends ChangeNotifier {
 
    TextEditingController searchController = TextEditingController();
    String searchText = "";
+  String? selectedLeadStage;
 
   List<String> statusList = [];
   List<String> callStatusList = [];

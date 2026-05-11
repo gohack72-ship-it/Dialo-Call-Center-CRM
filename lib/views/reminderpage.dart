@@ -17,12 +17,18 @@ class ReminderPage extends StatefulWidget {
 
 class _ReminderPageState extends State<ReminderPage> {
 
+
+
   @override
   void initState() {
     super.initState();
 
     Future.microtask(() {
       context.read<LeadProvider>().getCallStatusList();
+      context.read<LeadProvider>().getLeadStatus();
+
+
+
     });
   }
   @override
@@ -112,16 +118,16 @@ class _ReminderPageState extends State<ReminderPage> {
                   const SizedBox(height: 8),
 
                   Consumer<LeadProvider>(
-                    builder: (context,value, child) {
+                    builder: (context, value, child) {
                       return DropdownButtonFormField<String>(
-                        value: value.selectedCallStatus,
+                        value: value.selectedLeadStage,
 
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                           hintText: "Select Lead Stage",
                         ),
 
-                        items: value.callStatusList.map((status) {
+                        items: value.statusList.map((status) {
                           return DropdownMenuItem<String>(
                             value: status,
                             child: Text(status),
@@ -129,14 +135,11 @@ class _ReminderPageState extends State<ReminderPage> {
                         }).toList(),
 
                         onChanged: (val) {
-
-                            value.selectedCallStatus = val;
-
-
-
+                          value.selectedLeadStage = val;
+                          value.notifyListeners();
                         },
                       );
-                    }
+                    },
                   ),
                   SizedBox(height: 20,),
 
