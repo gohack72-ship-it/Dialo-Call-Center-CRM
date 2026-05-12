@@ -34,15 +34,30 @@ appBar: AppBar(
             width: double.infinity,
             padding: EdgeInsets.all(15),
             decoration: BoxDecoration(
+              color: Theme.of(context).brightness == Brightness.dark
+                   ? Colors.grey.shade900
+                   : Colors.white,
               borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: AppColors.textColor),
+              border: Border.all(
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.grey.shade700
+                      : AppColors.textColor
+                  // AppColors.textColor
+              ),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   children: [
-                    Text("Swabirin", style: AppTextstyle.SubTitle),
+                    Text("Swabirin",
+                        style: AppTextstyle.SubTitle.copyWith(
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodyLarge
+                              ?.color,
+                        ),
+                    ),
                     Spacer(),
                     Row(
                       children: [
@@ -62,7 +77,14 @@ appBar: AppBar(
                         backgroundColor: AppColors.whitetext,
                       ),
                     ),
-                    Text("Pending", style: AppTextstyle.MiniText),
+                    Text("Pending",
+                        style: AppTextstyle.MiniText.copyWith(
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.color,
+                        )
+                    ),
                   ],
                 ),
                 Row(
@@ -104,15 +126,31 @@ appBar: AppBar(
                 width: double.infinity,
                 padding: EdgeInsets.all(15),
                 decoration: BoxDecoration(
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.grey.shade900
+                      : Colors.white,
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: AppColors.textColor),
+                  border: Border.all(
+                      color:  Theme.of(context).brightness == Brightness.dark
+                      ? Colors.grey.shade700
+                      : AppColors.textColor
+                      // AppColors.textColor
+                  ),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
-                        Text("Swabirin", style: AppTextstyle.SubTitle),
+                        Text("Swabirin",
+                            style: AppTextstyle.SubTitle.copyWith(
+                              color: Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge
+                                  ?.color,
+                            ),
+                            // AppTextstyle.SubTitle
+                        ),
                         Spacer(),
                         Row(
                           children: [
@@ -132,7 +170,14 @@ appBar: AppBar(
                             backgroundColor: AppColors.whitetext,
                           ),
                         ),
-                        Text("Pending", style: AppTextstyle.MiniText),
+                        Text("Pending",
+                            style: AppTextstyle.MiniText.copyWith(
+                              color: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.color,
+                            )
+                        ),
                       ],
                     ),
                     Row(
@@ -176,15 +221,27 @@ appBar: AppBar(
                 width: double.infinity,
                 padding: EdgeInsets.all(15),
                 decoration: BoxDecoration(
+                  color: Theme.of(context).brightness == Brightness.dark
+                       ? Colors.grey.shade900
+                       : Colors.white,
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: AppColors.textColor),
+                  border: Border.all(
+                      color: Theme.of(context).brightness == Brightness.dark
+                           ? Colors.grey.shade700
+                           : AppColors.textColor
+                  ),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
-                        Text("Swabirin", style: AppTextstyle.SubTitle),
+                        Text("Swabirin", style: AppTextstyle.SubTitle.copyWith(
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodyLarge
+                              ?.color
+                        )),
                         Spacer(),
                         Row(
                           children: [
@@ -204,7 +261,12 @@ appBar: AppBar(
                             backgroundColor: AppColors.whitetext,
                           ),
                         ),
-                        Text("Pending", style: AppTextstyle.MiniText),
+                        Text("Pending", style: AppTextstyle.MiniText.copyWith(
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.color
+                        )),
                       ],
                     ),
                     Row(
@@ -254,15 +316,27 @@ appBar: AppBar(
                 width: double.infinity,
                 padding: EdgeInsets.all(15),
                 decoration: BoxDecoration(
+                  color: Theme.of(context).brightness == Brightness.dark
+                       ? Colors.grey.shade900
+                       : Colors.white,
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: AppColors.textColor),
+                  border: Border.all(color:
+                  Theme.of(context).brightness == Brightness.dark
+                       ? Colors.grey.shade700
+                       : AppColors.textColor),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
-                        Text("Swabirin", style: AppTextstyle.SubTitle),
+                        Text("Swabirin", style: AppTextstyle.SubTitle.copyWith(
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodyLarge
+                              ?.color
+                        ),
+                        ),
                         Spacer(),
                         Row(
                           children: [
@@ -282,7 +356,12 @@ appBar: AppBar(
                             backgroundColor: AppColors.whitetext,
                           ),
                         ),
-                        Text("Pending", style: AppTextstyle.MiniText),
+                        Text("Pending", style: AppTextstyle.MiniText.copyWith(
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.color
+                        )),
                       ],
                     ),
                     Row(
@@ -323,7 +402,12 @@ appBar: AppBar(
             width: double.infinity,
             padding: EdgeInsets.all(10),
             decoration: BoxDecoration(
-              border: Border.all(color: AppColors.textColor),
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.grey.shade900
+                  : Colors.white,
+              border: Border.all(color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.grey.shade700
+                   :AppColors.textColor),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Column(
@@ -331,7 +415,12 @@ appBar: AppBar(
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Text("Alice cooper", style: AppTextstyle.SubTitle),
+                    Text("Alice cooper", style: AppTextstyle.SubTitle.copyWith(
+                      color: Theme.of(context)
+                          .textTheme
+                          .bodyLarge
+                          ?.color
+                    )),
                   ],
                 ),
                 const SizedBox(height: 10),
@@ -421,15 +510,26 @@ appBar: AppBar(
                 width: double.infinity,
                 padding: EdgeInsets.all(15),
                 decoration: BoxDecoration(
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.grey.shade900
+                      : Colors.white,
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: AppColors.textColor),
+                  border: Border.all(color: Theme.of(context).brightness == Brightness.dark
+                                          ? Colors.grey.shade700
+                                          : AppColors.textColor),
+
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
-                        Text("Swabirin", style: AppTextstyle.SubTitle),
+                        Text("Swabirin", style: AppTextstyle.SubTitle.copyWith(
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodyLarge
+                              ?.color
+                        )),
                         Spacer(),
                         Row(
                           children: [
@@ -449,7 +549,12 @@ appBar: AppBar(
                             backgroundColor: AppColors.whitetext,
                           ),
                         ),
-                        Text("Pending", style: AppTextstyle.MiniText),
+                        Text("Pending", style: AppTextstyle.MiniText.copyWith(
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.color
+                        )),
                       ],
                     ),
                     Row(
@@ -490,7 +595,12 @@ appBar: AppBar(
             width: double.infinity,
             padding: EdgeInsets.all(10),
             decoration: BoxDecoration(
-              border: Border.all(color: AppColors.textColor),
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.grey.shade900
+                  : Colors.white,
+              border: Border.all(color:Theme.of(context).brightness == Brightness.dark
+                  ? Colors.grey.shade700
+                  : AppColors.textColor),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Column(
@@ -498,7 +608,12 @@ appBar: AppBar(
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Text("Alice cooper", style: AppTextstyle.SubTitle),
+                    Text("Alice cooper", style: AppTextstyle.SubTitle.copyWith(
+                      color: Theme.of(context)
+                          .textTheme
+                          .bodyLarge
+                          ?.color
+                    )),
                   ],
                 ),
                 const SizedBox(height: 10),
@@ -587,15 +702,25 @@ appBar: AppBar(
                 width: double.infinity,
                 padding: EdgeInsets.all(15),
                 decoration: BoxDecoration(
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.grey.shade900
+                      : Colors.white,
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: AppColors.textColor),
+                  border: Border.all(color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.grey.shade700
+                      : AppColors.textColor),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
-                        Text("Swabirin", style: AppTextstyle.SubTitle),
+                        Text("Swabirin", style: AppTextstyle.SubTitle.copyWith(
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodyLarge
+                              ?.color
+                        )),
                         Spacer(),
                         Row(
                           children: [
@@ -615,7 +740,12 @@ appBar: AppBar(
                             backgroundColor: AppColors.whitetext,
                           ),
                         ),
-                        Text("Pending", style: AppTextstyle.MiniText),
+                        Text("Pending", style: AppTextstyle.MiniText.copyWith(
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.color
+                        )),
                       ],
                     ),
                     Row(
@@ -656,7 +786,12 @@ appBar: AppBar(
             width: double.infinity,
             padding: EdgeInsets.all(10),
             decoration: BoxDecoration(
-              border: Border.all(color: AppColors.textColor),
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.grey.shade900
+                  : Colors.white,
+              border: Border.all(color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.grey.shade700
+                  : AppColors.textColor),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Column(
@@ -664,7 +799,13 @@ appBar: AppBar(
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Text("Alice cooper", style: AppTextstyle.SubTitle),
+                    Text("Alice cooper", style: AppTextstyle.SubTitle.copyWith(
+                      color: Theme.of(context)
+                          .textTheme
+                          .bodyLarge
+                          ?.color
+                    ),
+                    )
                   ],
                 ),
                 const SizedBox(height: 10),
@@ -752,15 +893,25 @@ appBar: AppBar(
                 width: double.infinity,
                 padding: EdgeInsets.all(15),
                 decoration: BoxDecoration(
+                  color: Theme.of(context).brightness == Brightness.dark
+                       ? Colors.grey.shade900
+                       : Colors.white,
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: AppColors.textColor),
+                  border: Border.all(color: Theme.of(context).brightness == Brightness.dark
+                       ? Colors.grey.shade700
+                       : AppColors.textColor),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
-                        Text("Swabirin", style: AppTextstyle.SubTitle),
+                        Text("Swabirin", style: AppTextstyle.SubTitle.copyWith(
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodyLarge
+                              ?.color
+                        )),
                         Spacer(),
                         Row(
                           children: [
@@ -780,7 +931,12 @@ appBar: AppBar(
                             backgroundColor: AppColors.whitetext,
                           ),
                         ),
-                        Text("Pending", style: AppTextstyle.MiniText),
+                        Text("Pending", style: AppTextstyle.MiniText.copyWith(
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.color
+                        )),
                       ],
                     ),
                     Row(
@@ -822,15 +978,25 @@ appBar: AppBar(
                 width: double.infinity,
                 padding: EdgeInsets.all(15),
                 decoration: BoxDecoration(
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.grey.shade900
+                      : Colors.white,
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: AppColors.textColor),
+                  border: Border.all(color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.grey.shade700
+                      : AppColors.textColor),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
-                        Text("Swabirin", style: AppTextstyle.SubTitle),
+                        Text("Swabirin", style: AppTextstyle.SubTitle.copyWith(
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodyLarge
+                              ?.color
+                        )),
                         Spacer(),
                         Row(
                           children: [
@@ -850,7 +1016,12 @@ appBar: AppBar(
                             backgroundColor: AppColors.whitetext,
                           ),
                         ),
-                        Text("Pending", style: AppTextstyle.MiniText),
+                        Text("Pending", style: AppTextstyle.MiniText.copyWith(
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.color
+                        )),
                       ],
                     ),
                     Row(
@@ -891,15 +1062,25 @@ appBar: AppBar(
                 width: double.infinity,
                 padding: EdgeInsets.all(15),
                 decoration: BoxDecoration(
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.grey.shade900
+                      : Colors.white,
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: AppColors.textColor),
+                  border: Border.all(color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.grey.shade700
+                      : AppColors.textColor),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
-                        Text("Swabirin", style: AppTextstyle.SubTitle),
+                        Text("Swabirin", style: AppTextstyle.SubTitle.copyWith(
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodyLarge
+                              ?.color
+                        )),
                         Spacer(),
                         Row(
                           children: [
@@ -919,7 +1100,12 @@ appBar: AppBar(
                             backgroundColor: AppColors.whitetext,
                           ),
                         ),
-                        Text("Pending", style: AppTextstyle.MiniText),
+                        Text("Pending", style: AppTextstyle.MiniText.copyWith(
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.color
+                        )),
                       ],
                     ),
                     Row(
@@ -960,7 +1146,12 @@ appBar: AppBar(
             width: double.infinity,
             padding: EdgeInsets.all(10),
             decoration: BoxDecoration(
-              border: Border.all(color: AppColors.textColor),
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.grey.shade900
+                  : Colors.white,
+              border: Border.all(color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.grey.shade700
+                   : AppColors.textColor),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Column(
@@ -968,7 +1159,12 @@ appBar: AppBar(
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Text("Alice cooper", style: AppTextstyle.SubTitle),
+                    Text("Alice cooper", style: AppTextstyle.SubTitle.copyWith(
+                      color: Theme.of(context)
+                          .textTheme
+                          .bodyLarge
+                          ?.color
+                    )),
                   ],
                 ),
                 const SizedBox(height: 10),
@@ -1058,15 +1254,25 @@ appBar: AppBar(
                 width: double.infinity,
                 padding: EdgeInsets.all(15),
                 decoration: BoxDecoration(
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.grey.shade900
+                      : Colors.white,
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: AppColors.textColor),
+                  border: Border.all(color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.grey.shade700
+                      : AppColors.textColor),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
-                        Text("Swabirin", style: AppTextstyle.SubTitle),
+                        Text("Swabirin", style: AppTextstyle.SubTitle.copyWith(
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodyLarge
+                              ?.color
+                        )),
                         Spacer(),
                         Row(
                           children: [
@@ -1086,7 +1292,12 @@ appBar: AppBar(
                             backgroundColor: AppColors.whitetext,
                           ),
                         ),
-                        Text("Pending", style: AppTextstyle.MiniText),
+                        Text("Pending", style: AppTextstyle.MiniText.copyWith(
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.color
+                        )),
                       ],
                     ),
                     Row(
@@ -1129,15 +1340,25 @@ appBar: AppBar(
                 width: double.infinity,
                 padding: EdgeInsets.all(15),
                 decoration: BoxDecoration(
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.grey.shade900
+                      : Colors.white,
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: AppColors.textColor),
+                  border: Border.all(color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.grey.shade700
+                      : AppColors.textColor),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
-                        Text("Swabirin", style: AppTextstyle.SubTitle),
+                        Text("Swabirin", style: AppTextstyle.SubTitle.copyWith(
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodyLarge
+                              ?.color
+                        )),
                         Spacer(),
                         Row(
                           children: [
@@ -1157,7 +1378,12 @@ appBar: AppBar(
                             backgroundColor: AppColors.whitetext,
                           ),
                         ),
-                        Text("Pending", style: AppTextstyle.MiniText),
+                        Text("Pending", style: AppTextstyle.MiniText.copyWith(
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.color
+                        )),
                       ],
                     ),
                     Row(
@@ -1198,7 +1424,12 @@ appBar: AppBar(
             width: double.infinity,
             padding: EdgeInsets.all(10),
             decoration: BoxDecoration(
-              border: Border.all(color: AppColors.textColor),
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.grey.shade900
+                  : Colors.white,
+              border: Border.all(color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.grey.shade700
+                  : AppColors.textColor),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Column(
@@ -1206,7 +1437,12 @@ appBar: AppBar(
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Text("Alice cooper", style: AppTextstyle.SubTitle),
+                    Text("Alice cooper", style: AppTextstyle.SubTitle.copyWith(
+                      color: Theme.of(context)
+                          .textTheme
+                          .bodyLarge
+                          ?.color
+                    )),
                   ],
                 ),
                 const SizedBox(height: 10),
@@ -1294,7 +1530,12 @@ appBar: AppBar(
             width: double.infinity,
             padding: EdgeInsets.all(10),
             decoration: BoxDecoration(
-              border: Border.all(color: AppColors.textColor),
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.grey.shade900
+                  : Colors.white,
+              border: Border.all(color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.grey.shade700
+                  :AppColors.textColor),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Column(
@@ -1302,7 +1543,12 @@ appBar: AppBar(
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Text("Alice cooper", style: AppTextstyle.SubTitle),
+                    Text("Alice cooper", style: AppTextstyle.SubTitle.copyWith(
+                      color: Theme.of(context)
+                          .textTheme
+                          .bodyLarge
+                          ?.color
+                    )),
                   ],
                 ),
                 const SizedBox(height: 10),
@@ -1390,15 +1636,25 @@ appBar: AppBar(
                 width: double.infinity,
                 padding: EdgeInsets.all(15),
                 decoration: BoxDecoration(
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.grey.shade900
+                      : Colors.white,
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: AppColors.textColor),
+                  border: Border.all(color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.grey.shade700
+                      : AppColors.textColor),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
-                        Text("Swabirin", style: AppTextstyle.SubTitle),
+                        Text("Swabirin", style: AppTextstyle.SubTitle.copyWith(
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodyLarge
+                              ?.color
+                        )),
                         Spacer(),
                         Row(
                           children: [
@@ -1418,7 +1674,12 @@ appBar: AppBar(
                             backgroundColor: AppColors.whitetext,
                           ),
                         ),
-                        Text("Pending", style: AppTextstyle.MiniText),
+                        Text("Pending", style: AppTextstyle.MiniText.copyWith(
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.color
+                        )),
                       ],
                     ),
                     Row(
@@ -1459,15 +1720,25 @@ appBar: AppBar(
                 width: double.infinity,
                 padding: EdgeInsets.all(15),
                 decoration: BoxDecoration(
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.grey.shade900
+                      : Colors.white,
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: AppColors.textColor),
+                  border: Border.all(color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.grey.shade700
+                      : AppColors.textColor),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
-                        Text("Swabirin", style: AppTextstyle.SubTitle),
+                        Text("Swabirin", style: AppTextstyle.SubTitle.copyWith(
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodyLarge
+                              ?.color
+                        )),
                         Spacer(),
                         Row(
                           children: [
@@ -1487,7 +1758,12 @@ appBar: AppBar(
                             backgroundColor: AppColors.whitetext,
                           ),
                         ),
-                        Text("Pending", style: AppTextstyle.MiniText),
+                        Text("Pending", style: AppTextstyle.MiniText.copyWith(
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.color
+                        )),
                       ],
                     ),
                     Row(
@@ -1529,7 +1805,12 @@ appBar: AppBar(
             width: double.infinity,
             padding: EdgeInsets.all(10),
             decoration: BoxDecoration(
-              border: Border.all(color: AppColors.textColor),
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.grey.shade900
+                  : Colors.white,
+              border: Border.all(color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.grey.shade700
+                  : AppColors.textColor),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Column(
@@ -1537,7 +1818,12 @@ appBar: AppBar(
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Text("Alice cooper", style: AppTextstyle.SubTitle),
+                    Text("Alice cooper", style: AppTextstyle.SubTitle.copyWith(
+                      color: Theme.of(context)
+                          .textTheme
+                          .bodyLarge
+                          ?.color
+                    )),
                   ],
                 ),
                 const SizedBox(height: 10),
@@ -1625,15 +1911,25 @@ appBar: AppBar(
                 width: double.infinity,
                 padding: EdgeInsets.all(15),
                 decoration: BoxDecoration(
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.grey.shade900
+                      : Colors.white,
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: AppColors.textColor),
+                  border: Border.all(color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.grey.shade700
+                      : AppColors.textColor),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
-                        Text("Swabirin", style: AppTextstyle.SubTitle),
+                        Text("Swabirin", style: AppTextstyle.SubTitle.copyWith(
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodyLarge
+                              ?.color
+                        )),
                         Spacer(),
                         Row(
                           children: [
@@ -1653,7 +1949,12 @@ appBar: AppBar(
                             backgroundColor: AppColors.whitetext,
                           ),
                         ),
-                        Text("Pending", style: AppTextstyle.MiniText),
+                        Text("Pending", style: AppTextstyle.MiniText.copyWith(
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.color
+                        )),
                       ],
                     ),
                     Row(
@@ -1694,15 +1995,25 @@ appBar: AppBar(
                 width: double.infinity,
                 padding: EdgeInsets.all(15),
                 decoration: BoxDecoration(
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.grey.shade900
+                      : Colors.white,
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: AppColors.textColor),
+                  border: Border.all(color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.grey.shade700
+                      : AppColors.textColor),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
-                        Text("Swabirin", style: AppTextstyle.SubTitle),
+                        Text("Swabirin", style: AppTextstyle.SubTitle.copyWith(
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodyLarge
+                              ?.color
+                        )),
                         Spacer(),
                         Row(
                           children: [
@@ -1722,7 +2033,12 @@ appBar: AppBar(
                             backgroundColor: AppColors.whitetext,
                           ),
                         ),
-                        Text("Pending", style: AppTextstyle.MiniText),
+                        Text("Pending", style: AppTextstyle.MiniText.copyWith(
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.color
+                        )),
                       ],
                     ),
                     Row(
@@ -1764,7 +2080,12 @@ appBar: AppBar(
             width: double.infinity,
             padding: EdgeInsets.all(10),
             decoration: BoxDecoration(
-              border: Border.all(color: AppColors.textColor),
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.grey.shade900
+                  : Colors.white,
+              border: Border.all(color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.grey.shade700
+                  : AppColors.textColor),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Column(
@@ -1772,7 +2093,12 @@ appBar: AppBar(
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Text("Alice cooper", style: AppTextstyle.SubTitle),
+                    Text("Alice cooper", style: AppTextstyle.SubTitle.copyWith(
+                      color: Theme.of(context)
+                          .textTheme
+                          .bodyLarge
+                          ?.color
+                    )),
                   ],
                 ),
                 const SizedBox(height: 10),
@@ -1860,7 +2186,12 @@ appBar: AppBar(
             width: double.infinity,
             padding: EdgeInsets.all(10),
             decoration: BoxDecoration(
-              border: Border.all(color: AppColors.textColor),
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.grey.shade900
+                  : Colors.white,
+              border: Border.all(color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.grey.shade700
+                 : AppColors.textColor),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Column(
@@ -1868,7 +2199,12 @@ appBar: AppBar(
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Text("Alice cooper", style: AppTextstyle.SubTitle),
+                    Text("Alice cooper", style: AppTextstyle.SubTitle.copyWith(
+                      color: Theme.of(context)
+                          .textTheme
+                          .bodyLarge
+                          ?.color
+                    )),
                   ],
                 ),
                 const SizedBox(height: 10),

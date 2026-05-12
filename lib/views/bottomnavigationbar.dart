@@ -39,7 +39,7 @@ class _BottomnavPageState extends State<BottomnavPage> {
         currentIndex: _currentIndex,
         type: BottomNavigationBarType.fixed,
         selectedItemColor: Theme.of(context).brightness == Brightness.dark
-                         ? Colors.white
+                         ? Colors.black
                          : Colors.black,
         unselectedItemColor: Theme.of(context).brightness == Brightness.dark
                          ? Colors.white

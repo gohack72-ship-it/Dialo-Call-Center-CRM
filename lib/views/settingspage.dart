@@ -7,8 +7,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 class SettingsDrawer extends StatefulWidget {
   final Function(bool) changeTheme;
   const SettingsDrawer({super.key, required this.changeTheme});
+  // sharedPreferences prefs = await SharedPreferences.getInstance();
   @override
   State<SettingsDrawer> createState() => _SettingsDrawerState();
+  // prefs.setString("userName", userData['NAME']);
+  // prefs.setString?("UserImage", userDate['IMAGE']);
 
   static Widget _item(String title, IconData icon) {
     return ListTile(
@@ -24,6 +27,9 @@ class SettingsDrawer extends StatefulWidget {
 
 class _SettingsDrawerState extends State<SettingsDrawer> {
   bool isDarkMode = false;
+
+String userName = '';
+String userImage = '';
 
   @override
   void initState() {
@@ -43,7 +49,18 @@ class _SettingsDrawerState extends State<SettingsDrawer> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       isDarkMode = prefs.getBool('isDarkMode') ?? false;
-    });
+
+      // userName = prefs.getString("userName") ?? "Profile";
+      //
+      // userImage = prefs.getString("userImage") ?? '';
+
+      userName = prefs.getString("name") ?? "Profile";
+
+      userImage = prefs.getString("image") ?? '';
+     });
+    print(userName);
+    print(userImage);
+
   }
 
   void saveTheme(bool value) async {
@@ -108,22 +125,36 @@ TextButton(
               ),
             ),
             SizedBox(height: 20),
-            const ListTile(
+             ListTile(
               leading: CircleAvatar(
                 radius: 24,
                 backgroundColor: AppColors.themeColor,
-                child: Icon(
+
+                backgroundImage: userImage.isNotEmpty
+                                ? NetworkImage(userImage)
+                                 : null,
+                child: userImage.isEmpty
+                   ? const Icon(
                   Icons.person_outline,
                   color: AppColors.textColor,
                   size: 28,
-                ),
+
+              )
+              : null,
               ),
 
               title: Text(
-                "Profile",
-                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 22),
+                userName,
+                style: TextStyle(
+                    fontWeight:
+                    FontWeight.w600,
+                    fontSize: 22
+                ),
               ),
+               subtitle: Text("Agent"),
             ),
+
+             // ),
             SizedBox(height: 10),
             const Divider(),
             SettingsDrawer._item("Notifications", Icons.notifications,),

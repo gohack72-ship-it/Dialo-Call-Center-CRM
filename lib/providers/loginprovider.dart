@@ -63,6 +63,13 @@ Future<auth.User?> signInWithGoogle() async {
         Map<String, dynamic> userMap =
         querySnapshot.docs.first.data();
 
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+
+       // await prefs.getString("userName", userMap['NAME'] ?? '');
+       // await prefs.getString("userImage", userMap['IMAGE'] ?? '');
+
+
+
 
         print("Login Success: ${emailController.text}");
 
@@ -72,6 +79,8 @@ Future<auth.User?> signInWithGoogle() async {
         await prefs.setString('employeeid', userMap['EMPLOYEEID'] ?? '');
         await prefs.setString('name', userMap['NAME'] ?? '');
         await prefs.setString('image', userMap['IMAGE'] ?? '');
+        // await prefs.setString("userName", userMap['NAME'] ?? '');
+        // await prefs.setString("userImage", userMap['IMAGE'] ?? '');
 
         // await fetchUsers();
         clearLoginPage();

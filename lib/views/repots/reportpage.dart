@@ -154,21 +154,21 @@ void initState() {
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   children: [
-                    // Container(
-                    //   width: 200,
-                    //   padding: EdgeInsets.all(15),
-                    //   decoration: BoxDecoration(
-                    //     color: Theme.of(context).brightness == Brightness.dark
-                    //       ? Colors.grey.shade900
-                    //       : AppColors.whitetext,
-                    //     border: Border.all(
-                    //         color: Theme.of(context).brightness == Brightness.dark
-                    //       ? Colors.grey
-                    //       : AppColors.textColor
-                    //     ),
-                    //     borderRadius: BorderRadius.circular(10),
-                    //   ),
-                      Column(
+                    Container(
+                      width: 200,
+                      padding: EdgeInsets.all(15),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.grey.shade900
+                          : AppColors.whitetext,
+                        border: Border.all(
+                            color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.grey
+                          : AppColors.textColor
+                        ),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                     child:  Column(
                         children: [
 
                           // Text(
@@ -265,7 +265,12 @@ void initState() {
                                 // View Button
                                 Container(
                                   decoration: BoxDecoration(
-                                    border: Border.all(color: Colors.black12),
+                                    border: Border.all(
+                                        color: Theme.of(context).brightness == Brightness.dark
+                                        ? Colors.grey
+                                        : AppColors.textColor
+                                    // Colors.black12
+                                    ),
                                     borderRadius: BorderRadius.circular(5),
                                   ),
                                   child: InkWell(
@@ -295,7 +300,7 @@ void initState() {
                               ],
                             ),
 
-                          ),
+                          // ),
                           const SizedBox(height: 5),
                           // Container(
                           //   decoration: BoxDecoration(
@@ -327,7 +332,7 @@ void initState() {
                           // ),
                         ],
                       ),
-                    // ),
+                    ),
                     const SizedBox(width: 30),
                     Container(
                       width: 200,
