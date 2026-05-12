@@ -25,6 +25,7 @@ class _DbState extends State<Dashboard> {
     Future.microtask(() {
       Provider.of<LeadProvider>(context, listen: false).loadDashboardCounts();
       Provider.of<LeadProvider>(context, listen: false).getLeadStatus();
+      Provider.of<LeadProvider>(context, listen: false).getStatusCounts();
     });
   }
 
@@ -135,7 +136,7 @@ class _DbState extends State<Dashboard> {
               Consumer<LeadProvider>(
                 builder: (context, value, child) {
                   return Container(
-                    height: MediaQuery.of(context).size.height / 2,
+                    height: MediaQuery.of(context).size.height / 2.5,
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
                       border: Border.all(color: Colors.grey.shade300),
@@ -146,7 +147,10 @@ class _DbState extends State<Dashboard> {
                       itemBuilder: (context, index) {
                         var status = value.statusList[index];
                         print(status);
-                        return SummaryRow(title: status, value: "03");
+                        return SummaryRow(
+                          title: status,
+                          value: (value.statusCountMap[status] ?? 0).toString(),
+                        );
                       },
 
                       separatorBuilder: (context, index) {
