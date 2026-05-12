@@ -50,16 +50,13 @@ String userImage = '';
     setState(() {
       isDarkMode = prefs.getBool('isDarkMode') ?? false;
 
-      // userName = prefs.getString("userName") ?? "Profile";
-      //
-      // userImage = prefs.getString("userImage") ?? '';
 
       userName = prefs.getString("name") ?? "Profile";
 
       userImage = prefs.getString("image") ?? '';
      });
-    print(userName);
-    print(userImage);
+   print(userName);
+   print(userImage);
 
   }
 

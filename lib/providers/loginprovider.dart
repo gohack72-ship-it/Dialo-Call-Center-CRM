@@ -65,8 +65,7 @@ Future<auth.User?> signInWithGoogle() async {
 
         SharedPreferences prefs = await SharedPreferences.getInstance();
 
-       // await prefs.getString("userName", userMap['NAME'] ?? '');
-       // await prefs.getString("userImage", userMap['IMAGE'] ?? '');
+
 
 
 
@@ -79,8 +78,6 @@ Future<auth.User?> signInWithGoogle() async {
         await prefs.setString('employeeid', userMap['EMPLOYEEID'] ?? '');
         await prefs.setString('name', userMap['NAME'] ?? '');
         await prefs.setString('image', userMap['IMAGE'] ?? '');
-        // await prefs.setString("userName", userMap['NAME'] ?? '');
-        // await prefs.setString("userImage", userMap['IMAGE'] ?? '');
 
         // await fetchUsers();
         clearLoginPage();

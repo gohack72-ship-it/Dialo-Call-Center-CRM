@@ -228,7 +228,7 @@ class _LeadProfileScreenState extends State<LeadProfileScreen> {
             _buildEditableTile(
               Icons.phone_outlined,
               widget.leadData["PHONE"] ?? "",
-              keyboardType: TextInputType.number,
+              keyboardType: TextInputType.phone,
               inputFormatters: [
                 FilteringTextInputFormatter.digitsOnly,
                 LengthLimitingTextInputFormatter(10),
