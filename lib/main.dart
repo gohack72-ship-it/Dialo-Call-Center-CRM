@@ -1,4 +1,6 @@
-// import 'package:dialo/loginpage.dart';
+import 'package:dialo/loginpage.dart';
+import 'package:dialo/home_page.dart';
+import 'package:dialo/loginpage.dart';
 
 import 'package:dialo/providers/leadProvider.dart';
 
@@ -48,7 +50,7 @@ class _MyAppState extends State<MyApp> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       isDarkMode = prefs.getBool('isDarkMode') ?? false;
-       
+
     });
   }
 
@@ -71,10 +73,43 @@ class _MyAppState extends State<MyApp> {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
-        home: BottomnavPage(changeTheme: changeTheme),
+        theme: ThemeData(
+          brightness:  Brightness.light,
+          primarySwatch: Colors.blue,
+        scaffoldBackgroundColor: Colors.white,
+
+          iconTheme: IconThemeData(
+            color: Colors.black
+          ),
+          appBarTheme: const AppBarTheme(
+            backgroundColor: Colors.white,
+            foregroundColor: Colors.black,
+          ),
+        ),
+
+        darkTheme: ThemeData(
+          brightness: Brightness.dark,
+          primarySwatch: Colors.blue,
+          scaffoldBackgroundColor: Colors.black,
+            iconTheme: const IconThemeData(
+              color: Colors.white,
+            ),
+
+          textTheme: const TextTheme(
+            bodyLarge: TextStyle(color: Colors.white),
+            bodyMedium: TextStyle(color: Colors.white),
+            titleLarge: TextStyle(color: Colors.white),
+          ),
+
+            appBarTheme: const AppBarTheme(
+            backgroundColor: Colors.black,
+            foregroundColor: Colors.white,
+          )
+        ),
+        home: Loginpage(changeTheme: changeTheme,)
       ),
     );
   }
-  
- 
+
+
 }

@@ -44,7 +44,8 @@ class _LeadsScreenState extends State<LeadsScreen> {
       },
     );
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      // Colors.white,
 
       drawer: SettingsDrawer(changeTheme: widget.changeTheme),
 
@@ -97,9 +98,14 @@ class _LeadsScreenState extends State<LeadsScreen> {
                     },
                     decoration: InputDecoration(
                       hintText: "Search Leads",
+                      // hintStyle: TextStyle(
+                      //   color: Theme.of(context).textTheme.bodyLarge?.color,
+                      // ),
                       prefixIcon: const Icon(Icons.search),
                       filled: true,
-                      fillColor: Colors.white,
+                      fillColor: Theme.of(context).brightness == Brightness.dark
+                               ? Colors.grey.shade800
+                               : Colors.white,
                       contentPadding: const EdgeInsets.symmetric(vertical: 0),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30),
@@ -109,14 +115,17 @@ class _LeadsScreenState extends State<LeadsScreen> {
                   ),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.refresh),
+                  icon:  Icon(
+                      Icons.refresh,
+                    color: Theme.of(context).iconTheme.color,
+                  ),
                   onPressed: () {
                     _refreshLeads(context);
                   },
                 ),
                 Builder(
                   builder: (context) => IconButton(
-                    icon: const Icon(Icons.tune),
+                    icon:  Icon(Icons.tune,color: Theme.of(context).iconTheme.color,),
                     onPressed: () {
                       Provider.of<LeadProvider>(
                         context,
@@ -347,7 +356,9 @@ class LeadCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).brightness == Brightness.dark
+             ? Colors.grey.shade900
+             : Colors.white,
         borderRadius: BorderRadius.circular(16),
         boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 4)],
       ),

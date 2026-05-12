@@ -1,31 +1,47 @@
 import 'package:dialo/constants/app_colors.dart';
 import 'package:dialo/constants/app_textstyle.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../../providers/leadProvider.dart';
-
+import 'package:dialo/models/leadModel.dart';
+import 'package:dialo/providers/leadProvider.dart';
 
 import 'package:dialo/views/repots/reportsum.dart';
 import 'package:dialo/views/settingspage.dart';
+import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:provider/provider.dart';
 
 
 class Reportpage extends StatefulWidget {
   final Function(bool) changeTheme;
 
-  const Reportpage({super.key,required this.changeTheme});
+  const Reportpage({super.key, required this.changeTheme});
 
 
-
+  
 
   @override
   State<Reportpage> createState() => _ReportpageState();
 }
 
 class _ReportpageState extends State<Reportpage> {
-  int currentIndex = 2;
+
+  final int _currentIndex = 0;
   String selectedReportType = "Today's data";
+  List<LeadModel> allLeads = [];
 
+Map<String, int> analyticsData = {};
 
+bool isLoading = false;
+
+int total = 0;
+
+@override
+void initState() {
+  super.initState();
+ 
+
+  
+}
+ 
   Widget analyticsItem({
     required String title,
     required String count,
@@ -74,27 +90,18 @@ class _ReportpageState extends State<Reportpage> {
     );
   }
 
-  int _currentIndex = 0;
-
-  @override
-  void initState() {
-    super.initState();
-
-    Future.microtask(() {
-      Provider.of<LeadProvider>(context, listen: false)
-          .calculateWorkload();
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.whitetext,
+
+    
+
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
        drawer: SettingsDrawer(changeTheme:widget.changeTheme),
 
+
+
       appBar: AppBar(
-
-
         title: const Text(
           "Reports",
           style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
@@ -107,7 +114,7 @@ class _ReportpageState extends State<Reportpage> {
               context,
               MaterialPageRoute(
                 builder: (context) =>
-                     SettingsDrawer(changeTheme:widget.changeTheme),
+                    SettingsDrawer(changeTheme: widget.changeTheme),
               ),
             );
           },
@@ -122,16 +129,19 @@ class _ReportpageState extends State<Reportpage> {
               TextFormField(
                 cursorColor: AppColors.whitetext,
                 decoration: InputDecoration(
+                  hintText: "Search Leads",
+                  prefixIcon: const Icon(Icons.search),
                   filled: true,
-                  fillColor: AppColors.themeColor,
-                  hintText: "search leads",
-                  hintStyle: TextStyle(color: AppColors.whitetext),
-                  prefixIcon: const Icon(
-                    Icons.search,
-                    color: AppColors.whitetext,
-                  ),
+
+                
+
+                  fillColor:Theme.of(context).brightness == Brightness.dark
+                          ? Colors.grey.shade800
+                          : Colors.white,
+
+                  contentPadding: const EdgeInsets.symmetric(vertical: 0),
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(30),
                     borderSide: BorderSide.none,
                   ),
                 ),
@@ -143,17 +153,51 @@ class _ReportpageState extends State<Reportpage> {
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   children: [
-                    Container(
-                      width: 200,
-                      padding: EdgeInsets.all(15),
-                      decoration: BoxDecoration(
-                        color: AppColors.whitetext,
-                        border: Border.all(color: AppColors.textColor),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Column(
+                    // Container(
+                    //   width: 200,
+                    //   padding: EdgeInsets.all(15),
+                    //   decoration: BoxDecoration(
+                    //     color: Theme.of(context).brightness == Brightness.dark
+                    //       ? Colors.grey.shade900
+                    //       : AppColors.whitetext,
+                    //     border: Border.all(
+                    //         color: Theme.of(context).brightness == Brightness.dark
+                    //       ? Colors.grey
+                    //       : AppColors.textColor
+                    //     ),
+                    //     borderRadius: BorderRadius.circular(10),
+                    //   ),
+                      Column(
                         children: [
 
+                          // Text(
+                          //   "Today's workload",
+                          //   style: AppTextstyle.MiniText,
+                          // ),
+                          const SizedBox(height: 10),
+                          // Row(
+                          //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          //   children: [
+                          //     Text("Due today"),
+                          //     Text("23"),
+                          //     CircleAvatar(
+                          //       radius: 5,
+                          //       backgroundColor: AppColors.redColor,
+                          //     ),
+                          //   ],
+                          // ),
+                          // Row(
+                          //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          //   children: [
+                          //     Text("This week"),
+                          //     Text("67"),
+                          //     CircleAvatar(
+                          //       radius: 5,
+                          //       backgroundColor: AppColors.themeColor,
+                          //     ),
+                          //   ],
+
+                          // ),
                           // ... inside your Row's children, replace the first Container with this:
 
                           Container(
@@ -168,7 +212,9 @@ class _ReportpageState extends State<Reportpage> {
                               children: [
                                 Text(
                                   "Today's workload",
-                                  style: AppTextstyle.MiniText,
+                                  style: AppTextstyle.MiniText.copyWith(
+                              color: Theme.of(context).textTheme.bodyLarge?.color
+                            )
                                 ),
                                 const SizedBox(height: 10),
 
@@ -247,51 +293,62 @@ class _ReportpageState extends State<Reportpage> {
                                 ),
                               ],
                             ),
-                          ),
 
-                          const SizedBox(height: 5),
-                          Container(
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.black),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Text(
-                                  "View all reports",
-                                  style: TextStyle(fontSize: 10),
-                                ),
-                                IconButton(
-                                  icon: Icon(Icons.arrow_forward),
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (_) => ReportSum(),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ],
-                            ),
                           ),
+                          const SizedBox(height: 5),
+                          // Container(
+                          //   decoration: BoxDecoration(
+                          //     border: Border.all(color: Colors.black),
+                          //   ),
+                          //   child: Row(
+                          //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          //     children: [
+                          //       Text(
+                          //         "View all reports",
+                          //         style: TextStyle(
+                          //             fontSize: 10,
+                          //             color: Theme.of(context).textTheme.bodyLarge?.color
+                          //         ),
+                          //       ),
+                          //       IconButton(
+                          //         icon: Icon(Icons.arrow_forward),
+                          //         onPressed: () {
+                          //           Navigator.push(
+                          //             context,
+                          //             MaterialPageRoute(
+                          //               builder: (_) => ReportSum(),
+                          //             ),
+                          //           );
+                          //         },
+                          //       ),
+                          //     ],
+                          //   ),
+                          // ),
                         ],
                       ),
-                    ),
+                    // ),
                     const SizedBox(width: 30),
                     Container(
                       width: 200,
                       padding: EdgeInsets.all(15),
                       decoration: BoxDecoration(
-                        color: AppColors.whitetext,
-                        border: Border.all(color: AppColors.textColor),
+                        color: Theme.of(context).brightness == Brightness.dark
+                             ? Colors.grey.shade900
+                             : Colors.white,
+                        border: Border.all(
+                            color: Theme.of(context).brightness == Brightness.dark
+                                 ? Colors.white
+                                 : Colors.black,
+                        ),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Column(
                         children: [
                           Text(
                             "Daily metric card",
-                            style: AppTextstyle.MiniText,
+                            style: AppTextstyle.MiniText.copyWith(
+                              color: Theme.of(context).textTheme.bodyLarge?.color,
+                            ),
                           ),
                           const SizedBox(height: 10),
                           Row(
@@ -313,13 +370,15 @@ class _ReportpageState extends State<Reportpage> {
                 ),
               ),
               SizedBox(height: 30),
-
+              
 
               Container(
   width: double.infinity,
   padding: const EdgeInsets.all(15),
   decoration: BoxDecoration(
-    color: Colors.white,
+    color: Theme.of(context).brightness ==Brightness.dark
+         ? Colors.grey.shade900
+         : AppColors.whitetext,
     borderRadius: BorderRadius.circular(20),
   ),
 
@@ -327,7 +386,7 @@ class _ReportpageState extends State<Reportpage> {
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
 
-
+      
       Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -357,7 +416,7 @@ class _ReportpageState extends State<Reportpage> {
                   style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.textColor,
+                    color: Theme.of(context).textTheme.bodyLarge?.color,
                   ),
                 ),
 
@@ -388,7 +447,7 @@ class _ReportpageState extends State<Reportpage> {
 
                 const SizedBox(height: 8),
 
-
+               
               ],
             ),
           ),
@@ -397,22 +456,7 @@ class _ReportpageState extends State<Reportpage> {
 
           Column(
             children: [
-
-              Icon(
-                Icons.filter_alt_outlined,
-                color: AppColors.themeColor,
-              ),
-
-              const SizedBox(height: 15),
-
-
-            ],
-          ),
-
-          const SizedBox(width: 10),
-
-
-          PopupMenuButton<String>(
+                     PopupMenuButton<String>(
   onSelected: (value) {
     setState(() {
       selectedReportType = value;
@@ -441,28 +485,45 @@ class _ReportpageState extends State<Reportpage> {
     radius: 22,
     backgroundColor: Colors.blue.shade100,
     child: Icon(
-      Icons.more_vert,
+      Icons.filter_list,
       color: AppColors.themeColor,
     ),
   ),
 ),
+
+              
+
+              const SizedBox(height: 15),
+
+             
+            ],
+          ),
+
+          const SizedBox(width: 10),
+
+          
+   
         ],
       ),
     ],
   ),
 ),
               const SizedBox(height: 20),
-
+  
 
   Container(
   width: double.infinity,
   padding: const EdgeInsets.all(20),
   decoration: BoxDecoration(
-    color: AppColors.whitetext,
+    color: Theme.of(context).brightness == Brightness.dark
+         ? Colors.grey.shade900
+         : AppColors.whitetext,
     borderRadius: BorderRadius.circular(25),
     boxShadow: [
       BoxShadow(
-        color: Colors.grey.shade200,
+        color: Theme.of(context).brightness == Brightness.dark
+             ? Colors.black54
+             : Colors.grey.shade200,
         blurRadius: 10,
         offset: const Offset(0, 4),
       ),
@@ -480,7 +541,9 @@ class _ReportpageState extends State<Reportpage> {
 
           Text(
             "Response Analytics",
-            style: AppTextstyle.SubTitle,
+            style: AppTextstyle.SubTitle.copyWith(
+              color: Theme.of(context).textTheme.bodyLarge?.color,
+            )
           ),
 
           Container(
@@ -505,62 +568,93 @@ class _ReportpageState extends State<Reportpage> {
 
       const SizedBox(height: 30),
 
-      analyticsItem(
-        title: "Connected",
-        count: "0",
-        color: Colors.blue,
+      
+
+      SizedBox(
+        // height: 200,
+        child: Consumer<LeadProvider>(
+          builder: (context, pro, child) {
+            return Column(
+              children: pro.statusCounts.entries.map((entry) {
+                String title = entry.key;
+                int count = entry.value;
+
+                return analyticsItem(
+                  title: title,
+                  count: count.toString(),
+                  color: Colors.blue,
+                );
+              }).toList(),
+            
+          //   ListView.builder(
+          // itemCount: pro.statusCounts.length,
+          // shrinkWrap: true,
+          // physics: NeverScrollableScrollPhysics(),
+          // itemBuilder: (context, index) {
+        
+          //   String title = pro.statusCounts.keys.elementAt(index);
+          //   int count = pro.statusCounts.values.elementAt(index);
+        
+          //   return 
+        //     analyticsItem(
+        // title: title,
+        // count: count.toString(),
+        // color: Colors.blue,
+        //     )
+        //   },
+        );
+        }),
       ),
+      // analyticsItem(
+      //   title: "Busy",
+      //   count: "0",
+      //   color: Colors.lightBlue,
+      // ),
 
-      analyticsItem(
-        title: "Busy",
-        count: "0",
-        color: Colors.lightBlue,
-      ),
+      // analyticsItem(
+      //   title: "Rejected",
+      //   count: "0",
+      //   color: Colors.red,
+      // ),
 
-      analyticsItem(
-        title: "Rejected",
-        count: "0",
-        color: Colors.red,
-      ),
+      // analyticsItem(
+      //   title: "Switched off",
+      //   count: "0",
+      //   color: Colors.red,
+      // ),
 
-      analyticsItem(
-        title: "Switched off",
-        count: "0",
-        color: Colors.red,
-      ),
+      // analyticsItem(
+      //   title: "Out of Coverage Area",
+      //   count: "0",
+      //   color: Colors.green,
+      // ),
 
-      analyticsItem(
-        title: "Out of Coverage Area",
-        count: "0",
-        color: Colors.green,
-      ),
+      // analyticsItem(
+      //   title: "Not Attended",
+      //   count: "0",
+      //   color: Colors.red,
+      // ),
 
-      analyticsItem(
-        title: "Not Attended",
-        count: "0",
-        color: Colors.red,
-      ),
+      // analyticsItem(
+      //   title: "No Status Updated",
+      //   count: "0",
+      //   color: Colors.purple,
+      // ),
 
-      analyticsItem(
-        title: "No Status Updated",
-        count: "0",
-        color: Colors.purple,
-      ),
+      // const SizedBox(height: 20),
 
-      const SizedBox(height: 20),
-
-
+     
     ],
   ),
 ),
-
-
-
-
+          
+                 
+               
+                
           ]),
-
+      
       ),
     ));
   }
-
+  
 }
