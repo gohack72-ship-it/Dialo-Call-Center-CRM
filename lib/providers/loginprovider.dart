@@ -1,10 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart' hide User;
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+
 import 'package:provider/provider.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_auth/firebase_auth.dart' as auth;
+import 'modelclass.dart';
 
 
 class Loginprovider extends ChangeNotifier {
@@ -17,7 +21,7 @@ TextEditingController passwordController=TextEditingController();
   
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  Future<User?> signInWithGoogle() async{
+Future<auth.User?> signInWithGoogle() async {
     try {
       final GoogleSignInAccount? googleUser =await GoogleSignIn().signIn();
 
@@ -30,9 +34,9 @@ TextEditingController passwordController=TextEditingController();
         idToken: googleAuth.idToken,
       );
 
-      
-      UserCredential userCredential = 
-          await FirebaseAuth.instance.signInWithCredential(credential);
+
+      auth.UserCredential userCredential =
+      await auth.FirebaseAuth.instance.signInWithCredential(credential);
 
       return userCredential.user;
     } catch (e) {
