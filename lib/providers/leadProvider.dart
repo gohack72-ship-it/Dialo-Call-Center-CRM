@@ -5,7 +5,7 @@ import 'package:dialo/models/lead_details_Model.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+
 import 'package:url_launcher/url_launcher.dart';
 // import 'package:provider/provider.dart';
 
@@ -26,7 +26,7 @@ class LeadProvider extends ChangeNotifier {
   Map<String, int> statusCountMap = {};
   List<String> statusList = [];
   List<String> callStatusList = [];
-
+  
   List<LeadDetailsModel> additionalLeadDetailsList = [];
   List<Map<String, dynamic>> _todaysLeadsList = [];
   List<Map<String, dynamic>> get todaysLeadsList => _todaysLeadsList;
@@ -40,9 +40,10 @@ class LeadProvider extends ChangeNotifier {
   int todayCalls = 0;
   int overdue = 0;
 
+
   LeadProvider() {
     getLeadStatus();
-    Future.delayed(Duration(seconds: 1), () {
+    Future.delayed(Duration(seconds: 2), () {
       getStatusCounts();
     });
     
@@ -63,6 +64,29 @@ class LeadProvider extends ChangeNotifier {
 
     notifyListeners();
   }
+List<Map<String, dynamic>> leadList = [];
+Future<void> getLeads() async {
+
+  final snapshot = await FirebaseFirestore.instance
+      .collection("LEADS")
+      .get();
+
+  leadList = snapshot.docs.map((doc) {
+
+    return {
+      "name": doc["NAME"],
+      "phone": doc["PHONE"],
+      "status": doc["FOLLOW_UP_STATUS"],
+      "staff": doc["ADDED_BY_ID"],
+
+      "statusColor": Colors.green.shade100,
+      "statusText": Colors.green,
+    };
+
+  }).toList();
+
+  notifyListeners();
+}
 
 
   Map<String, int> statusCounts = {};

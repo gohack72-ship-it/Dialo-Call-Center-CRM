@@ -55,6 +55,9 @@ class _BottomnavPageState extends State<BottomnavPage> {
           }
           if (index == 0) {
             context.read<LeadProvider>().getLeadStatus();
+            Future.delayed(Duration(seconds: 1), () {
+            context.read<LeadProvider>().getStatusCounts();
+            });
           }
           if (index == 3) {
             context.read<LeadProvider>().getCallStatusList();
