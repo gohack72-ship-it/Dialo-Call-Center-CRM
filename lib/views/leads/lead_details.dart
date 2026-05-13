@@ -1,9 +1,11 @@
 import 'package:dialo/views/reminderpage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../constants/app_colors.dart';
 import '../../providers/leadProvider.dart';
+import 'package:flutter/services.dart';
 
 
 
@@ -226,6 +228,11 @@ class _LeadProfileScreenState extends State<LeadProfileScreen> {
             _buildEditableTile(
               Icons.phone_outlined,
               widget.leadData["PHONE"] ?? "",
+              keyboardType: TextInputType.phone,
+              inputFormatters: [
+                FilteringTextInputFormatter.digitsOnly,
+                LengthLimitingTextInputFormatter(10),
+              ]
             ),
             // const SizedBox(height: 10),
             // _buildEditableTile(
@@ -258,7 +265,12 @@ class _LeadProfileScreenState extends State<LeadProfileScreen> {
   // --- REUSABLE WIDGETS ---
 
   // 1. UPDATED: Editable Text Field (Previously read-only)
-  Widget _buildEditableTile(IconData icon, String hintText) {
+  Widget _buildEditableTile(
+      IconData icon,
+      String hintText, {
+  TextInputType keyboardType = TextInputType.text,
+  List<TextInputFormatter>? inputFormatters,
+  }){
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(
@@ -272,6 +284,8 @@ class _LeadProfileScreenState extends State<LeadProfileScreen> {
           // Using Expanded + TextField allows typing
           Expanded(
             child: TextField(
+              keyboardType:  keyboardType,
+              inputFormatters: inputFormatters,
               decoration: InputDecoration(
                 hintText: hintText,
                 hintStyle: TextStyle(

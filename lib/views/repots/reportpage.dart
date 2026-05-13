@@ -16,7 +16,7 @@ class Reportpage extends StatefulWidget {
   const Reportpage({super.key, required this.changeTheme});
 
 
-  
+
 
   @override
   State<Reportpage> createState() => _ReportpageState();
@@ -37,11 +37,11 @@ int total = 0;
 @override
 void initState() {
   super.initState();
- 
 
-  
+
+
 }
- 
+
   Widget analyticsItem({
     required String title,
     required String count,
@@ -92,9 +92,10 @@ void initState() {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
 
-    
+
 
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
        drawer: SettingsDrawer(changeTheme:widget.changeTheme),
@@ -133,7 +134,7 @@ void initState() {
                   prefixIcon: const Icon(Icons.search),
                   filled: true,
 
-                
+
 
                   fillColor:Theme.of(context).brightness == Brightness.dark
                           ? Colors.grey.shade800
@@ -153,21 +154,21 @@ void initState() {
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   children: [
-                    // Container(
-                    //   width: 200,
-                    //   padding: EdgeInsets.all(15),
-                    //   decoration: BoxDecoration(
-                    //     color: Theme.of(context).brightness == Brightness.dark
-                    //       ? Colors.grey.shade900
-                    //       : AppColors.whitetext,
-                    //     border: Border.all(
-                    //         color: Theme.of(context).brightness == Brightness.dark
-                    //       ? Colors.grey
-                    //       : AppColors.textColor
-                    //     ),
-                    //     borderRadius: BorderRadius.circular(10),
-                    //   ),
-                      Column(
+                    Container(
+                      width: 200,
+                      padding: EdgeInsets.all(15),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.grey.shade900
+                          : AppColors.whitetext,
+                        border: Border.all(
+                            color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.grey
+                          : AppColors.textColor
+                        ),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                     child:  Column(
                         children: [
 
                           // Text(
@@ -200,20 +201,20 @@ void initState() {
                           // ),
                           // ... inside your Row's children, replace the first Container with this:
 
-                          Container(
-                            width: 200,
-                            padding: const EdgeInsets.all(15),
-                            decoration: BoxDecoration(
-                              color: AppColors.whitetext,
-                              border: Border.all(color: AppColors.textColor),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Column(
+                          // Container(
+                          //   width: 200,
+                          //   padding: const EdgeInsets.all(15),
+                          //   decoration: BoxDecoration(
+                          //     color: AppColors.whitetext,
+                          //     border: Border.all(color: AppColors.textColor),
+                          //     borderRadius: BorderRadius.circular(10),
+                          //   ),
+                             Column(
                               children: [
                                 Text(
                                   "Today's workload",
                                   style: AppTextstyle.MiniText.copyWith(
-                              color: Theme.of(context).textTheme.bodyLarge?.color
+                              color: Theme.of(context).textTheme.bodyLarge?.color,
                             )
                                 ),
                                 const SizedBox(height: 10),
@@ -264,7 +265,12 @@ void initState() {
                                 // View Button
                                 Container(
                                   decoration: BoxDecoration(
-                                    border: Border.all(color: Colors.black12),
+                                    border: Border.all(
+                                        color: Theme.of(context).brightness == Brightness.dark
+                                        ? Colors.grey
+                                        : AppColors.textColor
+                                    // Colors.black12
+                                    ),
                                     borderRadius: BorderRadius.circular(5),
                                   ),
                                   child: InkWell(
@@ -294,7 +300,7 @@ void initState() {
                               ],
                             ),
 
-                          ),
+                          // ),
                           const SizedBox(height: 5),
                           // Container(
                           //   decoration: BoxDecoration(
@@ -326,7 +332,7 @@ void initState() {
                           // ),
                         ],
                       ),
-                    // ),
+                    ),
                     const SizedBox(width: 30),
                     Container(
                       width: 200,
@@ -370,7 +376,7 @@ void initState() {
                 ),
               ),
               SizedBox(height: 30),
-              
+
 
               Container(
   width: double.infinity,
@@ -386,7 +392,7 @@ void initState() {
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
 
-      
+
       Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -447,7 +453,7 @@ void initState() {
 
                 const SizedBox(height: 8),
 
-               
+
               ],
             ),
           ),
@@ -491,25 +497,25 @@ void initState() {
   ),
 ),
 
-              
+
 
               const SizedBox(height: 15),
 
-             
+
             ],
           ),
 
           const SizedBox(width: 10),
 
-          
-   
+
+
         ],
       ),
     ],
   ),
 ),
               const SizedBox(height: 20),
-  
+
 
   Container(
   width: double.infinity,
@@ -568,7 +574,7 @@ void initState() {
 
       const SizedBox(height: 30),
 
-      
+
 
       SizedBox(
         // height: 200,
@@ -585,17 +591,17 @@ void initState() {
                   color: Colors.blue,
                 );
               }).toList(),
-            
+
           //   ListView.builder(
           // itemCount: pro.statusCounts.length,
           // shrinkWrap: true,
           // physics: NeverScrollableScrollPhysics(),
           // itemBuilder: (context, index) {
-        
+
           //   String title = pro.statusCounts.keys.elementAt(index);
           //   int count = pro.statusCounts.values.elementAt(index);
-        
-          //   return 
+
+          //   return
         //     analyticsItem(
         // title: title,
         // count: count.toString(),
@@ -643,18 +649,18 @@ void initState() {
 
       // const SizedBox(height: 20),
 
-     
+
     ],
   ),
 ),
-          
-                 
-               
-                
+
+
+
+
           ]),
-      
+
       ),
     ));
   }
-  
+
 }
