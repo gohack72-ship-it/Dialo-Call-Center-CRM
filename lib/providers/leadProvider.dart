@@ -482,4 +482,6 @@ class LeadProvider extends ChangeNotifier {
 
     notifyListeners();
   }
+
+  void changeLeadStage(String s) {}
 }
