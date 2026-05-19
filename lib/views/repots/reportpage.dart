@@ -1,18 +1,19 @@
 import 'package:dialo/constants/app_colors.dart';
 import 'package:dialo/constants/app_textstyle.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../../providers/leadProvider.dart';
-
+import 'package:dialo/models/leadModel.dart';
+import 'package:dialo/providers/leadProvider.dart';
 
 import 'package:dialo/views/repots/reportsum.dart';
 import 'package:dialo/views/settingspage.dart';
+import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:provider/provider.dart';
 
 
 class Reportpage extends StatefulWidget {
   final Function(bool) changeTheme;
 
-  const Reportpage({super.key,required this.changeTheme});
+  const Reportpage({super.key, required this.changeTheme});
 
 
 
@@ -22,9 +23,24 @@ class Reportpage extends StatefulWidget {
 }
 
 class _ReportpageState extends State<Reportpage> {
-  int currentIndex = 2;
-  String selectedReportType = "Today's data";
 
+  final int _currentIndex = 0;
+  String selectedReportType = "Today's data";
+  List<LeadModel> allLeads = [];
+
+Map<String, int> analyticsData = {};
+
+bool isLoading = false;
+
+int total = 0;
+
+@override
+void initState() {
+  super.initState();
+
+
+
+}
 
   Widget analyticsItem({
     required String title,
@@ -74,27 +90,19 @@ class _ReportpageState extends State<Reportpage> {
     );
   }
 
-  int _currentIndex = 0;
-
-  @override
-  void initState() {
-    super.initState();
-
-    Future.microtask(() {
-      Provider.of<LeadProvider>(context, listen: false)
-          .calculateWorkload();
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
+
+
+
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
        drawer: SettingsDrawer(changeTheme:widget.changeTheme),
 
+
+
       appBar: AppBar(
-
-
         title: const Text(
           "Reports",
           style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
@@ -107,7 +115,7 @@ class _ReportpageState extends State<Reportpage> {
               context,
               MaterialPageRoute(
                 builder: (context) =>
-                     SettingsDrawer(changeTheme:widget.changeTheme),
+                    SettingsDrawer(changeTheme: widget.changeTheme),
               ),
             );
           },
@@ -122,13 +130,19 @@ class _ReportpageState extends State<Reportpage> {
               TextFormField(
                 cursorColor: AppColors.whitetext,
                 decoration: InputDecoration(
+                  hintText: "Search Leads",
+                  prefixIcon: const Icon(Icons.search),
                   filled: true,
+
+
+
                   fillColor:Theme.of(context).brightness == Brightness.dark
                           ? Colors.grey.shade800
                           : Colors.white,
+
                   contentPadding: const EdgeInsets.symmetric(vertical: 0),
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(30),
                     borderSide: BorderSide.none,
                   ),
                 ),
@@ -154,25 +168,53 @@ class _ReportpageState extends State<Reportpage> {
                         ),
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      child: Column(
+                     child:  Column(
                         children: [
 
+                          // Text(
+                          //   "Today's workload",
+                          //   style: AppTextstyle.MiniText,
+                          // ),
+                          const SizedBox(height: 10),
+                          // Row(
+                          //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          //   children: [
+                          //     Text("Due today"),
+                          //     Text("23"),
+                          //     CircleAvatar(
+                          //       radius: 5,
+                          //       backgroundColor: AppColors.redColor,
+                          //     ),
+                          //   ],
+                          // ),
+                          // Row(
+                          //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          //   children: [
+                          //     Text("This week"),
+                          //     Text("67"),
+                          //     CircleAvatar(
+                          //       radius: 5,
+                          //       backgroundColor: AppColors.themeColor,
+                          //     ),
+                          //   ],
+
+                          // ),
                           // ... inside your Row's children, replace the first Container with this:
 
-                          Container(
-                            width: 200,
-                            padding: const EdgeInsets.all(15),
-                            decoration: BoxDecoration(
-                              color: AppColors.whitetext,
-                              border: Border.all(color: AppColors.textColor),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Column(
+                          // Container(
+                          //   width: 200,
+                          //   padding: const EdgeInsets.all(15),
+                          //   decoration: BoxDecoration(
+                          //     color: AppColors.whitetext,
+                          //     border: Border.all(color: AppColors.textColor),
+                          //     borderRadius: BorderRadius.circular(10),
+                          //   ),
+                             Column(
                               children: [
                                 Text(
                                   "Today's workload",
                                   style: AppTextstyle.MiniText.copyWith(
-                              color: Theme.of(context).textTheme.bodyLarge?.color
+                              color: Theme.of(context).textTheme.bodyLarge?.color,
                             )
                                 ),
                                 const SizedBox(height: 10),
@@ -223,7 +265,12 @@ class _ReportpageState extends State<Reportpage> {
                                 // View Button
                                 Container(
                                   decoration: BoxDecoration(
-                                    border: Border.all(color: Colors.black12),
+                                    border: Border.all(
+                                        color: Theme.of(context).brightness == Brightness.dark
+                                        ? Colors.grey
+                                        : AppColors.textColor
+                                    // Colors.black12
+                                    ),
                                     borderRadius: BorderRadius.circular(5),
                                   ),
                                   child: InkWell(
@@ -252,37 +299,37 @@ class _ReportpageState extends State<Reportpage> {
                                 ),
                               ],
                             ),
-                          ),
 
+                          // ),
                           const SizedBox(height: 5),
-                          Container(
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.black),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Text(
-                                  "View all reports",
-                                  style: TextStyle(
-                                      fontSize: 10,
-                                      color: Theme.of(context).textTheme.bodyLarge?.color
-                                  ),
-                                ),
-                                IconButton(
-                                  icon: Icon(Icons.arrow_forward),
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (_) => ReportSum(),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ],
-                            ),
-                          ),
+                          // Container(
+                          //   decoration: BoxDecoration(
+                          //     border: Border.all(color: Colors.black),
+                          //   ),
+                          //   child: Row(
+                          //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          //     children: [
+                          //       Text(
+                          //         "View all reports",
+                          //         style: TextStyle(
+                          //             fontSize: 10,
+                          //             color: Theme.of(context).textTheme.bodyLarge?.color
+                          //         ),
+                          //       ),
+                          //       IconButton(
+                          //         icon: Icon(Icons.arrow_forward),
+                          //         onPressed: () {
+                          //           Navigator.push(
+                          //             context,
+                          //             MaterialPageRoute(
+                          //               builder: (_) => ReportSum(),
+                          //             ),
+                          //           );
+                          //         },
+                          //       ),
+                          //     ],
+                          //   ),
+                          // ),
                         ],
                       ),
                     ),
@@ -415,22 +462,7 @@ class _ReportpageState extends State<Reportpage> {
 
           Column(
             children: [
-
-              Icon(
-                Icons.filter_alt_outlined,
-                color: AppColors.themeColor,
-              ),
-
-              const SizedBox(height: 15),
-
-
-            ],
-          ),
-
-          const SizedBox(width: 10),
-
-
-          PopupMenuButton<String>(
+                     PopupMenuButton<String>(
   onSelected: (value) {
     setState(() {
       selectedReportType = value;
@@ -459,11 +491,24 @@ class _ReportpageState extends State<Reportpage> {
     radius: 22,
     backgroundColor: Colors.blue.shade100,
     child: Icon(
-      Icons.more_vert,
+      Icons.filter_list,
       color: AppColors.themeColor,
     ),
   ),
 ),
+
+
+
+              const SizedBox(height: 15),
+
+
+            ],
+          ),
+
+          const SizedBox(width: 10),
+
+
+
         ],
       ),
     ],
@@ -529,49 +574,80 @@ class _ReportpageState extends State<Reportpage> {
 
       const SizedBox(height: 30),
 
-      analyticsItem(
-        title: "Connected",
-        count: "0",
-        color: Colors.blue,
-      ),
 
-      analyticsItem(
-        title: "Busy",
-        count: "0",
-        color: Colors.lightBlue,
-      ),
 
-      analyticsItem(
-        title: "Rejected",
-        count: "0",
-        color: Colors.red,
-      ),
+      SizedBox(
+        // height: 200,
+        child: Consumer<LeadProvider>(
+          builder: (context, pro, child) {
+            return Column(
+              children: pro.statusCounts.entries.map((entry) {
+                String title = entry.key;
+                int count = entry.value;
 
-      analyticsItem(
-        title: "Switched off",
-        count: "0",
-        color: Colors.red,
-      ),
+                return analyticsItem(
+                  title: title,
+                  count: count.toString(),
+                  color: Colors.blue,
+                );
+              }).toList(),
 
-      analyticsItem(
-        title: "Out of Coverage Area",
-        count: "0",
-        color: Colors.green,
-      ),
+          //   ListView.builder(
+          // itemCount: pro.statusCounts.length,
+          // shrinkWrap: true,
+          // physics: NeverScrollableScrollPhysics(),
+          // itemBuilder: (context, index) {
 
-      analyticsItem(
-        title: "Not Attended",
-        count: "0",
-        color: Colors.red,
-      ),
+          //   String title = pro.statusCounts.keys.elementAt(index);
+          //   int count = pro.statusCounts.values.elementAt(index);
 
-      analyticsItem(
-        title: "No Status Updated",
-        count: "0",
-        color: Colors.purple,
+          //   return
+        //     analyticsItem(
+        // title: title,
+        // count: count.toString(),
+        // color: Colors.blue,
+        //     )
+        //   },
+        );
+        }),
       ),
+      // analyticsItem(
+      //   title: "Busy",
+      //   count: "0",
+      //   color: Colors.lightBlue,
+      // ),
 
-      const SizedBox(height: 20),
+      // analyticsItem(
+      //   title: "Rejected",
+      //   count: "0",
+      //   color: Colors.red,
+      // ),
+
+      // analyticsItem(
+      //   title: "Switched off",
+      //   count: "0",
+      //   color: Colors.red,
+      // ),
+
+      // analyticsItem(
+      //   title: "Out of Coverage Area",
+      //   count: "0",
+      //   color: Colors.green,
+      // ),
+
+      // analyticsItem(
+      //   title: "Not Attended",
+      //   count: "0",
+      //   color: Colors.red,
+      // ),
+
+      // analyticsItem(
+      //   title: "No Status Updated",
+      //   count: "0",
+      //   color: Colors.purple,
+      // ),
+
+      // const SizedBox(height: 20),
 
 
     ],

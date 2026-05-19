@@ -6,9 +6,11 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../constants/app_colors.dart';
 import '../../providers/leadProvider.dart';
+import 'package:flutter/services.dart';
 
 class LeadProfileScreen extends StatefulWidget {
   final Map<String, dynamic> leadData;
+
   const LeadProfileScreen({super.key, required this.leadData});
 
   @override
@@ -16,251 +18,351 @@ class LeadProfileScreen extends StatefulWidget {
 }
 
 class _LeadProfileScreenState extends State<LeadProfileScreen> {
+
   String? _selectedStatus;
 
   @override
   Widget build(BuildContext context) {
-    final bool isDark = Theme.of(context).brightness == Brightness.dark;
-    final Map<String, dynamic> extra = widget.leadData["ADDITIONAL_LEAD_DETAILS"] ?? {};
 
+    Map<String, dynamic> extra =
+        widget.leadData["ADDITIONAL_LEAD_DETAILS"] ?? {};
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF121212) : const Color(0xFFF8F9FA),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+
+      // --- APP BAR ---
       appBar: AppBar(
-        backgroundColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
-        elevation: 0.5,
-        centerTitle: false,
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+        elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_new, size: 20, color: Theme.of(context).iconTheme.color),
-          onPressed: () => Navigator.pop(context),
+          icon:  Icon(Icons.arrow_back, color:Theme.of(context).iconTheme.color),
+          onPressed: () {
+            Navigator.pop(context);
+          },
         ),
-        title: Text(
-          widget.leadData["NAME"] ?? "Lead Profile",
-          style: TextStyle(
-            color: Theme.of(context).textTheme.bodyLarge?.color,
-            fontWeight: FontWeight.w700,
-            fontSize: 20,
-          ),
+        title: Text(widget.leadData["NAME"] ?? "Name", style: TextStyle(
+          color: Theme.of(context).textTheme.bodyLarge?.color,
+          fontWeight: FontWeight.bold,
+          fontSize: 22,
+        ),
+
         ),
         actions: [
-          TextButton.icon(
-            onPressed: () {
-              context.read<LeadProvider>().getCallStatusList();
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => ReminderPage(leadId: widget.leadData["LEAD_ID"] ?? "")),
-              );
-            },
-            icon: const Icon(Icons.history_rounded, size: 18, color: AppColors.themeColor),
-            label: const Text("Follow up", style: TextStyle(color: AppColors.themeColor, fontWeight: FontWeight.bold)),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+            child: ElevatedButton.icon(
+              onPressed: () {
+                context.read<LeadProvider>().getCallStatusList();
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const ReminderPage(leadId: '',),
+                  ),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.themeColor,
+                foregroundColor: Colors.white,
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+              ),
+              icon: Padding(
+                padding: const EdgeInsets.all(0.0),
+                child: const Icon(Icons.notifications_active, size: 16),
+              ),
+              label: const Text("Follow up", style: TextStyle(fontSize: 11)),
+            ),
           ),
           IconButton(
-            icon: Icon(Icons.edit_outlined, color: Theme.of(context).iconTheme.color),
+            icon:  Icon(Icons.edit_square, color:Theme.of(context).iconTheme.color),
             onPressed: () {},
           ),
         ],
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1.0),
+          child: Container(color: Colors.grey[200], height: 1.0),
+        ),
       ),
+
+      // --- BODY ---
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // --- QUICK ACTIONS ---
+            // 1. Top Buttons
             Row(
               children: [
                 Expanded(
-                  child: _buildActionBtn(Icons.phone, "Call", Colors.blue, () => makePhoneCall(widget.leadData["PHONE"] ?? "")),
+                  child: _buildPillButton(
+                    Icons.phone_in_talk,
+                    "Call Now",
+                    Theme.of(context).brightness == Brightness.dark
+                      ? Colors.white
+                      : Colors.black,
+                        () {
+                      String phone = widget.leadData["PHONE"] ?? "";
+                      if (phone.isNotEmpty) {
+                        makePhoneCall(phone);
+                      } else {
+                        print("No phone number");
+                      }
+                    },
+                  ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: _buildActionBtn(Icons.chat_bubble_outline, "WhatsApp", Colors.green, () => openWhatsApp(widget.leadData["PHONE"] ?? "")),
+                  child: _buildPillButton(
+                    Icons.chat_bubble,
+                    "Whatsapp",
+                      Colors.green,
+                        () async {
+                      String phone = widget.leadData["PHONE"] ?? "";
+                      final url = Uri.parse("https://wa.me/$phone");
+
+                      if (await canLaunchUrl(url)) {
+                        await launchUrl(url);
+                      } else {
+                        print("WhatsApp not available");
+                      }
+                    },
+                  ),
                 ),
               ],
             ),
-            const SizedBox(height: 24),
-
-            // --- LEAD INFO SECTION ---
-            _buildHeader("Lead Details"),
-            Container(
-              decoration: _boxDecoration(isDark),
-              child: Column(
-                children: [
-                  _buildInfoRow(Icons.person_outline, "Name", widget.leadData["NAME"]),
-                  _buildDivider(),
-                  _buildInfoRow(Icons.phone_android, "Phone", widget.leadData["PHONE"]),
-                  _buildDivider(),
-                  _buildInfoRow(Icons.location_on_outlined, "Place", widget.leadData["PLACE"]),
-                  _buildDivider(),
-                  _buildInfoRow(Icons.email_outlined, "Email", widget.leadData["EMAIL"]),
-                  _buildDivider(),
-                  _buildInfoRow(Icons.campaign_outlined, "Source", widget.leadData["SOURCE"]),
-                ],
+           SizedBox(height: 10,),
+            Text(
+                "Name",
+              style: TextStyle(
+                color: Theme.of(context).textTheme.bodyLarge?.color,
               ),
             ),
+            _buildEditableTile(
+              Icons.person_outline_outlined,
+              widget.leadData["NAME"] ?? "",
+            ),
 
-            // --- ADDITIONAL DETAILS ---
-            if (extra.isNotEmpty) ...[
-              const SizedBox(height: 24),
-              _buildHeader("Additional Details"),
-              Container(
-                decoration: _boxDecoration(isDark),
-                child: Column(
-                  children: extra.entries.map((e) {
-                    return Column(
-                      children: [
-                        _buildInfoRow(Icons.read_more, e.key, e.value.toString()),
-                        if (e.key != extra.keys.last) _buildDivider(),
-                      ],
-                    );
-                  }).toList(),
+            SizedBox(height: 10,),
+            Text("Place"),
+            _buildEditableTile(
+              Icons.place,
+              widget.leadData["PLACE"] ?? "",
+            ),
+            SizedBox(height: 10,),
+            Text("Email"),
+            _buildEditableTile(
+              Icons.mail,
+              widget.leadData["EMAIL"] ?? "",
+            ),
+            SizedBox(height: 10,),
+            Text("Sourse"),
+            _buildEditableTile(
+              Icons.source,
+              widget.leadData["SOURCE"] ?? "",
+            ),
+            const SizedBox(height: 20),
+
+            _buildHeader("Additional Details"),
+
+            Column(
+              children: extra.entries.map((e) {
+                print(widget.leadData);
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(e.key),
+                    _buildEditableTile(Icons.read_more_rounded, e.value.toString()),
+                    const SizedBox(height: 10),
+
+                  ],
+                );
+              }).toList(),
+
+            ),
+
+
+            SizedBox(height: 10,),
+            // 2. Status
+            _buildHeader("Status"),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              decoration: _boxDecoration(),
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton<String>(
+                  isExpanded: true,
+                  hint: const Text("Select Status"),
+                  value: _selectedStatus,
+                  icon: const Icon(Icons.arrow_drop_down),
+                  items: ["New", "Interested", "Follow Up"]
+                      .map((e) => DropdownMenuItem(value: e, child: Text(e)))
+                      .toList(),
+                  onChanged: (val) {
+                    setState(() => _selectedStatus = val);
+                  },
                 ),
               ),
-            ],
-
-            const SizedBox(height: 24),
-            _buildHeader("Follow Up History"),
-
-            StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance
-                  .collection("LEADS")
-                  .doc(widget.leadData["LEAD_ID"])
-                  .collection("FOLLOW_UPS")
-                  .orderBy("DATE", descending: true)
-                  .snapshots(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: Padding(padding: EdgeInsets.all(20), child: CircularProgressIndicator(strokeWidth: 2)));
-                }
-                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return Container(
-                    padding: const EdgeInsets.all(20),
-                    width: double.infinity,
-                    decoration: _boxDecoration(isDark),
-                    child: const Center(child: Text("No history found", style: TextStyle(color: Colors.grey))),
-                  );
-                }
-
-                return ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: snapshot.data!.docs.length,
-                  itemBuilder: (context, index) {
-                    final data = snapshot.data!.docs[index].data() as Map<String, dynamic>;
-                    Timestamp? ts = data["DATE"];
-                    String dateStr = ts != null ? DateFormat('MMM dd, yyyy • hh:mm a').format(ts.toDate()) : "N/A";
-
-                    return Container(
-                      margin: const EdgeInsets.only(bottom: 12),
-                      padding: const EdgeInsets.all(16),
-                      decoration: _boxDecoration(isDark),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                decoration: BoxDecoration(
-                                  color: AppColors.themeColor.withOpacity(0.1),
-                                  borderRadius: BorderRadius.circular(6),
-                                ),
-                                child: Text(data["LEAD_STATUS"] ?? "No Status",
-                                    style: const TextStyle(color: AppColors.themeColor, fontWeight: FontWeight.bold, fontSize: 12)),
-                              ),
-                              Text(dateStr, style: const TextStyle(color: Colors.grey, fontSize: 11)),
-                            ],
-                          ),
-                          const SizedBox(height: 10),
-                          Text("Call: ${data["CALL_STATUS"]}", style: const TextStyle(fontWeight: FontWeight.w600)),
-                          const SizedBox(height: 4),
-                          Text(data["NOTE"] ?? "No notes added", style: TextStyle(color: Colors.grey[600], fontSize: 13)),
-                        ],
-                      ),
-                    );
-                  },
-                );
-              },
             ),
+            const SizedBox(height: 20),
+
+            // 3. Interaction
+            _buildHeader("Interaction"),
+            Container(
+              height: 100,
+              decoration: _boxDecoration(),
+              child: const TextField(
+                maxLines: null,
+                decoration: InputDecoration(
+                  hintText: "Type interaction notes...",
+                  border: InputBorder.none,
+                  contentPadding: EdgeInsets.all(12),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+
+            // 4. Contact Information (NOW EDITABLE)
+            _buildHeader("Contact Information"),
+            _buildEditableTile(
+              Icons.phone_outlined,
+              widget.leadData["PHONE"] ?? "",
+            ),
+            // const SizedBox(height: 10),
+            // _buildEditableTile(
+            //   Icons.location_on_outlined,
+            //   widget.leadData["PLACE"] ?? "",
+            // ),
+            // const SizedBox(height: 20),
+
+
+
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //   children: [
+            //     _buildHeader("Interaction History", padding: 0),
+            //     const Text(
+            //       "view all >",
+            //       style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+            //     ),
+            //   ],
+            // ),
+            // const SizedBox(height: 8),
+            // Container(height: 80, decoration: _boxDecoration()),
+            // const SizedBox(height: 40),
           ],
         ),
       ),
     );
   }
 
-  // --- UI COMPONENTS ---
+  // --- REUSABLE WIDGETS ---
 
-  Widget _buildHeader(String title) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 4, bottom: 12),
-      child: Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 0.5)),
-    );
-  }
-
-  Widget _buildInfoRow(IconData icon, String title, dynamic value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+  // 1. UPDATED: Editable Text Field (Previously read-only)
+  Widget _buildEditableTile(IconData icon, String hintText) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(
+        horizontal: 12,
+      ), // Removed vertical padding
+      decoration: _boxDecoration(),
       child: Row(
         children: [
-          Icon(icon, size: 20, color: AppColors.themeColor.withOpacity(0.7)),
-          const SizedBox(width: 12),
-          Text("$title:", style: const TextStyle(color: Colors.grey, fontWeight: FontWeight.w500)),
-          const SizedBox(width: 8),
-          Expanded(child: Text(value?.toString() ?? "N/A", style: const TextStyle(fontWeight: FontWeight.bold), textAlign: TextAlign.end)),
+          Icon(icon, size: 20, color: Theme.of(context).iconTheme.color),
+          const SizedBox(width: 16),
+          // Using Expanded + TextField allows typing
+          Expanded(
+            child: TextField(
+              decoration: InputDecoration(
+                hintText: hintText,
+                hintStyle: TextStyle(
+                  color: Theme.of(context).textTheme.bodyLarge?.color,
+                ),
+                border: InputBorder.none, // Removes the line under text
+                contentPadding: const EdgeInsets.symmetric(
+                  vertical: 14,
+                ), // Centers text vertically
+              ),
+              style:  TextStyle(fontSize: 15, color: Theme.of(context).textTheme.bodyLarge?.color),
+            ),
+          ),
         ],
       ),
     );
   }
+  Widget _buildPillButton(
+      IconData icon,
+      String label,
+      Color color,
+  VoidCallback onTap
+      ) {
+    return GestureDetector(
+      onTap: onTap, // 👈 handle click
+      child:Container(
+      height: 45,
+      decoration: BoxDecoration(
+        border: Border.all(
+            color: Theme.of(context).brightness == Brightness.dark
+                 ? Colors.grey.shade700
+                 : Colors.grey.shade300
+          ),
+        borderRadius: BorderRadius.circular(30),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, color: color, size: 20),
+          const SizedBox(width: 8),
+          Text(
+            label,
+            style: TextStyle(
+              fontWeight: FontWeight.w500,
+              color: Theme.of(context).textTheme.bodyLarge?.color,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+  Future<void> makePhoneCall(String phoneNumber) async {
+    final Uri url = Uri(scheme: 'tel', path: phoneNumber);
 
-  Widget _buildActionBtn(IconData icon, String label, Color color, VoidCallback onTap) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 12),
-          decoration: BoxDecoration(
-            border: Border.all(color: color.withOpacity(0.5)),
-            borderRadius: BorderRadius.circular(12),
-            color: color.withOpacity(0.05),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(icon, color: color, size: 18),
-              const SizedBox(width: 8),
-              Text(label, style: TextStyle(color: color, fontWeight: FontWeight.bold)),
-            ],
-          ),
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url);
+    } else {
+      print("Could not launch $url");
+    }
+  }
+
+
+  Widget _buildHeader(String title, {double padding = 8.0}) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: padding),
+      child: Text(
+        title,
+        style:  TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+          color: Theme.of(context).textTheme.bodyLarge?.color,
         ),
       ),
     );
   }
 
-  Widget _buildDivider() => Divider(height: 1, thickness: 0.5, indent: 16, endIndent: 16, color: Colors.grey.withOpacity(0.2));
-
-  BoxDecoration _boxDecoration(bool isDark) {
+  BoxDecoration _boxDecoration() {
     return BoxDecoration(
-      color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
-      borderRadius: BorderRadius.circular(12),
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withOpacity(0.03),
-          blurRadius: 10,
-          offset: const Offset(0, 4),
-        ),
-      ],
-      border: Border.all(color: isDark ? Colors.grey.shade800 : Colors.grey.shade200),
+      color: Theme.of(context).brightness == Brightness.dark
+             ? const Color(0xFF1E1E1E)
+             : Colors.white,
+      border: Border.all(
+          color: Theme.of(context).brightness == Brightness.dark
+              ? Colors.grey.shade700
+              : Colors.grey.shade300
+      ),
+      borderRadius: BorderRadius.circular(10),
     );
   }
-
-  Future<void> makePhoneCall(String phoneNumber) async {
-    final Uri url = Uri(scheme: 'tel', path: phoneNumber);
-    if (await canLaunchUrl(url)) await launchUrl(url);
-  }
-
-  Future<void> openWhatsApp(String phone) async {
-    final url = Uri.parse("https://wa.me/$phone");
-    if (await canLaunchUrl(url)) await launchUrl(url);
-  }
 }
+
+
+

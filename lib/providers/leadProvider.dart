@@ -24,10 +24,11 @@ class LeadProvider extends ChangeNotifier {
   int dueToday = 0;
   int thisWeek = 0;
 
-   TextEditingController searchController = TextEditingController();
-   String searchText = "";
+  TextEditingController searchController = TextEditingController();
+  String searchText = "";
   String? selectedLeadStage;
 
+  Map<String, int> statusCountMap = {};
   List<String> statusList = [];
   List<String> callStatusList = [];
 
@@ -43,6 +44,67 @@ class LeadProvider extends ChangeNotifier {
   int followUps = 0;
   int todayCalls = 0;
   int overdue = 0;
+
+  LeadProvider() {
+    getLeadStatus();
+    Future.delayed(Duration(seconds: 2), () {
+      getStatusCounts();
+    });
+  }
+
+  Future<void> getStatusCounts() async {
+    statusCountMap = {};
+    for (var status in statusList) {
+      final snap = await fdb
+          .collection("LEADS")
+          .where("FOLLOW_UP_STATUS", isEqualTo: status)
+          .count()
+          .get();
+
+      int count = snap.count ?? 0;
+      statusCountMap[status] = count;
+    }
+
+    notifyListeners();
+  }
+
+  List<Map<String, dynamic>> leadList = [];
+  Future<void> getLeads() async {
+    final snapshot = await FirebaseFirestore.instance.collection("LEADS").get();
+
+    leadList = snapshot.docs.map((doc) {
+      return {
+        "name": doc["NAME"],
+        "phone": doc["PHONE"],
+        "status": doc["LEAD_STATUS"],
+        "staff": doc[""],
+
+        "statusColor": Colors.green.shade100,
+        "statusText": Colors.green,
+      };
+    }).toList();
+
+    notifyListeners();
+  }
+
+  Map<String, int> statusCounts = {};
+
+  fetchCallStatusCounts() async {
+    final snapshot = await FirebaseFirestore.instance.collection("LEADS").get();
+
+    print("callStatusList: $callStatusList");
+
+    for (var status in callStatusList) {
+      final count = snapshot.docs
+          .where((doc) => doc['CALL_STATUS'] == status)
+          .length;
+
+      statusCounts[status] = count;
+    }
+    print(statusCounts);
+    notifyListeners();
+  }
+
 
 
 
@@ -80,8 +142,8 @@ class LeadProvider extends ChangeNotifier {
 
       "ADDED_TIME": now,
       "LEAD_STATUS": selectedStatus ?? "NEW",
-      "LEAD_CATEGORY" :"",
-      "CALL_STATUS" :"",
+      "LEAD_CATEGORY": "",
+      "CALL_STATUS": "",
       "SOURCE": sourceController.text,
 
       "FOLLOW_UP_DATE": now.add(const Duration(days: 1)),
@@ -120,17 +182,11 @@ class LeadProvider extends ChangeNotifier {
 
   }
 
-
   DateTime? selectedDate;
   TimeOfDay? selectedTime;
 
   String? selectedCallStatus;
 
-  void changeLeadStage(String status){
-    selectedLeadStage = status;
-    print("Selected Lead Stage: $selectedLeadStage");
-    notifyListeners();
-  }
 
   // 📅 Pick Date
   Future<void> pickDate(BuildContext context) async {
@@ -142,8 +198,7 @@ class LeadProvider extends ChangeNotifier {
     );
 
     if (picked != null) {
-
-        selectedDate = picked;
+      selectedDate = picked;
     }
     notifyListeners();
   }
@@ -167,15 +222,12 @@ class LeadProvider extends ChangeNotifier {
     );
 
     if (picked != null) {
-
-        selectedTime = picked;
-
+      selectedTime = picked;
     }
     notifyListeners();
   }
 
   void saveReminder(String leadId, BuildContext context) {
-
     if (selectedDate == null || selectedTime == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Please select date & time")),
@@ -199,16 +251,16 @@ class LeadProvider extends ChangeNotifier {
     print("Last Call (NOW): $lastCallDate");
     print("Follow Up (SELECTED): $followUpDate");
 
-   updateReminder(
+    updateReminder(
       leadId: leadId,
       lastCallDate: lastCallDate,
       followUpDate: followUpDate,
       note: noteController.text,
     );
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Reminder Saved ✅")),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text("Reminder Saved ✅")));
 
     Navigator.pop(context);
     print("Lead ID: ${leadId}");
@@ -221,12 +273,15 @@ class LeadProvider extends ChangeNotifier {
 
     try {
       // Filter LEADS where FOLLOW_UP_DATE is between today 00:00 and 23:59
-      final snapshot = await fdb.collection("LEADS")
+      final snapshot = await fdb
+          .collection("LEADS")
           .where("FOLLOW_UP_DATE", isGreaterThanOrEqualTo: startOfDay)
           .where("FOLLOW_UP_DATE", isLessThan: endOfDay)
           .get();
 
-      _todaysLeadsList = snapshot.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
+      _todaysLeadsList = snapshot.docs
+          .map((doc) => doc.data() as Map<String, dynamic>)
+          .toList();
 
       // Update the counts for the dashboard while we are at it
       dueToday = _todaysLeadsList.length;
@@ -266,7 +321,9 @@ class LeadProvider extends ChangeNotifier {
   }
 
   void getLeadStatus() async {
-    fdb.collection("LEAD_SETTINGS").doc("lead_status").get().then((value) {
+    await fdb.collection("LEAD_SETTINGS").doc("lead_status").get().then((
+      value,
+    ) {
       statusList.clear();
       if (value.exists) {
         Map<String, dynamic> statusMap = value.data() as Map<String, dynamic>;
@@ -298,9 +355,8 @@ class LeadProvider extends ChangeNotifier {
 
         if (data["FOLLOW_UP_DATE"] != null &&
             data["FOLLOW_UP_STATUS"] == "pending") {
-
-          DateTime followUpDate =
-          (data["FOLLOW_UP_DATE"] as Timestamp).toDate();
+          DateTime followUpDate = (data["FOLLOW_UP_DATE"] as Timestamp)
+              .toDate();
 
           // Due today
           if (followUpDate.isAfter(startOfDay) &&
@@ -320,15 +376,16 @@ class LeadProvider extends ChangeNotifier {
       thisWeek = weekCount;
 
       notifyListeners();
-
     } catch (e) {
       print("Workload error: $e");
     }
   }
+
   void changeStatus(String status) {
     selectedStatus = status;
     notifyListeners();
   }
+
   Future<void> updateReminder({
     required String leadId,
     required DateTime lastCallDate,
@@ -346,11 +403,11 @@ class LeadProvider extends ChangeNotifier {
       print("Last Call: $lastCallDate");
       print("Follow Up: $followUpDate");
       print("Note: $note");
-
     } catch (e) {
       print("❌ Error updating reminder: $e");
     }
   }
+
   Future<void> fetchAdditionalLeadDetails() async {
     await fdb.collection("LEAD_SETTINGS").doc("categories").get().then((value) {
       if (value.exists) {
@@ -372,8 +429,8 @@ class LeadProvider extends ChangeNotifier {
         notifyListeners();
       }
     });
-
   }
+
   Future<void> _makePhoneCall(String phoneNumber) async {
     final Uri url = Uri(scheme: 'tel', path: phoneNumber);
 

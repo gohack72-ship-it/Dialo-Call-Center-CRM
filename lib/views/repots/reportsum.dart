@@ -16,8 +16,8 @@ class _ReportSumState extends State<ReportSum> {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
+    // final screenWidth = MediaQuery.of(context).size.width;
+    // final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
 appBar: AppBar(
   centerTitle: true,
@@ -34,15 +34,30 @@ appBar: AppBar(
             width: double.infinity,
             padding: EdgeInsets.all(15),
             decoration: BoxDecoration(
+              color: Theme.of(context).brightness == Brightness.dark
+                   ? Colors.grey.shade900
+                   : Colors.white,
               borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: AppColors.textColor),
+              border: Border.all(
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.grey.shade700
+                      : AppColors.textColor
+                  // AppColors.textColor
+              ),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   children: [
-                    Text("Swabirin", style: AppTextstyle.SubTitle),
+                    Text("Swabirin",
+                        style: AppTextstyle.SubTitle.copyWith(
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodyLarge
+                              ?.color,
+                        ),
+                    ),
                     Spacer(),
                     Row(
                       children: [
@@ -62,7 +77,14 @@ appBar: AppBar(
                         backgroundColor: AppColors.whitetext,
                       ),
                     ),
-                    Text("Pending", style: AppTextstyle.MiniText),
+                    Text("Pending",
+                        style: AppTextstyle.MiniText.copyWith(
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.color,
+                        )
+                    ),
                   ],
                 ),
                 Row(
@@ -97,22 +119,38 @@ appBar: AppBar(
 
               ],
             ),
-          ),
+          ),SizedBox(height: 10,),
           Column(
             children: [
               Container(
                 width: double.infinity,
                 padding: EdgeInsets.all(15),
                 decoration: BoxDecoration(
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.grey.shade900
+                      : Colors.white,
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: AppColors.textColor),
+                  border: Border.all(
+                      color:  Theme.of(context).brightness == Brightness.dark
+                      ? Colors.grey.shade700
+                      : AppColors.textColor
+                      // AppColors.textColor
+                  ),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
-                        Text("Swabirin", style: AppTextstyle.SubTitle),
+                        Text("Swabirin",
+                            style: AppTextstyle.SubTitle.copyWith(
+                              color: Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge
+                                  ?.color,
+                            ),
+                            // AppTextstyle.SubTitle
+                        ),
                         Spacer(),
                         Row(
                           children: [
@@ -132,7 +170,1134 @@ appBar: AppBar(
                             backgroundColor: AppColors.whitetext,
                           ),
                         ),
-                        Text("Pending", style: AppTextstyle.MiniText),
+                        Text("Pending",
+                            style: AppTextstyle.MiniText.copyWith(
+                              color: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.color,
+                            )
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text("priority:"),
+                        CircleAvatar(
+                          radius: 5,
+                          backgroundColor: AppColors.redColor,
+                        ),
+                        Text("High"),
+                      ],
+                    ),
+                    Row(children: [Text("Handle time:"), Text("3m 32s"),
+                      Spacer(),
+                      Container(
+                        height: 25,
+                        width: 50,
+                        decoration: BoxDecoration(
+                          color: AppColors.greenColor,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(Icons.call_end,color: AppColors.whitetext,size: 20,),
+
+                            Text("Call",style: TextStyle(color: AppColors.whitetext),)
+                          ],
+                        ),
+
+                      )]
+                    ),
+
+                  ],
+                ),
+              ),
+            ],
+          ),SizedBox(height: 10,),
+          Column(
+            children: [
+              Container(
+                width: double.infinity,
+                padding: EdgeInsets.all(15),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).brightness == Brightness.dark
+                       ? Colors.grey.shade900
+                       : Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(
+                      color: Theme.of(context).brightness == Brightness.dark
+                           ? Colors.grey.shade700
+                           : AppColors.textColor
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text("Swabirin", style: AppTextstyle.SubTitle.copyWith(
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodyLarge
+                              ?.color
+                        )),
+                        Spacer(),
+                        Row(
+                          children: [
+                            Icon(Icons.check_box_outlined,color: AppColors.greenColor,),
+                            Text("Completed",style: TextStyle(color: AppColors.greenColor),),
+                          ],
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 10,
+                          backgroundColor: AppColors.themeColor,
+                          child: CircleAvatar(
+                            radius: 5,
+                            backgroundColor: AppColors.whitetext,
+                          ),
+                        ),
+                        Text("Pending", style: AppTextstyle.MiniText.copyWith(
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.color
+                        )),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text("priority:"),
+                        CircleAvatar(
+                          radius: 5,
+                          backgroundColor: AppColors.redColor,
+                        ),
+                        Text("High"),
+                      ],
+                    ),
+                    Row(children: [Text("Handle time:"), Text("3m 32s"),
+                      Spacer(),
+                      Container(
+                        height: 25,
+                        width: 50,
+                        decoration: BoxDecoration(
+                          color: AppColors.greenColor,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(Icons.call_end,color: AppColors.whitetext,size: 20,),
+
+                            Text("Call",style: TextStyle(color: AppColors.whitetext),)
+                          ],
+                        ),
+                        // child: Row(
+                        //   children: [
+                        //     Icon(Icons.call_end,color: AppColors.whitetext,size: 90,),
+
+                        //     Text("Call",style: TextStyle(color: AppColors.whitetext),)
+                        //   ],
+                        // ),
+
+                      )]
+                    ),
+
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+              Container(
+                width: double.infinity,
+                padding: EdgeInsets.all(15),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).brightness == Brightness.dark
+                       ? Colors.grey.shade900
+                       : Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color:
+                  Theme.of(context).brightness == Brightness.dark
+                       ? Colors.grey.shade700
+                       : AppColors.textColor),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text("Swabirin", style: AppTextstyle.SubTitle.copyWith(
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodyLarge
+                              ?.color
+                        ),
+                        ),
+                        Spacer(),
+                        Row(
+                          children: [
+                            Icon(Icons.check_box_outlined,color: AppColors.greenColor,),
+                            Text("Completed",style: TextStyle(color: AppColors.greenColor),),
+                          ],
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 10,
+                          backgroundColor: AppColors.themeColor,
+                          child: CircleAvatar(
+                            radius: 5,
+                            backgroundColor: AppColors.whitetext,
+                          ),
+                        ),
+                        Text("Pending", style: AppTextstyle.MiniText.copyWith(
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.color
+                        )),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text("priority:"),
+                        CircleAvatar(
+                          radius: 5,
+                          backgroundColor: AppColors.redColor,
+                        ),
+                        Text("High"),
+                      ],
+                    ),
+                    Row(children: [Text("Handle time:"), Text("3m 32s"),
+                      Spacer(),
+                      Container(
+                        height: 25,
+                        width: 50,
+                        decoration: BoxDecoration(
+                          color: AppColors.greenColor,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(Icons.call_end,color: AppColors.whitetext,size: 20,),
+
+                            Text("Call",style: TextStyle(color: AppColors.whitetext),)
+                          ],
+                        ),
+
+                      )]
+                    ),
+
+                  ],
+                ),
+              ),
+          const SizedBox(height: 10),
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.grey.shade900
+                  : Colors.white,
+              border: Border.all(color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.grey.shade700
+                   :AppColors.textColor),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text("Alice cooper", style: AppTextstyle.SubTitle.copyWith(
+                      color: Theme.of(context)
+                          .textTheme
+                          .bodyLarge
+                          ?.color
+                    )),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Container(
+                      height: 20,
+                      width: 80,
+
+                      decoration: BoxDecoration(
+                        color: AppColors.redColor,
+
+                      ),
+                      child: Row(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Overdue",
+                                style: TextStyle(
+                                  color: AppColors.whitetext,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(width: 4),
+                          Icon(
+                            Icons.warning_amber,
+                            color: AppColors.whitetext,
+                            size: 18,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Text("Priority:"),
+                    const SizedBox(width: 10),
+                    CircleAvatar(
+                      radius: 5,
+                      backgroundColor: AppColors.redColor,
+                    ),
+                    Text("High"),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Text(
+                      "Handle Time:",
+                    ),
+                    Text("5m 20s"),
+                    Spacer(),
+                    Container(
+                      height: 25,
+                      width: 50,
+                      decoration: BoxDecoration(
+                        color: AppColors.redColor,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.call_end,
+                            color: AppColors.whitetext,
+                            size: 20,
+                          ),
+                          Text(
+                            "Call",
+                            style: TextStyle(
+                              color: AppColors.whitetext,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 10),
+              Container(
+                width: double.infinity,
+                padding: EdgeInsets.all(15),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.grey.shade900
+                      : Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: Theme.of(context).brightness == Brightness.dark
+                                          ? Colors.grey.shade700
+                                          : AppColors.textColor),
+
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text("Swabirin", style: AppTextstyle.SubTitle.copyWith(
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodyLarge
+                              ?.color
+                        )),
+                        Spacer(),
+                        Row(
+                          children: [
+                            Icon(Icons.check_box_outlined,color: AppColors.greenColor,),
+                            Text("Completed",style: TextStyle(color: AppColors.greenColor),),
+                          ],
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 10,
+                          backgroundColor: AppColors.themeColor,
+                          child: CircleAvatar(
+                            radius: 5,
+                            backgroundColor: AppColors.whitetext,
+                          ),
+                        ),
+                        Text("Pending", style: AppTextstyle.MiniText.copyWith(
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.color
+                        )),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text("priority:"),
+                        CircleAvatar(
+                          radius: 5,
+                          backgroundColor: AppColors.redColor,
+                        ),
+                        Text("High"),
+                      ],
+                    ),
+                    Row(children: [Text("Handle time:"), Text("3m 32s"),
+                      Spacer(),
+                      Container(
+                        height: 25,
+                        width: 50,
+                        decoration: BoxDecoration(
+                          color: AppColors.greenColor,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(Icons.call_end,color: AppColors.whitetext,size: 20,),
+
+                            Text("Call",style: TextStyle(color: AppColors.whitetext),)
+                          ],
+                        ),
+
+                      )]
+                    ),
+
+                  ],
+                ),
+              ),
+          const SizedBox(height: 10),
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.grey.shade900
+                  : Colors.white,
+              border: Border.all(color:Theme.of(context).brightness == Brightness.dark
+                  ? Colors.grey.shade700
+                  : AppColors.textColor),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text("Alice cooper", style: AppTextstyle.SubTitle.copyWith(
+                      color: Theme.of(context)
+                          .textTheme
+                          .bodyLarge
+                          ?.color
+                    )),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Container(
+                      height: 20,
+                      width: 80,
+                      decoration: BoxDecoration(
+                        color: AppColors.redColor,
+                      ),
+                      child: Row(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Overdue",
+                                style: TextStyle(
+                                  color: AppColors.whitetext,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(width: 4),
+                          Icon(
+                            Icons.warning_amber,
+                            color: AppColors.whitetext,
+                            size: 18,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Text("Priority:"),
+                    const SizedBox(width: 10),
+                    CircleAvatar(
+                      radius: 5,
+                      backgroundColor: AppColors.redColor,
+                    ),
+                    Text("High"),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Text(
+                      "Handle Time:",
+                    ),
+                    Text("5m 20s"),
+                    Spacer(),
+                    Container(
+                      height: 25,
+                      width: 50,
+                      decoration: BoxDecoration(
+                        color: AppColors.redColor,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.call_end,
+                            color: AppColors.whitetext,
+                            size: 20,
+                          ),
+                          Text(
+                            "Call",
+                            style: TextStyle(
+                              color: AppColors.whitetext,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 10),
+
+              Container(
+                width: double.infinity,
+                padding: EdgeInsets.all(15),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.grey.shade900
+                      : Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.grey.shade700
+                      : AppColors.textColor),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text("Swabirin", style: AppTextstyle.SubTitle.copyWith(
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodyLarge
+                              ?.color
+                        )),
+                        Spacer(),
+                        Row(
+                          children: [
+                            Icon(Icons.check_box_outlined,color: AppColors.greenColor,),
+                            Text("Completed",style: TextStyle(color: AppColors.greenColor),),
+                          ],
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 10,
+                          backgroundColor: AppColors.themeColor,
+                          child: CircleAvatar(
+                            radius: 5,
+                            backgroundColor: AppColors.whitetext,
+                          ),
+                        ),
+                        Text("Pending", style: AppTextstyle.MiniText.copyWith(
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.color
+                        )),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text("priority:"),
+                        CircleAvatar(
+                          radius: 5,
+                          backgroundColor: AppColors.redColor,
+                        ),
+                        Text("High"),
+                      ],
+                    ),
+                    Row(children: [Text("Handle time:"), Text("3m 32s"),
+                      Spacer(),
+                      Container(
+                        height: 25,
+                        width: 50,
+                        decoration: BoxDecoration(
+                          color: AppColors.greenColor,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(Icons.call_end,color: AppColors.whitetext,size: 20,),
+
+                            Text("Call",style: TextStyle(color: AppColors.whitetext),)
+                          ],
+                        ),
+
+                      )]
+                    ),
+
+                  ],
+                ),
+              ),
+          const SizedBox(height: 10),
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.grey.shade900
+                  : Colors.white,
+              border: Border.all(color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.grey.shade700
+                  : AppColors.textColor),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text("Alice cooper", style: AppTextstyle.SubTitle.copyWith(
+                      color: Theme.of(context)
+                          .textTheme
+                          .bodyLarge
+                          ?.color
+                    ),
+                    )
+                  ],
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Container(
+                      height: 20,
+                      width: 80,
+                      decoration: BoxDecoration(
+                        color: AppColors.redColor,
+                      ),
+                      child: Row(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Overdue",
+                                style: TextStyle(
+                                  color: AppColors.whitetext,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(width: 4),
+                          Icon(
+                            Icons.warning_amber,
+                            color: AppColors.whitetext,
+                            size: 18,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Text("Priority:"),
+                    const SizedBox(width: 10),
+                    CircleAvatar(
+                      radius: 5,
+                      backgroundColor: AppColors.redColor,
+                    ),
+                    Text("High"),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Text(
+                      "Handle Time:",
+                    ),
+                    Text("5m 20s"),
+                    Spacer(),
+                    Container(
+                      height: 25,
+                      width: 50,
+                      decoration: BoxDecoration(
+                        color: AppColors.redColor,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.call_end,
+                            color: AppColors.whitetext,
+                            size: 20,
+                          ),
+                          Text(
+                            "Call",
+                            style: TextStyle(
+                              color: AppColors.whitetext,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 10),
+              Container(
+                width: double.infinity,
+                padding: EdgeInsets.all(15),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).brightness == Brightness.dark
+                       ? Colors.grey.shade900
+                       : Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: Theme.of(context).brightness == Brightness.dark
+                       ? Colors.grey.shade700
+                       : AppColors.textColor),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text("Swabirin", style: AppTextstyle.SubTitle.copyWith(
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodyLarge
+                              ?.color
+                        )),
+                        Spacer(),
+                        Row(
+                          children: [
+                            Icon(Icons.check_box_outlined,color: AppColors.greenColor,),
+                            Text("Completed",style: TextStyle(color: AppColors.greenColor),),
+                          ],
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 10,
+                          backgroundColor: AppColors.themeColor,
+                          child: CircleAvatar(
+                            radius: 5,
+                            backgroundColor: AppColors.whitetext,
+                          ),
+                        ),
+                        Text("Pending", style: AppTextstyle.MiniText.copyWith(
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.color
+                        )),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text("priority:"),
+                        CircleAvatar(
+                          radius: 5,
+                          backgroundColor: AppColors.redColor,
+                        ),
+                        Text("High"),
+                      ],
+                    ),
+                    Row(children: [Text("Handle time:"), Text("3m 32s"),
+                      Spacer(),
+                      Container(
+                        height: 25,
+                        width: 50,
+                        decoration: BoxDecoration(
+                          color: AppColors.greenColor,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(Icons.call_end,color: AppColors.whitetext,size: 20,),
+
+                            Text("Call",style: TextStyle(color: AppColors.whitetext),)
+                          ],
+                        ),
+
+                      )]
+                    ),
+
+                  ],
+                ),
+              ),
+
+          const SizedBox(height: 10),
+              Container(
+                width: double.infinity,
+                padding: EdgeInsets.all(15),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.grey.shade900
+                      : Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.grey.shade700
+                      : AppColors.textColor),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text("Swabirin", style: AppTextstyle.SubTitle.copyWith(
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodyLarge
+                              ?.color
+                        )),
+                        Spacer(),
+                        Row(
+                          children: [
+                            Icon(Icons.check_box_outlined,color: AppColors.greenColor,),
+                            Text("Completed",style: TextStyle(color: AppColors.greenColor),),
+                          ],
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 10,
+                          backgroundColor: AppColors.themeColor,
+                          child: CircleAvatar(
+                            radius: 5,
+                            backgroundColor: AppColors.whitetext,
+                          ),
+                        ),
+                        Text("Pending", style: AppTextstyle.MiniText.copyWith(
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.color
+                        )),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text("priority:"),
+                        CircleAvatar(
+                          radius: 5,
+                          backgroundColor: AppColors.redColor,
+                        ),
+                        Text("High"),
+                      ],
+                    ),
+                    Row(children: [Text("Handle time:"), Text("3m 32s"),
+                      Spacer(),
+                      Container(
+                        height: 25,
+                        width: 50,
+                        decoration: BoxDecoration(
+                          color: AppColors.greenColor,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(Icons.call_end,color: AppColors.whitetext,size: 20,),
+
+                            Text("Call",style: TextStyle(color: AppColors.whitetext),)
+                          ],
+                        ),
+
+                      )]
+                    ),
+
+                  ],
+                ),
+              ),
+          const SizedBox(height: 10),
+              Container(
+                width: double.infinity,
+                padding: EdgeInsets.all(15),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.grey.shade900
+                      : Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.grey.shade700
+                      : AppColors.textColor),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text("Swabirin", style: AppTextstyle.SubTitle.copyWith(
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodyLarge
+                              ?.color
+                        )),
+                        Spacer(),
+                        Row(
+                          children: [
+                            Icon(Icons.check_box_outlined,color: AppColors.greenColor,),
+                            Text("Completed",style: TextStyle(color: AppColors.greenColor),),
+                          ],
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 10,
+                          backgroundColor: AppColors.themeColor,
+                          child: CircleAvatar(
+                            radius: 5,
+                            backgroundColor: AppColors.whitetext,
+                          ),
+                        ),
+                        Text("Pending", style: AppTextstyle.MiniText.copyWith(
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.color
+                        )),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text("priority:"),
+                        CircleAvatar(
+                          radius: 5,
+                          backgroundColor: AppColors.redColor,
+                        ),
+                        Text("High"),
+                      ],
+                    ),
+                    Row(children: [Text("Handle time:"), Text("3m 32s"),
+                      Spacer(),
+                      Container(
+                        height: 25,
+                        width: 50,
+                        decoration: BoxDecoration(
+                          color: AppColors.greenColor,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(Icons.call_end,color: AppColors.whitetext,size: 20,),
+
+                            Text("Call",style: TextStyle(color: AppColors.whitetext),)
+                          ],
+                        ),
+
+                      )]
+                    ),
+
+                  ],
+                ),
+              ),
+          const SizedBox(height: 10),
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.grey.shade900
+                  : Colors.white,
+              border: Border.all(color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.grey.shade700
+                   : AppColors.textColor),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text("Alice cooper", style: AppTextstyle.SubTitle.copyWith(
+                      color: Theme.of(context)
+                          .textTheme
+                          .bodyLarge
+                          ?.color
+                    )),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Container(
+                      height: 20,
+                      width: 80,
+                      decoration: BoxDecoration(
+                        color: AppColors.redColor,
+                      ),
+                      child: Row(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Overdue",
+                                style: TextStyle(
+                                  color: AppColors.whitetext,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(width: 4),
+                          Icon(
+                            Icons.warning_amber,
+                            color: AppColors.whitetext,
+                            size: 18,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Text("Priority:"),
+                    const SizedBox(width: 10),
+                    CircleAvatar(
+                      radius: 5,
+                      backgroundColor: AppColors.redColor,
+                    ),
+                    Text("High"),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Text(
+                      "Handle Time:",
+                    ),
+                    Text("5m 20s"),
+                    Spacer(),
+                    Container(
+                      height: 25,
+                      width: 50,
+                      decoration: BoxDecoration(
+                        color: AppColors.redColor,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.call_end,
+                            color: AppColors.whitetext,
+                            size: 20,
+                          ),
+                          Text(
+                            "Call",
+                            style: TextStyle(
+                              color: AppColors.whitetext,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 10),
+          Column(
+            children: [
+              Container(
+                width: double.infinity,
+                padding: EdgeInsets.all(15),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.grey.shade900
+                      : Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.grey.shade700
+                      : AppColors.textColor),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text("Swabirin", style: AppTextstyle.SubTitle.copyWith(
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodyLarge
+                              ?.color
+                        )),
+                        Spacer(),
+                        Row(
+                          children: [
+                            Icon(Icons.check_box_outlined,color: AppColors.greenColor,),
+                            Text("Completed",style: TextStyle(color: AppColors.greenColor),),
+                          ],
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 10,
+                          backgroundColor: AppColors.themeColor,
+                          child: CircleAvatar(
+                            radius: 5,
+                            backgroundColor: AppColors.whitetext,
+                          ),
+                        ),
+                        Text("Pending", style: AppTextstyle.MiniText.copyWith(
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.color
+                        )),
                       ],
                     ),
                     Row(
@@ -170,92 +1335,30 @@ appBar: AppBar(
               ),
             ],
           ),
-          Column(
-            children: [
-              Container(
-                width: double.infinity,
-                padding: EdgeInsets.all(15),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: AppColors.textColor),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Text("Swabirin", style: AppTextstyle.SubTitle),
-                        Spacer(),
-                        Row(
-                          children: [
-                            Icon(Icons.check_box_outlined,color: AppColors.greenColor,),
-                            Text("Completed",style: TextStyle(color: AppColors.greenColor),),
-                          ],
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        CircleAvatar(
-                          radius: 10,
-                          backgroundColor: AppColors.themeColor,
-                          child: CircleAvatar(
-                            radius: 5,
-                            backgroundColor: AppColors.whitetext,
-                          ),
-                        ),
-                        Text("Pending", style: AppTextstyle.MiniText),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Text("priority:"),
-                        CircleAvatar(
-                          radius: 5,
-                          backgroundColor: AppColors.redColor,
-                        ),
-                        Text("High"),
-                      ],
-                    ),
-                    Row(children: [Text("Handle time:"), Text("3m 32s"),
-                      Spacer(),
-                      Container(
-                        height: 25,
-                        width: 50,
-                        decoration: BoxDecoration(
-                          color: AppColors.greenColor,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(Icons.call_end,color: AppColors.whitetext,size: 90,),
-
-                            Text("Call",style: TextStyle(color: AppColors.whitetext),)
-                          ],
-                        ),
-
-                      )]
-                    ),
-
-                  ],
-                ),
-              ),
-            ],
-          ),
           const SizedBox(height: 10),
               Container(
                 width: double.infinity,
                 padding: EdgeInsets.all(15),
                 decoration: BoxDecoration(
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.grey.shade900
+                      : Colors.white,
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: AppColors.textColor),
+                  border: Border.all(color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.grey.shade700
+                      : AppColors.textColor),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
-                        Text("Swabirin", style: AppTextstyle.SubTitle),
+                        Text("Swabirin", style: AppTextstyle.SubTitle.copyWith(
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodyLarge
+                              ?.color
+                        )),
                         Spacer(),
                         Row(
                           children: [
@@ -275,7 +1378,12 @@ appBar: AppBar(
                             backgroundColor: AppColors.whitetext,
                           ),
                         ),
-                        Text("Pending", style: AppTextstyle.MiniText),
+                        Text("Pending", style: AppTextstyle.MiniText.copyWith(
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.color
+                        )),
                       ],
                     ),
                     Row(
@@ -316,7 +1424,12 @@ appBar: AppBar(
             width: double.infinity,
             padding: EdgeInsets.all(10),
             decoration: BoxDecoration(
-              border: Border.all(color: AppColors.textColor),
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.grey.shade900
+                  : Colors.white,
+              border: Border.all(color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.grey.shade700
+                  : AppColors.textColor),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Column(
@@ -324,882 +1437,12 @@ appBar: AppBar(
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Text("Alice cooper", style: AppTextstyle.SubTitle),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Container(
-                      height: 20,
-                      width: 80,
-
-                      decoration: BoxDecoration(
-                        color: AppColors.redColor,
-
-                      ),
-                      child: Row(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Overdue",
-                                style: TextStyle(
-                                  color: AppColors.whitetext,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(width: 4),
-                          Icon(
-                            Icons.warning_amber,
-                            color: AppColors.whitetext,
-                            size: 18,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Text("Priority:"),
-                    const SizedBox(width: 10),
-                    CircleAvatar(
-                      radius: 5,
-                      backgroundColor: AppColors.redColor,
-                    ),
-                    Text("High"),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Text(
-                      "Handle Time:",
-                    ),
-                    Text("5m 20s"),
-                    Spacer(),
-                    Container(
-                      height: 25,
-                      width: 50,
-                      decoration: BoxDecoration(
-                        color: AppColors.redColor,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.call_end,
-                            color: AppColors.whitetext,
-                            size: 20,
-                          ),
-                          Text(
-                            "Call",
-                            style: TextStyle(
-                              color: AppColors.whitetext,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 10),
-              Container(
-                width: double.infinity,
-                padding: EdgeInsets.all(15),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: AppColors.textColor),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Text("Swabirin", style: AppTextstyle.SubTitle),
-                        Spacer(),
-                        Row(
-                          children: [
-                            Icon(Icons.check_box_outlined,color: AppColors.greenColor,),
-                            Text("Completed",style: TextStyle(color: AppColors.greenColor),),
-                          ],
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        CircleAvatar(
-                          radius: 10,
-                          backgroundColor: AppColors.themeColor,
-                          child: CircleAvatar(
-                            radius: 5,
-                            backgroundColor: AppColors.whitetext,
-                          ),
-                        ),
-                        Text("Pending", style: AppTextstyle.MiniText),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Text("priority:"),
-                        CircleAvatar(
-                          radius: 5,
-                          backgroundColor: AppColors.redColor,
-                        ),
-                        Text("High"),
-                      ],
-                    ),
-                    Row(children: [Text("Handle time:"), Text("3m 32s"),
-                      Spacer(),
-                      Container(
-                        height: 25,
-                        width: 50,
-                        decoration: BoxDecoration(
-                          color: AppColors.greenColor,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(Icons.call_end,color: AppColors.whitetext,size: 20,),
-
-                            Text("Call",style: TextStyle(color: AppColors.whitetext),)
-                          ],
-                        ),
-
-                      )]
-                    ),
-
-                  ],
-                ),
-              ),
-          const SizedBox(height: 10),
-          Container(
-            width: double.infinity,
-            padding: EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              border: Border.all(color: AppColors.textColor),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Text("Alice cooper", style: AppTextstyle.SubTitle),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Container(
-                      height: 20,
-                      width: 80,
-                      decoration: BoxDecoration(
-                        color: AppColors.redColor,
-                      ),
-                      child: Row(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Overdue",
-                                style: TextStyle(
-                                  color: AppColors.whitetext,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(width: 4),
-                          Icon(
-                            Icons.warning_amber,
-                            color: AppColors.whitetext,
-                            size: 18,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Text("Priority:"),
-                    const SizedBox(width: 10),
-                    CircleAvatar(
-                      radius: 5,
-                      backgroundColor: AppColors.redColor,
-                    ),
-                    Text("High"),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Text(
-                      "Handle Time:",
-                    ),
-                    Text("5m 20s"),
-                    Spacer(),
-                    Container(
-                      height: 25,
-                      width: 50,
-                      decoration: BoxDecoration(
-                        color: AppColors.redColor,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.call_end,
-                            color: AppColors.whitetext,
-                            size: 20,
-                          ),
-                          Text(
-                            "Call",
-                            style: TextStyle(
-                              color: AppColors.whitetext,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 10),
-
-              Container(
-                width: double.infinity,
-                padding: EdgeInsets.all(15),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: AppColors.textColor),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Text("Swabirin", style: AppTextstyle.SubTitle),
-                        Spacer(),
-                        Row(
-                          children: [
-                            Icon(Icons.check_box_outlined,color: AppColors.greenColor,),
-                            Text("Completed",style: TextStyle(color: AppColors.greenColor),),
-                          ],
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        CircleAvatar(
-                          radius: 10,
-                          backgroundColor: AppColors.themeColor,
-                          child: CircleAvatar(
-                            radius: 5,
-                            backgroundColor: AppColors.whitetext,
-                          ),
-                        ),
-                        Text("Pending", style: AppTextstyle.MiniText),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Text("priority:"),
-                        CircleAvatar(
-                          radius: 5,
-                          backgroundColor: AppColors.redColor,
-                        ),
-                        Text("High"),
-                      ],
-                    ),
-                    Row(children: [Text("Handle time:"), Text("3m 32s"),
-                      Spacer(),
-                      Container(
-                        height: 25,
-                        width: 50,
-                        decoration: BoxDecoration(
-                          color: AppColors.greenColor,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(Icons.call_end,color: AppColors.whitetext,size: 20,),
-
-                            Text("Call",style: TextStyle(color: AppColors.whitetext),)
-                          ],
-                        ),
-
-                      )]
-                    ),
-
-                  ],
-                ),
-              ),
-          const SizedBox(height: 10),
-          Container(
-            width: double.infinity,
-            padding: EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              border: Border.all(color: AppColors.textColor),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Text("Alice cooper", style: AppTextstyle.SubTitle),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Container(
-                      height: 20,
-                      width: 80,
-                      decoration: BoxDecoration(
-                        color: AppColors.redColor,
-                      ),
-                      child: Row(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Overdue",
-                                style: TextStyle(
-                                  color: AppColors.whitetext,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(width: 4),
-                          Icon(
-                            Icons.warning_amber,
-                            color: AppColors.whitetext,
-                            size: 18,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Text("Priority:"),
-                    const SizedBox(width: 10),
-                    CircleAvatar(
-                      radius: 5,
-                      backgroundColor: AppColors.redColor,
-                    ),
-                    Text("High"),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Text(
-                      "Handle Time:",
-                    ),
-                    Text("5m 20s"),
-                    Spacer(),
-                    Container(
-                      height: 25,
-                      width: 50,
-                      decoration: BoxDecoration(
-                        color: AppColors.redColor,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.call_end,
-                            color: AppColors.whitetext,
-                            size: 20,
-                          ),
-                          Text(
-                            "Call",
-                            style: TextStyle(
-                              color: AppColors.whitetext,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 10),
-              Container(
-                width: double.infinity,
-                padding: EdgeInsets.all(15),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: AppColors.textColor),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Text("Swabirin", style: AppTextstyle.SubTitle),
-                        Spacer(),
-                        Row(
-                          children: [
-                            Icon(Icons.check_box_outlined,color: AppColors.greenColor,),
-                            Text("Completed",style: TextStyle(color: AppColors.greenColor),),
-                          ],
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        CircleAvatar(
-                          radius: 10,
-                          backgroundColor: AppColors.themeColor,
-                          child: CircleAvatar(
-                            radius: 5,
-                            backgroundColor: AppColors.whitetext,
-                          ),
-                        ),
-                        Text("Pending", style: AppTextstyle.MiniText),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Text("priority:"),
-                        CircleAvatar(
-                          radius: 5,
-                          backgroundColor: AppColors.redColor,
-                        ),
-                        Text("High"),
-                      ],
-                    ),
-                    Row(children: [Text("Handle time:"), Text("3m 32s"),
-                      Spacer(),
-                      Container(
-                        height: 25,
-                        width: 50,
-                        decoration: BoxDecoration(
-                          color: AppColors.greenColor,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(Icons.call_end,color: AppColors.whitetext,size: 20,),
-
-                            Text("Call",style: TextStyle(color: AppColors.whitetext),)
-                          ],
-                        ),
-
-                      )]
-                    ),
-
-                  ],
-                ),
-              ),
-
-          const SizedBox(height: 10),
-              Container(
-                width: double.infinity,
-                padding: EdgeInsets.all(15),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: AppColors.textColor),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Text("Swabirin", style: AppTextstyle.SubTitle),
-                        Spacer(),
-                        Row(
-                          children: [
-                            Icon(Icons.check_box_outlined,color: AppColors.greenColor,),
-                            Text("Completed",style: TextStyle(color: AppColors.greenColor),),
-                          ],
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        CircleAvatar(
-                          radius: 10,
-                          backgroundColor: AppColors.themeColor,
-                          child: CircleAvatar(
-                            radius: 5,
-                            backgroundColor: AppColors.whitetext,
-                          ),
-                        ),
-                        Text("Pending", style: AppTextstyle.MiniText),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Text("priority:"),
-                        CircleAvatar(
-                          radius: 5,
-                          backgroundColor: AppColors.redColor,
-                        ),
-                        Text("High"),
-                      ],
-                    ),
-                    Row(children: [Text("Handle time:"), Text("3m 32s"),
-                      Spacer(),
-                      Container(
-                        height: 25,
-                        width: 50,
-                        decoration: BoxDecoration(
-                          color: AppColors.greenColor,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(Icons.call_end,color: AppColors.whitetext,size: 20,),
-
-                            Text("Call",style: TextStyle(color: AppColors.whitetext),)
-                          ],
-                        ),
-
-                      )]
-                    ),
-
-                  ],
-                ),
-              ),
-          const SizedBox(height: 10),
-              Container(
-                width: double.infinity,
-                padding: EdgeInsets.all(15),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: AppColors.textColor),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Text("Swabirin", style: AppTextstyle.SubTitle),
-                        Spacer(),
-                        Row(
-                          children: [
-                            Icon(Icons.check_box_outlined,color: AppColors.greenColor,),
-                            Text("Completed",style: TextStyle(color: AppColors.greenColor),),
-                          ],
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        CircleAvatar(
-                          radius: 10,
-                          backgroundColor: AppColors.themeColor,
-                          child: CircleAvatar(
-                            radius: 5,
-                            backgroundColor: AppColors.whitetext,
-                          ),
-                        ),
-                        Text("Pending", style: AppTextstyle.MiniText),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Text("priority:"),
-                        CircleAvatar(
-                          radius: 5,
-                          backgroundColor: AppColors.redColor,
-                        ),
-                        Text("High"),
-                      ],
-                    ),
-                    Row(children: [Text("Handle time:"), Text("3m 32s"),
-                      Spacer(),
-                      Container(
-                        height: 25,
-                        width: 50,
-                        decoration: BoxDecoration(
-                          color: AppColors.greenColor,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(Icons.call_end,color: AppColors.whitetext,size: 20,),
-
-                            Text("Call",style: TextStyle(color: AppColors.whitetext),)
-                          ],
-                        ),
-
-                      )]
-                    ),
-
-                  ],
-                ),
-              ),
-          const SizedBox(height: 10),
-          Container(
-            width: double.infinity,
-            padding: EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              border: Border.all(color: AppColors.textColor),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Text("Alice cooper", style: AppTextstyle.SubTitle),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Container(
-                      height: 20,
-                      width: 80,
-                      decoration: BoxDecoration(
-                        color: AppColors.redColor,
-                      ),
-                      child: Row(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Overdue",
-                                style: TextStyle(
-                                  color: AppColors.whitetext,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(width: 4),
-                          Icon(
-                            Icons.warning_amber,
-                            color: AppColors.whitetext,
-                            size: 18,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Text("Priority:"),
-                    const SizedBox(width: 10),
-                    CircleAvatar(
-                      radius: 5,
-                      backgroundColor: AppColors.redColor,
-                    ),
-                    Text("High"),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Text(
-                      "Handle Time:",
-                    ),
-                    Text("5m 20s"),
-                    Spacer(),
-                    Container(
-                      height: 25,
-                      width: 50,
-                      decoration: BoxDecoration(
-                        color: AppColors.redColor,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.call_end,
-                            color: AppColors.whitetext,
-                            size: 20,
-                          ),
-                          Text(
-                            "Call",
-                            style: TextStyle(
-                              color: AppColors.whitetext,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 10),
-          Column(
-            children: [
-              Container(
-                width: double.infinity,
-                padding: EdgeInsets.all(15),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: AppColors.textColor),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Text("Swabirin", style: AppTextstyle.SubTitle),
-                        Spacer(),
-                        Row(
-                          children: [
-                            Icon(Icons.check_box_outlined,color: AppColors.greenColor,),
-                            Text("Completed",style: TextStyle(color: AppColors.greenColor),),
-                          ],
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        CircleAvatar(
-                          radius: 10,
-                          backgroundColor: AppColors.themeColor,
-                          child: CircleAvatar(
-                            radius: 5,
-                            backgroundColor: AppColors.whitetext,
-                          ),
-                        ),
-                        Text("Pending", style: AppTextstyle.MiniText),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Text("priority:"),
-                        CircleAvatar(
-                          radius: 5,
-                          backgroundColor: AppColors.redColor,
-                        ),
-                        Text("High"),
-                      ],
-                    ),
-                    Row(children: [Text("Handle time:"), Text("3m 32s"),
-                      Spacer(),
-                      Container(
-                        height: 25,
-                        width: 50,
-                        decoration: BoxDecoration(
-                          color: AppColors.greenColor,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(Icons.call_end,color: AppColors.whitetext,size: 20,),
-
-                            Text("Call",style: TextStyle(color: AppColors.whitetext),)
-                          ],
-                        ),
-
-                      )]
-                    ),
-
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-              Container(
-                width: double.infinity,
-                padding: EdgeInsets.all(15),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: AppColors.textColor),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Text("Swabirin", style: AppTextstyle.SubTitle),
-                        Spacer(),
-                        Row(
-                          children: [
-                            Icon(Icons.check_box_outlined,color: AppColors.greenColor,),
-                            Text("Completed",style: TextStyle(color: AppColors.greenColor),),
-                          ],
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        CircleAvatar(
-                          radius: 10,
-                          backgroundColor: AppColors.themeColor,
-                          child: CircleAvatar(
-                            radius: 5,
-                            backgroundColor: AppColors.whitetext,
-                          ),
-                        ),
-                        Text("Pending", style: AppTextstyle.MiniText),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Text("priority:"),
-                        CircleAvatar(
-                          radius: 5,
-                          backgroundColor: AppColors.redColor,
-                        ),
-                        Text("High"),
-                      ],
-                    ),
-                    Row(children: [Text("Handle time:"), Text("3m 32s"),
-                      Spacer(),
-                      Container(
-                        height: 25,
-                        width: 50,
-                        decoration: BoxDecoration(
-                          color: AppColors.greenColor,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(Icons.call_end,color: AppColors.whitetext,size: 20,),
-
-                            Text("Call",style: TextStyle(color: AppColors.whitetext),)
-                          ],
-                        ),
-
-                      )]
-                    ),
-
-                  ],
-                ),
-              ),
-          const SizedBox(height: 10),
-          Container(
-            width: double.infinity,
-            padding: EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              border: Border.all(color: AppColors.textColor),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Text("Alice cooper", style: AppTextstyle.SubTitle),
+                    Text("Alice cooper", style: AppTextstyle.SubTitle.copyWith(
+                      color: Theme.of(context)
+                          .textTheme
+                          .bodyLarge
+                          ?.color
+                    )),
                   ],
                 ),
                 const SizedBox(height: 10),
@@ -1287,7 +1530,12 @@ appBar: AppBar(
             width: double.infinity,
             padding: EdgeInsets.all(10),
             decoration: BoxDecoration(
-              border: Border.all(color: AppColors.textColor),
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.grey.shade900
+                  : Colors.white,
+              border: Border.all(color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.grey.shade700
+                  :AppColors.textColor),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Column(
@@ -1295,7 +1543,12 @@ appBar: AppBar(
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Text("Alice cooper", style: AppTextstyle.SubTitle),
+                    Text("Alice cooper", style: AppTextstyle.SubTitle.copyWith(
+                      color: Theme.of(context)
+                          .textTheme
+                          .bodyLarge
+                          ?.color
+                    )),
                   ],
                 ),
                 const SizedBox(height: 10),
@@ -1383,15 +1636,25 @@ appBar: AppBar(
                 width: double.infinity,
                 padding: EdgeInsets.all(15),
                 decoration: BoxDecoration(
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.grey.shade900
+                      : Colors.white,
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: AppColors.textColor),
+                  border: Border.all(color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.grey.shade700
+                      : AppColors.textColor),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
-                        Text("Swabirin", style: AppTextstyle.SubTitle),
+                        Text("Swabirin", style: AppTextstyle.SubTitle.copyWith(
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodyLarge
+                              ?.color
+                        )),
                         Spacer(),
                         Row(
                           children: [
@@ -1411,7 +1674,12 @@ appBar: AppBar(
                             backgroundColor: AppColors.whitetext,
                           ),
                         ),
-                        Text("Pending", style: AppTextstyle.MiniText),
+                        Text("Pending", style: AppTextstyle.MiniText.copyWith(
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.color
+                        )),
                       ],
                     ),
                     Row(
@@ -1452,15 +1720,25 @@ appBar: AppBar(
                 width: double.infinity,
                 padding: EdgeInsets.all(15),
                 decoration: BoxDecoration(
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.grey.shade900
+                      : Colors.white,
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: AppColors.textColor),
+                  border: Border.all(color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.grey.shade700
+                      : AppColors.textColor),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
-                        Text("Swabirin", style: AppTextstyle.SubTitle),
+                        Text("Swabirin", style: AppTextstyle.SubTitle.copyWith(
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodyLarge
+                              ?.color
+                        )),
                         Spacer(),
                         Row(
                           children: [
@@ -1480,7 +1758,12 @@ appBar: AppBar(
                             backgroundColor: AppColors.whitetext,
                           ),
                         ),
-                        Text("Pending", style: AppTextstyle.MiniText),
+                        Text("Pending", style: AppTextstyle.MiniText.copyWith(
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.color
+                        )),
                       ],
                     ),
                     Row(
@@ -1522,7 +1805,12 @@ appBar: AppBar(
             width: double.infinity,
             padding: EdgeInsets.all(10),
             decoration: BoxDecoration(
-              border: Border.all(color: AppColors.textColor),
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.grey.shade900
+                  : Colors.white,
+              border: Border.all(color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.grey.shade700
+                  : AppColors.textColor),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Column(
@@ -1530,7 +1818,12 @@ appBar: AppBar(
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Text("Alice cooper", style: AppTextstyle.SubTitle),
+                    Text("Alice cooper", style: AppTextstyle.SubTitle.copyWith(
+                      color: Theme.of(context)
+                          .textTheme
+                          .bodyLarge
+                          ?.color
+                    )),
                   ],
                 ),
                 const SizedBox(height: 10),
@@ -1618,15 +1911,25 @@ appBar: AppBar(
                 width: double.infinity,
                 padding: EdgeInsets.all(15),
                 decoration: BoxDecoration(
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.grey.shade900
+                      : Colors.white,
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: AppColors.textColor),
+                  border: Border.all(color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.grey.shade700
+                      : AppColors.textColor),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
-                        Text("Swabirin", style: AppTextstyle.SubTitle),
+                        Text("Swabirin", style: AppTextstyle.SubTitle.copyWith(
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodyLarge
+                              ?.color
+                        )),
                         Spacer(),
                         Row(
                           children: [
@@ -1646,7 +1949,12 @@ appBar: AppBar(
                             backgroundColor: AppColors.whitetext,
                           ),
                         ),
-                        Text("Pending", style: AppTextstyle.MiniText),
+                        Text("Pending", style: AppTextstyle.MiniText.copyWith(
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.color
+                        )),
                       ],
                     ),
                     Row(
@@ -1687,15 +1995,25 @@ appBar: AppBar(
                 width: double.infinity,
                 padding: EdgeInsets.all(15),
                 decoration: BoxDecoration(
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.grey.shade900
+                      : Colors.white,
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: AppColors.textColor),
+                  border: Border.all(color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.grey.shade700
+                      : AppColors.textColor),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
-                        Text("Swabirin", style: AppTextstyle.SubTitle),
+                        Text("Swabirin", style: AppTextstyle.SubTitle.copyWith(
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodyLarge
+                              ?.color
+                        )),
                         Spacer(),
                         Row(
                           children: [
@@ -1715,7 +2033,12 @@ appBar: AppBar(
                             backgroundColor: AppColors.whitetext,
                           ),
                         ),
-                        Text("Pending", style: AppTextstyle.MiniText),
+                        Text("Pending", style: AppTextstyle.MiniText.copyWith(
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.color
+                        )),
                       ],
                     ),
                     Row(
@@ -1757,7 +2080,12 @@ appBar: AppBar(
             width: double.infinity,
             padding: EdgeInsets.all(10),
             decoration: BoxDecoration(
-              border: Border.all(color: AppColors.textColor),
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.grey.shade900
+                  : Colors.white,
+              border: Border.all(color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.grey.shade700
+                  : AppColors.textColor),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Column(
@@ -1765,7 +2093,12 @@ appBar: AppBar(
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Text("Alice cooper", style: AppTextstyle.SubTitle),
+                    Text("Alice cooper", style: AppTextstyle.SubTitle.copyWith(
+                      color: Theme.of(context)
+                          .textTheme
+                          .bodyLarge
+                          ?.color
+                    )),
                   ],
                 ),
                 const SizedBox(height: 10),
@@ -1853,7 +2186,12 @@ appBar: AppBar(
             width: double.infinity,
             padding: EdgeInsets.all(10),
             decoration: BoxDecoration(
-              border: Border.all(color: AppColors.textColor),
+              color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.grey.shade900
+                  : Colors.white,
+              border: Border.all(color: Theme.of(context).brightness == Brightness.dark
+                  ? Colors.grey.shade700
+                 : AppColors.textColor),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Column(
@@ -1861,7 +2199,12 @@ appBar: AppBar(
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Text("Alice cooper", style: AppTextstyle.SubTitle),
+                    Text("Alice cooper", style: AppTextstyle.SubTitle.copyWith(
+                      color: Theme.of(context)
+                          .textTheme
+                          .bodyLarge
+                          ?.color
+                    )),
                   ],
                 ),
                 const SizedBox(height: 10),

@@ -63,6 +63,12 @@ Future<auth.User?> signInWithGoogle() async {
         Map<String, dynamic> userMap =
         querySnapshot.docs.first.data();
 
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+
+
+
+
+
 
         print("Login Success: ${emailController.text}");
 
