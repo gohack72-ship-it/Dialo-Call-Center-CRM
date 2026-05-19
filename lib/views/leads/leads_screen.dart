@@ -180,8 +180,8 @@ class _LeadsScreenState extends State<LeadsScreen> {
                     ),
                     StatusChip(
                       text: "FOLLOW UP",
-                      isSelected: selectedStatus == "Followup",
-                      onTap: () => setState(() => selectedStatus = "Followup"),
+                      isSelected: selectedStatus == "Follow_Up",
+                      onTap: () => setState(() => selectedStatus = "Follow_Up"),
                     ),
                     StatusChip(
                       text: "CONVERTED",
@@ -373,7 +373,7 @@ class LeadCard extends StatelessWidget {
     switch (status) {
       case "CONVERTED":
         return Colors.green;
-      case "FOLLOW UPS":
+      case "FOLLOW UP":
         return Colors.blue;
       case "REJECTED":
         return Colors.red;

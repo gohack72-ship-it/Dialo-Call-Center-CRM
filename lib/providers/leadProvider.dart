@@ -5,6 +5,7 @@ import 'package:dialo/models/lead_details_Model.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 // import 'package:provider/provider.dart';
@@ -17,6 +18,9 @@ class LeadProvider extends ChangeNotifier {
   final TextEditingController noteController = TextEditingController();
   final TextEditingController sourceController = TextEditingController();
   final TextEditingController followUpNoteController = TextEditingController();
+  final TextEditingController calledDateController = TextEditingController(text: DateFormat('dd/MM/yyyy hh:mm a')
+        .format(DateTime.now()),);
+
   int dueToday = 0;
   int thisWeek = 0;
 
@@ -29,7 +33,7 @@ class LeadProvider extends ChangeNotifier {
 
 
    TextEditingController searchController = TextEditingController();
-   String searchText = "";
+   String searchText = "";String? selectedLeadStage;
 
   Map<String, int> statusCountMap = {};
   List<String> statusList = [];
@@ -50,10 +54,9 @@ class LeadProvider extends ChangeNotifier {
 
   LeadProvider() {
     getLeadStatus();
-    Future.delayed(Duration(seconds: 1), () {
+    Future.delayed(Duration(seconds: 2), () {
       getStatusCounts();
     });
-    
   }
 
   Future<void> getStatusCounts() async {
@@ -61,7 +64,7 @@ class LeadProvider extends ChangeNotifier {
     for (var status in statusList) {
       final snap = await fdb
           .collection("LEADS")
-          .where("FOLLOW_UP_STATUS", isEqualTo: status)
+          .where("LEAD_STATUS", isEqualTo: status)
           .count()
           .get();
 
@@ -72,27 +75,46 @@ class LeadProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  List<Map<String, dynamic>> leadList = [];
+  Future<void> getLeads() async {
+    final snapshot = await FirebaseFirestore.instance.collection("LEADS").get();
+
+    leadList = snapshot.docs.map((doc) {
+      return {
+        "name": doc["NAME"],
+        "phone": doc["PHONE"],
+        "status": doc["LEAD_STATUS"],
+        "staff": doc["ASSIGNED_AGENT_ID"],
+
+        "statusColor": Colors.green.shade100,
+        "statusText": Colors.green,
+      };
+    }).toList();
+
+    notifyListeners();
+  }
 
   Map<String, int> statusCounts = {};
-  
 
- fetchCallStatusCounts() async {
+  fetchCallStatusCounts() async {
+    final snapshot = await FirebaseFirestore.instance.collection("LEADS").get();
 
-  final snapshot = await FirebaseFirestore.instance
-      .collection("LEADS")
-      .get();
+    print("callStatusList: $callStatusList");
 
-  print("callStatusList: $callStatusList");
+    for (var status in callStatusList) {
+      final count = snapshot.docs
+          .where((doc) => doc['CALL_STATUS'] == status)
+          .length;
 
-  for (var status in callStatusList) {
-
-   final count = snapshot.docs.where((doc) => doc['CALL_STATUS'] == status).length;
-
-    statusCounts[status] = count;
+      statusCounts[status] = count;
+    }
+    print(statusCounts);
+    notifyListeners();
   }
-print(statusCounts);
-  notifyListeners();
-}
+
+
+
+
 
   Future<void> addNewLead() async {
     DateTime now = DateTime.now();
@@ -125,26 +147,47 @@ print(statusCounts);
       "ADDED_BY_ID": tempAgentId,
       "ASSIGNED_AGENT_ID": tempAgentId,
 
-      "ADDED_TIME": now,
-      "LEAD_STATUS": selectedStatus ?? "NEW",
+      "ADDED_TIME": Timestamp.fromDate(now),
+      "LEAD_STATUS": selectedStatus ?? "New",
       "LEAD_CATEGORY": "",
       "CALL_STATUS": "",
       "SOURCE": sourceController.text,
 
-      "FOLLOW_UP_DATE": now.add(const Duration(days: 3)),
+      "FOLLOW_UP_DATE": Timestamp.fromDate(now.add(const Duration(days: 3))),
       "FOLLOW_UP_TIME": "",
-      "LAST_CONTACTED_DATE": now,
+      "LAST_CONTACTED_DATE": Timestamp.fromDate(now),
       "PRIORITY": 'Medium',
 
-      "FOLLOW_UP_STATUS": selectedStatus ?? "NEW",
+      "FOLLOW_UP_STATUS": "FOLLOW_UP",
       "ADDITIONAL_LEAD_DETAILS": selectedLeadsFilters,
     };
 
     await fdb.collection("LEADS").doc(id).set(lead);
 
+
     clearData();
+    notifyListeners();
   }
 
+  void addFollowUp (String leadId){
+    print("Lead ID: $leadId");
+    DateTime now = DateTime.now();
+    String id = now.millisecondsSinceEpoch.toString();
+    DateTime calledDate =
+    DateFormat('d/MM/yyyy HH:mm')
+        .parse(calledDateController.text);
+    Map<String, dynamic> followUp = {
+    "CALL_STATUS": selectedCallStatus,
+      "CALL_DATE":calledDate ,
+      "LEAD_STATUS": selectedLeadStage,
+      "TIME": "${selectedTime?.hour}:${selectedTime?.minute}",
+      "DATE": selectedDate,
+      "NOTE": followUpNoteController.text,
+
+    };
+     fdb.collection("LEADS").doc(leadId).collection("FOLLOW_UPS").doc(id).set(followUp) ;
+
+  }
 
   DateTime? selectedDate;
   TimeOfDay? selectedTime;
@@ -162,9 +205,19 @@ print(statusCounts);
     );
 
     if (picked != null) {
-
-        selectedDate = picked;
+      selectedDate = picked;
     }
+    notifyListeners();
+  }
+  void clearReminderForm() {
+
+    followUpNoteController.clear();
+
+    selectedCallStatus = null;
+    selectedLeadStage = null;
+    selectedDate = null;
+    selectedTime = null;
+
     notifyListeners();
   }
 
@@ -176,15 +229,12 @@ print(statusCounts);
     );
 
     if (picked != null) {
-
-        selectedTime = picked;
-
+      selectedTime = picked;
     }
     notifyListeners();
   }
 
   void saveReminder(String leadId, BuildContext context) {
-
     if (selectedDate == null || selectedTime == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Please select date & time")),
@@ -208,16 +258,16 @@ print(statusCounts);
     print("Last Call (NOW): $lastCallDate");
     print("Follow Up (SELECTED): $followUpDate");
 
-   updateReminder(
+    updateReminder(
       leadId: leadId,
       lastCallDate: lastCallDate,
       followUpDate: followUpDate,
       note: noteController.text,
     );
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Reminder Saved ✅")),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text("Reminder Saved ✅")));
 
     Navigator.pop(context);
     print("Lead ID: ${leadId}");
@@ -230,12 +280,15 @@ print(statusCounts);
 
     try {
       // Filter LEADS where FOLLOW_UP_DATE is between today 00:00 and 23:59
-      final snapshot = await fdb.collection("LEADS")
+      final snapshot = await fdb
+          .collection("LEADS")
           .where("FOLLOW_UP_DATE", isGreaterThanOrEqualTo: startOfDay)
           .where("FOLLOW_UP_DATE", isLessThan: endOfDay)
           .get();
 
-      _todaysLeadsList = snapshot.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
+      _todaysLeadsList = snapshot.docs
+          .map((doc) => doc.data() as Map<String, dynamic>)
+          .toList();
 
       // Update the counts for the dashboard while we are at it
       dueToday = _todaysLeadsList.length;
@@ -309,9 +362,8 @@ print(statusCounts);
 
         if (data["FOLLOW_UP_DATE"] != null &&
             data["FOLLOW_UP_STATUS"] == "pending") {
-
-          DateTime followUpDate =
-          (data["FOLLOW_UP_DATE"] as Timestamp).toDate();
+          DateTime followUpDate = (data["FOLLOW_UP_DATE"] as Timestamp)
+              .toDate();
 
           // Due today
           if (followUpDate.isAfter(startOfDay) &&
@@ -331,15 +383,16 @@ print(statusCounts);
       thisWeek = weekCount;
 
       notifyListeners();
-
     } catch (e) {
       print("Workload error: $e");
     }
   }
+
   void changeStatus(String status) {
     selectedStatus = status;
     notifyListeners();
   }
+
   Future<void> updateReminder({
     required String leadId,
     required DateTime lastCallDate,
@@ -348,8 +401,9 @@ print(statusCounts);
   }) async {
     try {
       await fdb.collection("LEADS").doc(leadId).update({
-        "LAST_CONTACTED_DATE": lastCallDate,
-        "FOLLOW_UP_DATE": followUpDate,
+        "LAST_CONTACTED_DATE": Timestamp.fromDate(lastCallDate),
+        "FOLLOW_UP_DATE": Timestamp.fromDate(followUpDate),
+        "FOLLOW_UP_STATUS": "FOLLOW_UP",
         "NOTE": note,
       });
 
@@ -357,11 +411,11 @@ print(statusCounts);
       print("Last Call: $lastCallDate");
       print("Follow Up: $followUpDate");
       print("Note: $note");
-
     } catch (e) {
       print("❌ Error updating reminder: $e");
     }
   }
+
   Future<void> fetchAdditionalLeadDetails() async {
     await fdb.collection("LEAD_SETTINGS").doc("categories").get().then((value) {
       if (value.exists) {
@@ -383,8 +437,8 @@ print(statusCounts);
         notifyListeners();
       }
     });
-
   }
+
   Future<void> _makePhoneCall(String phoneNumber) async {
     final Uri url = Uri(scheme: 'tel', path: phoneNumber);
 
@@ -396,44 +450,59 @@ print(statusCounts);
   }
 
   Future<void> loadDashboardCounts() async {
-    print("load count started");
-    final db = FirebaseFirestore.instance;
+    try {
+      final db = FirebaseFirestore.instance;
 
-    final totalSnap = await db.collection("LEADS").count().get();
-    totalLeads = totalSnap.count!;
+      DateTime now = DateTime.now();
 
-    final followSnap = await db
-        .collection("LEADS")
-        .where("FOLLOW_UP_STATUS", isEqualTo: "FOLLOW_UP")
-        .count()
-        .get();
-    print("follow snap finished ${followSnap.count!}");
+      DateTime start = DateTime(now.year, now.month, now.day);
 
-    DateTime now = DateTime.now();
-    DateTime start = DateTime(now.year, now.month, now.day);
-    DateTime end = start.add(Duration(days: 1));
+      DateTime end = start.add(const Duration(days: 1));
 
-    final todaySnap = await db
-        .collection("LEADS")
-        .where("FOLLOW_UP_DATE", isGreaterThanOrEqualTo: start)
-        .where("FOLLOW_UP_DATE", isLessThan: end)
-        .count()
-        .get();
-    print("today snap finished");
+      final totalSnap = await db.collection("LEADS").count().get();
 
-    final overdueSnap = await db
-        .collection("LEADS")
-        .where("FOLLOW_UP_DATE", isLessThan: start)
-        .where("FOLLOW_UP_STATUS", isEqualTo: "FOLLOW_UP")
-        .count()
-        .get();
-    print("overdue finished");
+      final followSnap = await db
+          .collection("LEADS")
+          .where("FOLLOW_UP_STATUS", isEqualTo: "FOLLOW_UP")
+          .where(
+            "FOLLOW_UP_DATE",
+            isGreaterThanOrEqualTo: Timestamp.fromDate(start),
+          )
+          .where("FOLLOW_UP_DATE", isLessThan: Timestamp.fromDate(end))
+          .count()
+          .get();
 
-    totalLeads = totalSnap.count!;
-    followUps = followSnap.count!;
-    todayCalls = todaySnap.count!;
-    overdue = overdueSnap.count!;
+      print("follow snap finished ${followSnap.count!}");
 
-    notifyListeners();
+      final todaySnap = await db
+          .collection("LEADS")
+          .where(
+            "LAST_CONTACTED_DATE",
+            isGreaterThanOrEqualTo: Timestamp.fromDate(start),
+          )
+          .where("LAST_CONTACTED_DATE", isLessThan: Timestamp.fromDate(end))
+          .count()
+          .get();
+      print("today snap finished");
+
+      final overdueSnap = await db
+          .collection("LEADS")
+          .where("FOLLOW_UP_DATE", isLessThan: Timestamp.fromDate(start))
+          .where("FOLLOW_UP_STATUS", isEqualTo: "FOLLOW_UP")
+          .count()
+          .get();
+      print("overdue finished");
+
+      totalLeads = totalSnap.count ?? 0;
+      followUps = followSnap.count ?? 0;
+      todayCalls = todaySnap.count ?? 0;
+      overdue = overdueSnap.count ?? 0;
+
+      notifyListeners();
+    } catch (e) {
+      print("Dashboard Count Error: $e");
+    }
   }
+
+  void changeLeadStage(String s) {}
 }
