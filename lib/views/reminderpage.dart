@@ -17,12 +17,18 @@ class ReminderPage extends StatefulWidget {
 
 class _ReminderPageState extends State<ReminderPage> {
 
+
+
   @override
   void initState() {
     super.initState();
 
     Future.microtask(() {
       context.read<LeadProvider>().getCallStatusList();
+      context.read<LeadProvider>().getLeadStatus();
+
+
+
     });
   }
   @override
@@ -54,10 +60,7 @@ class _ReminderPageState extends State<ReminderPage> {
                   TextFormField(
                     readOnly: true,
 
-                    controller: TextEditingController(
-                      text: DateFormat('dd/MM/yyyy hh:mm a')
-                          .format(DateTime.now()),
-                    ),
+                    controller: context.watch<LeadProvider>().calledDateController,
 
                     decoration: const InputDecoration(
                       border: OutlineInputBorder(),
@@ -112,16 +115,18 @@ class _ReminderPageState extends State<ReminderPage> {
                   const SizedBox(height: 8),
 
                   Consumer<LeadProvider>(
-                    builder: (context,value, child) {
+                    builder: (context, valu, child) {
                       return DropdownButtonFormField<String>(
-                        value: value.selectedCallStatus,
+                        value: valu.statusList.contains(valu.selectedLeadStage)
+                            ? valu.selectedLeadStage
+                            : null,
 
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                           hintText: "Select Lead Stage",
                         ),
 
-                        items: value.callStatusList.map((status) {
+                        items: valu.statusList.map((status) {
                           return DropdownMenuItem<String>(
                             value: status,
                             child: Text(status),
@@ -129,92 +134,99 @@ class _ReminderPageState extends State<ReminderPage> {
                         }).toList(),
 
                         onChanged: (val) {
-
-                            value.selectedCallStatus = val;
-
-
-
+                          valu.changeLeadStage(val!);
                         },
                       );
-                    }
+                    },
                   ),
                   SizedBox(height: 20,),
 
 
               // 📦 DATE & TIME BOX
-              Container(
-                padding: const EdgeInsets.all(10),
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  border: Border.all(color: AppColors.textColor),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Column(
-                  children: [
-                    Text("Choose Custom Date & Time", style: AppTextstyle.dashBoardCard),
-                    const SizedBox(height: 10),
+              Consumer<LeadProvider>(
+                builder: (context,valu,child) {
+                  if ((valu.selectedLeadStage ?? "").toLowerCase() != "follow_up") {
+                    print((valu.selectedLeadStage ?? "").toLowerCase());
+                    print("tttttttttttttt");
+                    return const SizedBox();
 
-                    // 📅 DATE
-                    GestureDetector(
-                      onTap: (){
-                        context.read<LeadProvider>().pickDate(context);
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(15),
-                        decoration: BoxDecoration(
-                          border: Border.all(),
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        child: Row(
-                          children: [
-                            const Icon(Icons.calendar_month, size: 20),
-                            const SizedBox(width: 10),
-                           Consumer<LeadProvider>(
-                              builder: (context,val,child) {
-                                return Text(
-                                 val.selectedDate == null
-                                      ? "Pick Date"
-                                      : "${val.selectedDate!.day}/${val.selectedDate!.month}/${val.selectedDate!.year}",
-                                );
-                              }
-                            ),
-                          ],
-                        ),
-                      ),
+                  }
+                  return Container(
+                    padding: const EdgeInsets.all(10),
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: AppColors.textColor),
+                      borderRadius: BorderRadius.circular(10),
                     ),
+                    child: Column(
+                      children: [
+                        Text("Choose Custom Date & Time", style: AppTextstyle.dashBoardCard),
+                        const SizedBox(height: 10),
 
-                    const SizedBox(height: 10),
+                        // 📅 DATE
+                        GestureDetector(
+                          onTap: (){
+                            context.read<LeadProvider>().pickDate(context);
 
-                    // ⏰ TIME
-                    GestureDetector(
-                      onTap: (){
-                        context.read<LeadProvider>().pickTime(context);
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(15),
-                        decoration: BoxDecoration(
-                          border: Border.all(),
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        child: Row(
-                          children: [
-                            const Icon(Icons.access_time, size: 20),
-                            const SizedBox(width: 10),
-                            Consumer<LeadProvider>(
-                              builder: (context,val,child) {
-                                return Text(
-                                  val.selectedTime == null
-                                      ? "Select Time"
-                                      : val.selectedTime!.format(context),
-                                );
-                              }
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(15),
+                            decoration: BoxDecoration(
+                              border: Border.all(),
+                              borderRadius: BorderRadius.circular(5),
                             ),
-                          ],
+                            child: Row(
+                              children: [
+                                const Icon(Icons.calendar_month, size: 20),
+                                const SizedBox(width: 10),
+                               Consumer<LeadProvider>(
+                                  builder: (context,val,child) {
+                                    return Text(
+                                     val.selectedDate == null
+                                          ? "Pick Date"
+                                          : "${val.selectedDate!.day}/${val.selectedDate!.month}/${val.selectedDate!.year}",
+                                    );
+                                  }
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
-                      ),
+
+                        const SizedBox(height: 10),
+
+                        // ⏰ TIME
+                        GestureDetector(
+                          onTap: (){
+                            context.read<LeadProvider>().pickTime(context);
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(15),
+                            decoration: BoxDecoration(
+                              border: Border.all(),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            child: Row(
+                              children: [
+                                const Icon(Icons.access_time, size: 20),
+                                const SizedBox(width: 10),
+                                Consumer<LeadProvider>(
+                                  builder: (context,val,child) {
+                                    return Text(
+                                      val.selectedTime == null
+                                          ? "Select Time"
+                                          : val.selectedTime!.format(context),
+                                    );
+                                  }
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  );
+                }
               ),
 
               const SizedBox(height: 50),
@@ -264,12 +276,17 @@ class _ReminderPageState extends State<ReminderPage> {
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
+                    children:  [
                       Icon(Icons.notifications_active_outlined, color: Colors.white),
                       SizedBox(width: 10),
-                      Text(
-                        "Schedule Reminder",
-                        style: TextStyle(color: Colors.white),
+                      TextButton(
+                        onPressed: (){
+                        context.read<LeadProvider>().addFollowUp(widget.leadId);
+                        context.read<LeadProvider>().clearReminderForm();
+                        Navigator.pop(context);
+
+                        },
+                        child: Text("Save Reminder", style: TextStyle(color: Colors.white)),
                       ),
                     ],
                   ),
