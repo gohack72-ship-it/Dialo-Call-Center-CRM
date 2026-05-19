@@ -5,6 +5,7 @@ import 'package:dialo/models/lead_details_Model.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 // import 'package:provider/provider.dart';
@@ -17,6 +18,9 @@ class LeadProvider extends ChangeNotifier {
   final TextEditingController noteController = TextEditingController();
   final TextEditingController sourceController = TextEditingController();
   final TextEditingController followUpNoteController = TextEditingController();
+  final TextEditingController calledDateController = TextEditingController(text: DateFormat('dd/MM/yyyy hh:mm a')
+        .format(DateTime.now()),);
+
   int dueToday = 0;
   int thisWeek = 0;
 
@@ -39,6 +43,10 @@ class LeadProvider extends ChangeNotifier {
   int followUps = 0;
   int todayCalls = 0;
   int overdue = 0;
+
+
+
+
   Future<void> addNewLead() async {
     DateTime now = DateTime.now();
     String id = now.millisecondsSinceEpoch.toString();
@@ -76,7 +84,7 @@ class LeadProvider extends ChangeNotifier {
       "CALL_STATUS" :"",
       "SOURCE": sourceController.text,
 
-      "FOLLOW_UP_DATE": now.add(const Duration(days: 3)),
+      "FOLLOW_UP_DATE": now.add(const Duration(days: 1)),
       "FOLLOW_UP_TIME": "",
       "LAST_CONTACTED_DATE": now,
       "PRIORITY": 'Medium',
@@ -92,6 +100,25 @@ class LeadProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void addFollowUp (String leadId){
+    print("Lead ID: $leadId");
+    DateTime now = DateTime.now();
+    String id = now.millisecondsSinceEpoch.toString();
+    DateTime calledDate =
+    DateFormat('d/MM/yyyy HH:mm')
+        .parse(calledDateController.text);
+    Map<String, dynamic> followUp = {
+    "CALL_STATUS": selectedCallStatus,
+      "CALL_DATE":calledDate ,
+      "LEAD_STATUS": selectedLeadStage,
+      "TIME": "${selectedTime?.hour}:${selectedTime?.minute}",
+      "DATE": selectedDate,
+      "NOTE": followUpNoteController.text,
+
+    };
+     fdb.collection("LEADS").doc(leadId).collection("FOLLOW_UPS").doc(id).set(followUp) ;
+
+  }
 
 
   DateTime? selectedDate;
@@ -99,6 +126,11 @@ class LeadProvider extends ChangeNotifier {
 
   String? selectedCallStatus;
 
+  void changeLeadStage(String status){
+    selectedLeadStage = status;
+    print("Selected Lead Stage: $selectedLeadStage");
+    notifyListeners();
+  }
 
   // 📅 Pick Date
   Future<void> pickDate(BuildContext context) async {
@@ -113,6 +145,17 @@ class LeadProvider extends ChangeNotifier {
 
         selectedDate = picked;
     }
+    notifyListeners();
+  }
+  void clearReminderForm() {
+
+    followUpNoteController.clear();
+
+    selectedCallStatus = null;
+    selectedLeadStage = null;
+    selectedDate = null;
+    selectedTime = null;
+
     notifyListeners();
   }
 
