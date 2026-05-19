@@ -20,8 +20,19 @@ class _NewLeadPageState extends State<NewLeadPage> {
     super.initState();
 
     // ✅ LOAD DROPDOWN DATA
-    Future.microtask(() {
-      
+    Future.microtask(() async{
+      final pro = context.read<LeadProvider>();
+
+      try {
+        pro.setLoading(true);
+
+        await pro.getLeadStatus();
+        // await pro.getAdditionalLeadDetails();
+      } catch (e) {
+        debugPrint(e.toString());
+      } finally {
+        pro.setLoading(false);
+      }
     });
   }
 
@@ -31,7 +42,15 @@ class _NewLeadPageState extends State<NewLeadPage> {
       canPop: true, // Changed to true so the back button works
       child: Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        body: SafeArea(
+        body: Consumer<LeadProvider>(
+        builder: (context, pro, child) {
+
+          if(pro.isLoading){
+            return const Center(child: CircularProgressIndicator());
+
+        }
+
+        return SafeArea(
           child: Column(
             children: [
               Container(
@@ -131,7 +150,7 @@ class _NewLeadPageState extends State<NewLeadPage> {
                                 status.changeStatus(st!);
                               },
                             );
-                            
+
                           },
                         ),
 
@@ -203,19 +222,35 @@ class _NewLeadPageState extends State<NewLeadPage> {
                           width: double.infinity,
                           height: 48,
                           child: ElevatedButton(
-                            onPressed: () {
+                            onPressed: () async {
                               if (_formKey.currentState!.validate()) {
-                                context.read<LeadProvider>().addNewLead();
+                                final pro = context.read<LeadProvider>();
+
+                                try{
+                                  pro.setLoading(true);
+
+                                  await pro.addNewLead();
+
+
+                                // context.read<LeadProvider>().addNewLead();
 
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
                                     content: Text('Lead Created Successfully'),
                                   ),
                                 );
-                                
+
                                 // Automatically go back to the leads list
                                 Navigator.pop(context);
-                              }
+                              } catch (e) {
+                                  debugPrint(e.toString());
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text("Failed to create lead"))
+                                  );
+                              } finally {
+                                  pro.setLoading(false);
+                                }
+          }
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: const Color(0xFF3F5FBF),
@@ -240,6 +275,8 @@ class _NewLeadPageState extends State<NewLeadPage> {
               ),
             ],
           ),
+        );
+            },
         ),
       ),
     );

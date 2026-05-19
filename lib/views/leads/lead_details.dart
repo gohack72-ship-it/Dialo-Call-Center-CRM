@@ -52,13 +52,32 @@ class _LeadProfileScreenState extends State<LeadProfileScreen> {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
             child: ElevatedButton.icon(
-              onPressed: () {
-                context.read<LeadProvider>().getCallStatusList();
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const ReminderPage(leadId: '',),
-                  ),
-                );
+              onPressed: () async {
+                final pro = context.read<LeadProvider>();
+                try {
+                  pro.setLoading(true);
+
+                  await pro.getCallStatusList();
+
+
+                  // context.read<LeadProvider>().getCallStatusList();
+
+
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder:
+                          (context) =>
+                      const ReminderPage(
+                        leadId: '',
+                      ),
+                    ),
+                  );
+                } catch (e) {
+                  debugPrint(e.toString());
+                } finally {
+                  pro.setLoading(false);
+                }
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.themeColor,
@@ -88,176 +107,192 @@ class _LeadProfileScreenState extends State<LeadProfileScreen> {
       ),
 
       // --- BODY ---
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // 1. Top Buttons
-            Row(
+      body: Consumer<LeadProvider>(
+        builder: (context, pro, child) {
+          if (pro.isLoading) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          return SingleChildScrollView(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  child: _buildPillButton(
-                    Icons.phone_in_talk,
-                    "Call Now",
-                    Theme.of(context).brightness == Brightness.dark
-                      ? Colors.white
-                      : Colors.black,
-                        () {
-                      String phone = widget.leadData["PHONE"] ?? "";
-                      if (phone.isNotEmpty) {
-                        makePhoneCall(phone);
-                      } else {
-                        print("No phone number");
-                      }
-                    },
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: _buildPillButton(
-                    Icons.chat_bubble,
-                    "Whatsapp",
-                      Colors.green,
-                        () async {
-                      String phone = widget.leadData["PHONE"] ?? "";
-                      final url = Uri.parse("https://wa.me/$phone");
+                // 1. Top Buttons
+                Row(
+                  children: [
+                    Expanded(
+                      child: _buildPillButton(
+                        Icons.phone_in_talk,
+                        "Call Now",
+                        Theme
+                            .of(context)
+                            .brightness == Brightness.dark
+                            ? Colors.white
+                            : Colors.black,
+                            () {
+                          String phone = widget.leadData["PHONE"] ?? "";
+                          if (phone.isNotEmpty) {
+                            makePhoneCall(phone);
+                          } else {
+                            print("No phone number");
+                          }
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: _buildPillButton(
+                        Icons.chat_bubble,
+                        "Whatsapp",
+                        Colors.green,
+                            () async {
+                          String phone = widget.leadData["PHONE"] ?? "";
+                          final url = Uri.parse("https://wa.me/$phone");
 
-                      if (await canLaunchUrl(url)) {
-                        await launchUrl(url);
-                      } else {
-                        print("WhatsApp not available");
-                      }
-                    },
+                          if (await canLaunchUrl(url)) {
+                            await launchUrl(url);
+                          } else {
+                            print("WhatsApp not available");
+                          }
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 10,),
+                Text(
+                  "Name",
+                  style: TextStyle(
+                    color: Theme
+                        .of(context)
+                        .textTheme
+                        .bodyLarge
+                        ?.color,
                   ),
                 ),
+                _buildEditableTile(
+                  Icons.person_outline_outlined,
+                  widget.leadData["NAME"] ?? "",
+                ),
+
+                SizedBox(height: 10,),
+                Text("Place"),
+                _buildEditableTile(
+                  Icons.place,
+                  widget.leadData["PLACE"] ?? "",
+                ),
+                SizedBox(height: 10,),
+                Text("Email"),
+                _buildEditableTile(
+                  Icons.mail,
+                  widget.leadData["EMAIL"] ?? "",
+                ),
+                SizedBox(height: 10,),
+                Text("Sourse"),
+                _buildEditableTile(
+                  Icons.source,
+                  widget.leadData["SOURCE"] ?? "",
+                ),
+                const SizedBox(height: 20),
+
+                _buildHeader("Additional Details"),
+
+                Column(
+                  children: extra.entries.map((e) {
+                    print(widget.leadData);
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(e.key),
+                        _buildEditableTile(
+                            Icons.read_more_rounded, e.value.toString()),
+                        const SizedBox(height: 10),
+
+                      ],
+                    );
+                  }).toList(),
+
+                ),
+
+
+                SizedBox(height: 10,),
+                // 2. Status
+                _buildHeader("Status"),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  decoration: _boxDecoration(),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      isExpanded: true,
+                      hint: const Text("Select Status"),
+                      value: _selectedStatus,
+                      icon: const Icon(Icons.arrow_drop_down),
+                      items: ["New", "Interested", "Follow Up"]
+                          .map((e) =>
+                          DropdownMenuItem(value: e, child: Text(e)))
+                          .toList(),
+                      onChanged: (val) {
+                        setState(() => _selectedStatus = val);
+                      },
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+
+                // 3. Interaction
+                _buildHeader("Interaction"),
+                Container(
+                  height: 100,
+                  decoration: _boxDecoration(),
+                  child: const TextField(
+                    maxLines: null,
+                    decoration: InputDecoration(
+                      hintText: "Type interaction notes...",
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.all(12),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+
+                // 4. Contact Information (NOW EDITABLE)
+                _buildHeader("Contact Information"),
+                _buildEditableTile(
+                    Icons.phone_outlined,
+                    widget.leadData["PHONE"] ?? "",
+                    keyboardType: TextInputType.phone,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      LengthLimitingTextInputFormatter(10),
+                    ]
+                ),
+                // const SizedBox(height: 10),
+                // _buildEditableTile(
+                //   Icons.location_on_outlined,
+                //   widget.leadData["PLACE"] ?? "",
+                // ),
+                // const SizedBox(height: 20),
+
+
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //   children: [
+                //     _buildHeader("Interaction History", padding: 0),
+                //     const Text(
+                //       "view all >",
+                //       style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                //     ),
+                //   ],
+                // ),
+                // const SizedBox(height: 8),
+                // Container(height: 80, decoration: _boxDecoration()),
+                // const SizedBox(height: 40),
               ],
             ),
-           SizedBox(height: 10,),
-            Text(
-                "Name",
-              style: TextStyle(
-                color: Theme.of(context).textTheme.bodyLarge?.color,
-              ),
-            ),
-            _buildEditableTile(
-              Icons.person_outline_outlined,
-              widget.leadData["NAME"] ?? "",
-            ),
-
-            SizedBox(height: 10,),
-            Text("Place"),
-            _buildEditableTile(
-              Icons.place,
-              widget.leadData["PLACE"] ?? "",
-            ),
-            SizedBox(height: 10,),
-            Text("Email"),
-            _buildEditableTile(
-              Icons.mail,
-              widget.leadData["EMAIL"] ?? "",
-            ),
-            SizedBox(height: 10,),
-            Text("Sourse"),
-            _buildEditableTile(
-              Icons.source,
-              widget.leadData["SOURCE"] ?? "",
-            ),
-            const SizedBox(height: 20),
-
-            _buildHeader("Additional Details"),
-
-            Column(
-              children: extra.entries.map((e) {
-                print(widget.leadData);
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(e.key),
-                    _buildEditableTile(Icons.read_more_rounded, e.value.toString()),
-                    const SizedBox(height: 10),
-
-                  ],
-                );
-              }).toList(),
-
-            ),
-
-
-            SizedBox(height: 10,),
-            // 2. Status
-            _buildHeader("Status"),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              decoration: _boxDecoration(),
-              child: DropdownButtonHideUnderline(
-                child: DropdownButton<String>(
-                  isExpanded: true,
-                  hint: const Text("Select Status"),
-                  value: _selectedStatus,
-                  icon: const Icon(Icons.arrow_drop_down),
-                  items: ["New", "Interested", "Follow Up"]
-                      .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                      .toList(),
-                  onChanged: (val) {
-                    setState(() => _selectedStatus = val);
-                  },
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-
-            // 3. Interaction
-            _buildHeader("Interaction"),
-            Container(
-              height: 100,
-              decoration: _boxDecoration(),
-              child: const TextField(
-                maxLines: null,
-                decoration: InputDecoration(
-                  hintText: "Type interaction notes...",
-                  border: InputBorder.none,
-                  contentPadding: EdgeInsets.all(12),
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-
-            // 4. Contact Information (NOW EDITABLE)
-            _buildHeader("Contact Information"),
-            _buildEditableTile(
-              Icons.phone_outlined,
-              widget.leadData["PHONE"] ?? "",
-              keyboardType: TextInputType.phone,
-              inputFormatters: [
-                FilteringTextInputFormatter.digitsOnly,
-                LengthLimitingTextInputFormatter(10),
-              ]
-            ),
-            // const SizedBox(height: 10),
-            // _buildEditableTile(
-            //   Icons.location_on_outlined,
-            //   widget.leadData["PLACE"] ?? "",
-            // ),
-            // const SizedBox(height: 20),
-
-
-
-            // Row(
-            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //   children: [
-            //     _buildHeader("Interaction History", padding: 0),
-            //     const Text(
-            //       "view all >",
-            //       style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
-            //     ),
-            //   ],
-            // ),
-            // const SizedBox(height: 8),
-            // Container(height: 80, decoration: _boxDecoration()),
-            // const SizedBox(height: 40),
-          ],
-        ),
+          );
+        }
       ),
     );
   }

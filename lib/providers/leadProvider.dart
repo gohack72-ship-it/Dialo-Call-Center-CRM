@@ -20,6 +20,14 @@ class LeadProvider extends ChangeNotifier {
   int dueToday = 0;
   int thisWeek = 0;
 
+  bool isLoading = false;
+
+  void setLoading(bool value) {
+    isLoading = value;
+    notifyListeners();
+  }
+
+
    TextEditingController searchController = TextEditingController();
    String searchText = "";
 
@@ -253,7 +261,7 @@ print(statusCounts);
     notifyListeners();
   }
 
-  void getCallStatusList() async {
+  Future<void> getCallStatusList() async {
     fdb.collection("LEAD_SETTINGS").doc("call_status").get().then((value) {
       callStatusList.clear();
       if (value.exists) {
@@ -266,7 +274,7 @@ print(statusCounts);
     });
   }
 
-  void getLeadStatus() async {
+ Future<void> getLeadStatus() async {
     await fdb.collection("LEAD_SETTINGS").doc("lead_status").get().then((
       value,
     ) {

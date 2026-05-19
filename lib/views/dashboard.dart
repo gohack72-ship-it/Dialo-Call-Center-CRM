@@ -22,10 +22,19 @@ class _DbState extends State<Dashboard> {
   void initState() {
     super.initState();
 
-    Future.microtask(() {
-      Provider.of<LeadProvider>(context, listen: false).loadDashboardCounts();
-      Provider.of<LeadProvider>(context, listen: false).getLeadStatus();
-      Provider.of<LeadProvider>(context, listen: false).getStatusCounts();
+
+    Future.microtask(() async {
+      final pro = Provider.of<LeadProvider>(context, listen: false);
+      pro.setLoading(true);
+
+      // Provider.of<LeadProvider>(context, listen: false).
+     await pro.loadDashboardCounts();
+      // Provider.of<LeadProvider>(context, listen: false).
+      await pro.getLeadStatus();
+      // Provider.of<LeadProvider>(context, listen: false).
+     await pro.getStatusCounts();
+
+      pro.setLoading(false);
     });
   }
 
@@ -86,7 +95,12 @@ class _DbState extends State<Dashboard> {
         ],
       ),
       drawer: SettingsDrawer(changeTheme: widget.changeTheme),
-      body: SingleChildScrollView(
+      body: Consumer<LeadProvider>(
+        builder: (context, pro, child) {
+          if (pro.isLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+      return SingleChildScrollView(
         child: Container(
           width: MediaQuery.of(context).size.width,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
@@ -125,6 +139,7 @@ class _DbState extends State<Dashboard> {
                       ),
                     ],
                   );
+
                 },
               ),
 
@@ -173,6 +188,8 @@ class _DbState extends State<Dashboard> {
             ],
           ),
         ),
+        );
+        },
       ),
       // bottomNavigationBar: BottomNavigationBar(
       //   currentIndex: _currentIndex,
