@@ -134,6 +134,7 @@ class LeadProvider extends ChangeNotifier {
 
     String tempAgentId = "";
 
+
     try {
       final agentSnapshot = await fdb.collection("AGENT").get();
 
@@ -158,7 +159,7 @@ class LeadProvider extends ChangeNotifier {
 
       "ADDED_BY_ID": tempAgentId,
       "ASSIGNED_AGENT_ID": tempAgentId,
-
+      "ASSIGNED_AGENT_NAME": "NAME",
       "ADDED_TIME": Timestamp.fromDate(now),
       "LEAD_STATUS": selectedStatus ?? "New",
       "LEAD_CATEGORY": "",
