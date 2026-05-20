@@ -120,121 +120,155 @@ class _LeadProfileScreenState extends State<LeadProfileScreen> {
                 Row(
                   children: [
                     Expanded(
-                      child: _buildActionBtn(Icons.phone, "Call", Colors.blue, () => makePhoneCall(widget.leadData["PHONE"] ?? "")),
+                      child: _buildActionBtn(
+                          Icons.phone, "Call", Colors.blue, () =>
+                          makePhoneCall(widget.leadData["PHONE"] ?? "")),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: _buildActionBtn(
+                          Icons.chat_bubble_outline, "WhatsApp",
+                          Colors.green, () =>
+                          openWhatsApp(widget.leadData["PHONE"] ?? "")),
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: _buildActionBtn(Icons.chat_bubble_outline, "WhatsApp", Colors.green, () => openWhatsApp(widget.leadData["PHONE"] ?? "")),
-                ),
-              ],
-            ),
-            const SizedBox(height: 24),
+                const SizedBox(height: 24),
 
                 // --- LEAD INFO SECTION ---
-            _buildHeader("Lead Details"),
+                _buildHeader("Lead Details"),
                 Container(
-              decoration: _boxDecoration(isDark),
-              child: Column(
-                children: [
-                  _buildInfoRow(Icons.person_outline, "Name", widget.leadData["NAME"]),
-                  _buildDivider(),
-                  _buildInfoRow(Icons.phone_android, "Phone", widget.leadData["PHONE"]),
-                  _buildDivider(),
-                  _buildInfoRow(Icons.location_on_outlined, "Place", widget.leadData["PLACE"]),
-                  _buildDivider(),
-                  _buildInfoRow(Icons.email_outlined, "Email", widget.leadData["EMAIL"]),
-                  _buildDivider(),
-                  _buildInfoRow(Icons.campaign_outlined, "Source", widget.leadData["SOURCE"]),
-                ],
-              ),
-            ),
+                  decoration: _boxDecoration(isDark),
+                  child: Column(
+                    children: [
+                      _buildInfoRow(Icons.person_outline, "Name",
+                          widget.leadData["NAME"]),
+                      _buildDivider(),
+                      _buildInfoRow(Icons.phone_android, "Phone",
+                          widget.leadData["PHONE"]),
+                      _buildDivider(),
+                      _buildInfoRow(Icons.location_on_outlined, "Place",
+                          widget.leadData["PLACE"]),
+                      _buildDivider(),
+                      _buildInfoRow(Icons.email_outlined, "Email",
+                          widget.leadData["EMAIL"]),
+                      _buildDivider(),
+                      _buildInfoRow(Icons.campaign_outlined, "Source",
+                          widget.leadData["SOURCE"]),
+                    ],
+                  ),
+                ),
 
                 // --- ADDITIONAL DETAILS ---
-            if (extra.isNotEmpty) ...[
-              const SizedBox(height: 24),
-              _buildHeader("Additional Details"),
-              Container(
-                decoration: _boxDecoration(isDark),
-                child: Column(
-                  children: extra.entries.map((e) {
-                    return Column(
-                      children: [
-                        _buildInfoRow(Icons.read_more, e.key, e.value.toString()),
-                        if (e.key != extra.keys.last) _buildDivider(),
-                      ],
-                    );
-                  }).toList(),
-                ),
-              ),
-            ],
+                if (extra.isNotEmpty) ...[
+                  const SizedBox(height: 24),
+                  _buildHeader("Additional Details"),
+                  Container(
+                    decoration: _boxDecoration(isDark),
+                    child: Column(
+                      children: extra.entries.map((e) {
+                        return Column(
+                          children: [
+                            _buildInfoRow(
+                                Icons.read_more, e.key, e.value.toString()),
+                            if (e.key != extra.keys.last) _buildDivider(),
+                          ],
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ],
 
                 const SizedBox(height: 24),
                 _buildHeader("Follow Up History"),
 
-            StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance
-                  .collection("LEADS")
-                  .doc(widget.leadData["LEAD_ID"])
-                  .collection("FOLLOW_UPS")
-                  .orderBy("DATE", descending: true)
-                  .snapshots(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: Padding(padding: EdgeInsets.all(20), child: CircularProgressIndicator(strokeWidth: 2)));
-                }
-                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return Container(
-                    padding: const EdgeInsets.all(20),
-                    width: double.infinity,
-                    decoration: _boxDecoration(isDark),
-                    child: const Center(child: Text("No history found", style: TextStyle(color: Colors.grey))),
-                  );
-                }
+                StreamBuilder<QuerySnapshot>(
+                  stream: FirebaseFirestore.instance
+                      .collection("LEADS")
+                      .doc(widget.leadData["LEAD_ID"])
+                      .collection("FOLLOW_UPS")
+                      .orderBy("DATE", descending: true)
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: Padding(padding: EdgeInsets
+                          .all(20), child: CircularProgressIndicator(
+                          strokeWidth: 2)));
+                    }
+                    if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                      return Container(
+                        padding: const EdgeInsets.all(20),
+                        width: double.infinity,
+                        decoration: _boxDecoration(isDark),
+                        child: const Center(child: Text("No history found",
+                            style: TextStyle(color: Colors.grey))),
+                      );
+                    }
 
-                return ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: snapshot.data!.docs.length,
-                  itemBuilder: (context, index) {
-                    final data = snapshot.data!.docs[index].data() as Map<String, dynamic>;
-                    Timestamp? ts = data["DATE"];
-                    String dateStr = ts != null ? DateFormat('MMM dd, yyyy • hh:mm a').format(ts.toDate()) : "N/A";
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: snapshot.data!.docs.length,
+                      itemBuilder: (context, index) {
+                        final data = snapshot.data!.docs[index].data() as Map<
+                            String,
+                            dynamic>;
+                        Timestamp? ts = data["DATE"];
+                        String dateStr = ts != null
+                            ? DateFormat('MMM dd, yyyy • hh:mm a').format(
+                            ts.toDate())
+                            : "N/A";
 
-                    return Container(
-                      margin: const EdgeInsets.only(bottom: 12),
-                      padding: const EdgeInsets.all(16),
-                      decoration: _boxDecoration(isDark),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        return Container(
+                          margin: const EdgeInsets.only(bottom: 12),
+                          padding: const EdgeInsets.all(16),
+                          decoration: _boxDecoration(isDark),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                decoration: BoxDecoration(
-                                  color: AppColors.themeColor.withOpacity(0.1),
-                                  borderRadius: BorderRadius.circular(6),
-                                ),
-                                child: Text(data["LEAD_STATUS"] ?? "No Status",
-                                    style: const TextStyle(color: AppColors.themeColor, fontWeight: FontWeight.bold, fontSize: 12)),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment
+                                    .spaceBetween,
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 4),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.themeColor.withOpacity(
+                                          0.1),
+                                      borderRadius: BorderRadius.circular(6),
+                                    ),
+                                    child: Text(
+                                        data["LEAD_STATUS"] ?? "No Status",
+                                        style: const TextStyle(
+                                            color: AppColors.themeColor,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 12)),
+                                  ),
+                                  Text(dateStr, style: const TextStyle(
+                                      color: Colors.grey, fontSize: 11)),
+                                ],
                               ),
-                              Text(dateStr, style: const TextStyle(color: Colors.grey, fontSize: 11)),
+                              const SizedBox(height: 10),
+                              Text("Call: ${data["CALL_STATUS"]}",
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.w600)),
+                              const SizedBox(height: 4),
+                              Text(data["NOTE"] ?? "No notes added",
+                                  style: TextStyle(
+                                      color: Colors.grey[600], fontSize: 13)),
                             ],
                           ),
-                          const SizedBox(height: 10),
-                          Text("Call: ${data["CALL_STATUS"]}", style: const TextStyle(fontWeight: FontWeight.w600)),
-                          const SizedBox(height: 4),
-                          Text(data["NOTE"] ?? "No notes added", style: TextStyle(color: Colors.grey[600], fontSize: 13)),
-                        ],
-                      ),
+                        );
+                      },
                     );
                   },
-                );
-              },
+                ),
+              ],
             ),
-          ],
-        ),
+          );
+
+        }
       ),
     );
   }
