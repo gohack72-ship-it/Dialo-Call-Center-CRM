@@ -39,8 +39,8 @@ class _BottomnavPageState extends State<BottomnavPage> {
         currentIndex: _currentIndex,
         type: BottomNavigationBarType.fixed,
         selectedItemColor: Theme.of(context).brightness == Brightness.dark
-                         ? Colors.white
-                         : Colors.black,
+                         ? Colors.black
+                         : AppColors.whitetext,
         unselectedItemColor: Theme.of(context).brightness == Brightness.dark
                          ? Colors.white
                          : AppColors.themeColor,
@@ -55,6 +55,9 @@ class _BottomnavPageState extends State<BottomnavPage> {
           }
           if (index == 0) {
             context.read<LeadProvider>().getLeadStatus();
+            Future.delayed(Duration(seconds: 1), () {
+            context.read<LeadProvider>().getStatusCounts();
+            });
           }
           if (index == 3) {
             context.read<LeadProvider>().getCallStatusList();

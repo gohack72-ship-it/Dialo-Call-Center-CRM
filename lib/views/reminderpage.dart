@@ -82,10 +82,10 @@ class _ReminderPageState extends State<ReminderPage> {
 
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(),
-                          hintText: "Select Call Status",
+                          hintText: " Lead Status",
                         ),
 
-                        items: val.callStatusList.map((status) {
+                        items: val.leadStatusList.map((status) {
                           return DropdownMenuItem<String>(
                             value: status,
                             child: Text(status),
@@ -93,7 +93,7 @@ class _ReminderPageState extends State<ReminderPage> {
                         }).toList(),
 
                         onChanged: (value) {
-                          val.selectedCallStatus = value;
+                          val.selectedLeadStatus = value;
                           val.notifyListeners();
                         },
                       );
@@ -121,7 +121,7 @@ class _ReminderPageState extends State<ReminderPage> {
                           hintText: "Select Lead Stage",
                         ),
 
-                        items: value.callStatusList.map((status) {
+                        items: value.leadStatusList.map((status) {
                           return DropdownMenuItem<String>(
                             value: status,
                             child: Text(status),

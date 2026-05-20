@@ -16,7 +16,7 @@ class Reportpage extends StatefulWidget {
   const Reportpage({super.key, required this.changeTheme});
 
 
-  
+
 
   @override
   State<Reportpage> createState() => _ReportpageState();
@@ -37,11 +37,11 @@ int total = 0;
 @override
 void initState() {
   super.initState();
- 
 
-  
+
+
 }
- 
+
   Widget analyticsItem({
     required String title,
     required String count,
@@ -92,9 +92,10 @@ void initState() {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
 
-    
+
 
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
        drawer: SettingsDrawer(changeTheme:widget.changeTheme),
@@ -133,7 +134,7 @@ void initState() {
                   prefixIcon: const Icon(Icons.search),
                   filled: true,
 
-                
+
 
                   fillColor:Theme.of(context).brightness == Brightness.dark
                           ? Colors.grey.shade800
@@ -305,7 +306,7 @@ void initState() {
               //   ),
               // ),
               SizedBox(height: 30),
-              
+
 
               Container(
   width: double.infinity,
@@ -321,7 +322,7 @@ void initState() {
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
 
-      
+
       Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -382,7 +383,7 @@ void initState() {
 
                 const SizedBox(height: 8),
 
-               
+
               ],
             ),
           ),
@@ -426,25 +427,25 @@ void initState() {
   ),
 ),
 
-              
+
 
               const SizedBox(height: 15),
 
-             
+
             ],
           ),
 
           const SizedBox(width: 10),
 
-          
-   
+
+
         ],
       ),
     ],
   ),
 ),
               const SizedBox(height: 20),
-  
+
 
   Container(
   width: double.infinity,
@@ -503,7 +504,7 @@ void initState() {
 
       const SizedBox(height: 30),
 
-      
+
 
       SizedBox(
         // height: 200,
@@ -520,17 +521,17 @@ void initState() {
                   color: Colors.blue,
                 );
               }).toList(),
-            
+
           //   ListView.builder(
           // itemCount: pro.statusCounts.length,
           // shrinkWrap: true,
           // physics: NeverScrollableScrollPhysics(),
           // itemBuilder: (context, index) {
-        
+
           //   String title = pro.statusCounts.keys.elementAt(index);
           //   int count = pro.statusCounts.values.elementAt(index);
-        
-          //   return 
+
+          //   return
         //     analyticsItem(
         // title: title,
         // count: count.toString(),
@@ -540,45 +541,9 @@ void initState() {
         );
         }),
       ),
-      // analyticsItem(
-      //   title: "Busy",
-      //   count: "0",
-      //   color: Colors.lightBlue,
-      // ),
+    
 
-      // analyticsItem(
-      //   title: "Rejected",
-      //   count: "0",
-      //   color: Colors.red,
-      // ),
 
-      // analyticsItem(
-      //   title: "Switched off",
-      //   count: "0",
-      //   color: Colors.red,
-      // ),
-
-      // analyticsItem(
-      //   title: "Out of Coverage Area",
-      //   count: "0",
-      //   color: Colors.green,
-      // ),
-
-      // analyticsItem(
-      //   title: "Not Attended",
-      //   count: "0",
-      //   color: Colors.red,
-      // ),
-
-      // analyticsItem(
-      //   title: "No Status Updated",
-      //   count: "0",
-      //   color: Colors.purple,
-      // ),
-
-      // const SizedBox(height: 20),
-
-     
     ],
   ),
 ),
@@ -763,48 +728,50 @@ Container(
         ],
       ),
 
-      const SizedBox(height: 30),
+      const SizedBox(
+        height: 30),
 
-      analyticsItem(
-        title: "New Leads",
-        count: "12",
-        color: Colors.green,
-      ),
+        SizedBox(
+          // height: 200,
+          child: Consumer<LeadProvider>(
+            builder: (context, pro, child) {
+              return Column(
+                children: pro.leadStatusCountMap.entries.map((entry) {
+                  String title = entry.key;
+                  int count = entry.value;
 
-      analyticsItem(
-        title: "Follow Up",
-        count: "8",
-        color: Colors.orange,
-      ),
+                  return analyticsItem(
+                    title: title,
+                    count: count.toString(),
+                    color: Colors.green,
+                  );
+                }).toList(),
+              );
+            },
+          ),
+        ),
+      
 
-      analyticsItem(
-        title: "Interested",
-        count: "5",
-        color: Colors.blue,
-      ),
+      
 
-      analyticsItem(
-        title: "Converted",
-        count: "3",
-        color: Colors.purple,
-      ),
+      // analyticsItem(
+      //   title: "Interested",
+      //   count: "5",
+      //   color: Colors.blue,
+      // ),
 
-      analyticsItem(
-        title: "Rejected",
-        count: "2",
-        color: Colors.red,
-      ),
+     
     ],
   ),
 ),
-          
-                 
-               
-                
+
+
+
+
           ]),
-      
+
       ),
     ));
   }
-  
+
 }

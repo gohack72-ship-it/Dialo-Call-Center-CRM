@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../constants/app_colors.dart';
 import '../constants/app_textstyle.dart';
-import 'leads/lead_details.dart';
+
 
 class Dashboard extends StatefulWidget {
   final Function(bool) changeTheme;
@@ -25,6 +25,8 @@ class _DbState extends State<Dashboard> {
     Future.microtask(() {
       Provider.of<LeadProvider>(context, listen: false).loadDashboardCounts();
       Provider.of<LeadProvider>(context, listen: false).getLeadStatus();
+      Provider.of<LeadProvider>(context, listen: false).getStatusCounts();
+      Provider.of<LeadProvider>(context, listen: false).getLeads();
     });
   }
 
@@ -34,13 +36,15 @@ class _DbState extends State<Dashboard> {
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         toolbarHeight: 50,
-        backgroundColor:Theme.of(context).appBarTheme.backgroundColor,
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         leading: Builder(
           builder: (context) => IconButton(
-            icon:  Icon(Icons.menu,
-                color: Theme.of(context).iconTheme.color,
-                // color: Colors.black,
-                size: 30),
+            icon: Icon(
+              Icons.menu,
+              color: Theme.of(context).iconTheme.color,
+              // color: Colors.black,
+              size: 30,
+            ),
             onPressed: () {
               Scaffold.of(context).openDrawer();
             },
@@ -60,9 +64,10 @@ class _DbState extends State<Dashboard> {
         // ),
         actions: [
           PopupMenuButton<String>(
-            icon:  Icon(
-              Icons.tune, color: Theme.of(context).iconTheme.color,
-                size: 25,
+            icon: Icon(
+              Icons.tune,
+              color: Theme.of(context).iconTheme.color,
+              size: 25,
             ),
             onSelected: (value) {
               if (value == "today") {
@@ -128,14 +133,16 @@ class _DbState extends State<Dashboard> {
               ),
 
               const SizedBox(height: 20),
-               Text("Lead Summary", style: Theme.of(context).textTheme.titleLarge
-              // AppTextstyle.SubTitle
+              Text(
+                "Lead Summary",
+                style: Theme.of(context).textTheme.titleLarge,
+                // AppTextstyle.SubTitle
               ),
               const SizedBox(height: 05),
               Consumer<LeadProvider>(
                 builder: (context, value, child) {
                   return Container(
-                    height: MediaQuery.of(context).size.height / 2,
+                    height: MediaQuery.of(context).size.height / 2.5,
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
                       border: Border.all(color: Colors.grey.shade300),
@@ -146,7 +153,10 @@ class _DbState extends State<Dashboard> {
                       itemBuilder: (context, index) {
                         var status = value.statusList[index];
                         print(status);
-                        return SummaryRow(title: status, value: "03");
+                        return SummaryRow(
+                          title: status,
+                          value: (value.leadStatusCountMap[status] ?? 0).toString(),
+                        );
                       },
 
                       separatorBuilder: (context, index) {
@@ -158,46 +168,95 @@ class _DbState extends State<Dashboard> {
               ),
 
               const SizedBox(height: 20),
-              Text("Upcoming Follow-ups", style: Theme.of(context).textTheme.titleLarge
-              // AppTextstyle.SubTitle
+              Text(
+                "Upcoming Follow-ups",
+                style: Theme.of(context).textTheme.titleLarge,
+                // AppTextstyle.SubTitle
               ),
               const SizedBox(height: 15),
+              Consumer<LeadProvider>(
+                builder: (context, provider, child) {
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: provider.leadList.length,
 
-              const FollowUpCard(index: 0),
-              const FollowUpCard(index: 1),
-              const FollowUpCard(index: 1),
+                    itemBuilder: (context, index) {
+                      return LeadListCard(lead: provider.leadList[index]);
+                    },
+                  );
+                },
+              ),
+
+              //         const Spacer(),
+
+              //         Container(
+              //           padding: const EdgeInsets.symmetric(
+              //             horizontal: 12,
+              //             vertical: 6,
+              //           ),
+              //           decoration: BoxDecoration(
+              //             color: lead["statusColor"] as Color,
+              //             borderRadius: BorderRadius.circular(12),
+              //           ),
+              //           child: Text(
+              //             lead["status"].toString(),
+              //             style: TextStyle(
+              //               color: lead["statusText"] as Color,
+              //               fontWeight: FontWeight.w600,
+              //             ),
+              //           ),
+              //         ),
+              //       ],
+              //     ),
+              //     const SizedBox(height: 15),
+
+              //     Row(
+              //       children: [
+              //         const Icon(Icons.phone, color: Colors.blueGrey),
+              //         const SizedBox(width: 10),
+
+              //         Text(
+              //           lead["phone"].toString(),
+              //           style: const TextStyle(fontSize: 18),
+              //         ),
+              //       ],
+              //     ),
+
+              // ),
             ],
           ),
         ),
       ),
-      // bottomNavigationBar: BottomNavigationBar(
-      //   currentIndex: _currentIndex,
-      //   type: BottomNavigationBarType.fixed,
-      //   selectedItemColor: AppColors.textColor,
-      //   unselectedItemColor: AppColors.themeColor,
-      //   selectedLabelStyle: const TextStyle(color: AppColors.textColor),
-      //   unselectedLabelStyle: const TextStyle(color: AppColors.themeColor),
-      //   onTap: (index) {
-      //     setState(() {
-
-      //       _currentIndex = index;
-      //     });
-      //   },
-      //   items: const [
-      //     BottomNavigationBarItem(icon: Icon(Icons.home), label: "Dashboard"),
-      //     BottomNavigationBarItem(
-      //       icon: Icon(Icons.groups_outlined),
-      //       label: "Leads",
-      //     ),
-      //     BottomNavigationBarItem(icon: Icon(Icons.add), label: "Add Lead"),
-      //     BottomNavigationBarItem(
-      //       icon: Icon(Icons.receipt_outlined),
-      //       label: "Report",
-      //     ),
-      //   ],
-      // ),
     );
   }
+
+  // bottomNavigationBar: BottomNavigationBar(
+  //   currentIndex: _currentIndex,
+  //   type: BottomNavigationBarType.fixed,
+  //   selectedItemColor: AppColors.textColor,
+  //   unselectedItemColor: AppColors.themeColor,
+  //   selectedLabelStyle: const TextStyle(color: AppColors.textColor),
+  //   unselectedLabelStyle: const TextStyle(color: AppColors.themeColor),
+  //   onTap: (index) {
+  //     setState(() {
+
+  //       _currentIndex = index;
+  //     });
+  //   },
+  //   items: const [
+  //     BottomNavigationBarItem(icon: Icon(Icons.home), label: "Dashboard"),
+  //     BottomNavigationBarItem(
+  //       icon: Icon(Icons.groups_outlined),
+  //       label: "Leads",
+  //     ),
+  //     BottomNavigationBarItem(icon: Icon(Icons.add), label: "Add Lead"),
+  //     BottomNavigationBarItem(
+  //       icon: Icon(Icons.receipt_outlined),
+  //       label: "Report",
+  //     ),
+  //   ],
+  // ),
 }
 
 class DashboardCard extends StatelessWidget {
@@ -234,7 +293,7 @@ class DashboardCard extends StatelessWidget {
           Row(children: [Text(value, style: AppTextstyle.dashBoardCardNo)]),
           Padding(
             padding: EdgeInsets.only(left: 90),
-            child:  Icon(Icons.trending_up, color: Colors.black,),
+            child: Icon(Icons.trending_up, color: Colors.black),
           ),
         ],
       ),
@@ -256,15 +315,19 @@ class SummaryRow extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(title, style:TextStyle(
-            color: Theme.of(context).textTheme.bodyLarge?.color,
-          // AppTextstyle.normalText
+          Text(
+            title,
+            style: TextStyle(
+              color: Theme.of(context).textTheme.bodyLarge?.color,
+              // AppTextstyle.normalText
+            ),
           ),
-          ),
-          Text(value, style: TextStyle(
-            color: Theme.of(context).textTheme.bodyLarge?.color,
-          // AppTextstyle.normalText
-          ),
+          Text(
+            value,
+            style: TextStyle(
+              color: Theme.of(context).textTheme.bodyLarge?.color,
+              // AppTextstyle.normalText
+            ),
           ),
         ],
       ),
@@ -272,77 +335,137 @@ class SummaryRow extends StatelessWidget {
   }
 }
 
-class FollowUpCard extends StatelessWidget {
-  final int index;
+// class FollowUpCard extends StatelessWidget {
+//   final int index;
 
-  const FollowUpCard({super.key, required this.index});
+//   const FollowUpCard({super.key, required this.index});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return InkWell(
+//       onTap: () {
+//         Navigator.push(
+//           context,
+//           MaterialPageRoute(
+//             builder: (context) => LeadProfileScreen(leadData: {}),
+//           ),
+//         );
+//       },
+//       child: Container(
+//         width: double.infinity,
+//         margin: const EdgeInsets.only(bottom: 12),
+//         padding: const EdgeInsets.all(16),
+//         decoration: BoxDecoration(
+//           borderRadius: BorderRadius.circular(12),
+//           border: Border.all(color: Colors.grey.shade300),
+//         ),
+//       ),
+//     );
+//   }
+// }
+
+class LeadListCard extends StatelessWidget {
+  final Map<String, dynamic> lead;
+  const LeadListCard({super.key, required this.lead});
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => LeadProfileScreen(leadData: {}),
+    return Container(
+      margin: const EdgeInsets.only(bottom: 15),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor,
+        borderRadius: BorderRadius.circular(18),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            blurRadius: 8,
+            spreadRadius: 2,
           ),
-        );
-      },
-      child: Container(
-        width: double.infinity,
-        margin: const EdgeInsets.only(bottom: 12),
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.grey.shade300),
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
+        ],
+      ),
 
-                children: [
-                   Text("Mathew", style:TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).textTheme.bodyLarge?.color,
-                  // AppTextstyle.NameText
-                  ),
-                  ),
-                  const SizedBox(height: 4),
-                  const Text("Check on Proposal View"),
-                  const SizedBox(height: 4),
-                 Text("Jan-16-2026", style:TextStyle(
-                    fontSize: 12,
-                    color: Theme.of(context).textTheme.bodyLarge?.color,
-                  // AppTextstyle.MicroText
-                  ),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-              decoration: BoxDecoration(
-                color: index == 0
-                    ? Colors.orange.withOpacity(0.15)
-                    : Colors.green.withOpacity(0.15),
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: Text(
-                index == 0 ? "Contacted" : "Accepted",
-                style: TextStyle(
-                  color: index == 0 ? Colors.orange : Colors.green,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 12,
+                height: 12,
+                decoration: const BoxDecoration(
+                  color: Colors.green,
+                  shape: BoxShape.circle,
                 ),
               ),
-            ),
-          ],
-        ),
+
+              const SizedBox(width: 10),
+
+              Text(
+                lead["name"].toString(),
+                style: const TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+
+              const Spacer(),
+
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
+
+                decoration: BoxDecoration(
+                  color: lead["statusColor"],
+                  borderRadius: BorderRadius.circular(12),
+                ),
+
+                child: Text(
+                  lead["status"].toString(),
+                  style: TextStyle(
+                    color: lead["statusText"],
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 15),
+
+          Row(
+            children: [
+              const Icon(Icons.phone, color: Colors.blueGrey),
+
+              const SizedBox(width: 10),
+
+              Text(
+                lead["phone"].toString(),
+                style: const TextStyle(fontSize: 18),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 10),
+
+          Row(
+            children: [
+              const Icon(Icons.person_outline, color: Colors.blueGrey),
+
+              const SizedBox(width: 6),
+
+              Text(
+                lead["staff"].toString(),
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
