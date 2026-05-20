@@ -24,9 +24,16 @@ class LeadProvider extends ChangeNotifier {
   int dueToday = 0;
   int thisWeek = 0;
 
-  TextEditingController searchController = TextEditingController();
-  String searchText = "";
-  String? selectedLeadStage;
+  bool isLoading = false;
+
+  void setLoading(bool value) {
+    isLoading = value;
+    notifyListeners();
+  }
+
+
+   TextEditingController searchController = TextEditingController();
+   String searchText = "";String? selectedLeadStage;
 
   Map<String, int> statusCountMap = {};
   List<String> statusList = [];
@@ -57,7 +64,7 @@ class LeadProvider extends ChangeNotifier {
     for (var status in statusList) {
       final snap = await fdb
           .collection("LEADS")
-          .where("FOLLOW_UP_STATUS", isEqualTo: status)
+          .where("LEAD_STATUS", isEqualTo: status)
           .count()
           .get();
 
@@ -77,7 +84,7 @@ class LeadProvider extends ChangeNotifier {
         "name": doc["NAME"],
         "phone": doc["PHONE"],
         "status": doc["LEAD_STATUS"],
-        "staff": doc[""],
+        "staff": doc["ASSIGNED_AGENT_ID"],
 
         "statusColor": Colors.green.shade100,
         "statusText": Colors.green,
@@ -141,18 +148,18 @@ class LeadProvider extends ChangeNotifier {
       "ADDED_BY_ID": tempAgentId,
       "ASSIGNED_AGENT_ID": tempAgentId,
       "ASSIGNED_AGENT_NAME": "NAME",
-      "ADDED_TIME": now,
-      "LEAD_STATUS": selectedStatus ?? "NEW",
+      "ADDED_TIME": Timestamp.fromDate(now),
+      "LEAD_STATUS": selectedStatus ?? "New",
       "LEAD_CATEGORY": "",
       "CALL_STATUS": "",
       "SOURCE": sourceController.text,
 
-      "FOLLOW_UP_DATE": now.add(const Duration(days: 1)),
+      "FOLLOW_UP_DATE": Timestamp.fromDate(now.add(const Duration(days: 3))),
       "FOLLOW_UP_TIME": "",
-      "LAST_CONTACTED_DATE": now,
+      "LAST_CONTACTED_DATE": Timestamp.fromDate(now),
       "PRIORITY": 'Medium',
 
-      "FOLLOW_UP_STATUS": selectedStatus ?? "NEW",
+      "FOLLOW_UP_STATUS": "FOLLOW_UP",
       "ADDITIONAL_LEAD_DETAILS": selectedLeadsFilters,
     };
 
@@ -308,7 +315,7 @@ class LeadProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void getCallStatusList() async {
+  Future<void> getCallStatusList() async {
     fdb.collection("LEAD_SETTINGS").doc("call_status").get().then((value) {
       callStatusList.clear();
       if (value.exists) {
@@ -321,7 +328,7 @@ class LeadProvider extends ChangeNotifier {
     });
   }
 
-  void getLeadStatus() async {
+ Future<void> getLeadStatus() async {
     await fdb.collection("LEAD_SETTINGS").doc("lead_status").get().then((
       value,
     ) {
@@ -395,8 +402,9 @@ class LeadProvider extends ChangeNotifier {
   }) async {
     try {
       await fdb.collection("LEADS").doc(leadId).update({
-        "LAST_CONTACTED_DATE": lastCallDate,
-        "FOLLOW_UP_DATE": followUpDate,
+        "LAST_CONTACTED_DATE": Timestamp.fromDate(lastCallDate),
+        "FOLLOW_UP_DATE": Timestamp.fromDate(followUpDate),
+        "FOLLOW_UP_STATUS": "FOLLOW_UP",
         "NOTE": note,
       });
 
@@ -443,45 +451,58 @@ class LeadProvider extends ChangeNotifier {
   }
 
   Future<void> loadDashboardCounts() async {
-    print("load count started");
-    final db = FirebaseFirestore.instance;
+    try {
+      final db = FirebaseFirestore.instance;
 
-    final totalSnap = await db.collection("LEADS").count().get();
-    totalLeads = totalSnap.count!;
+      DateTime now = DateTime.now();
 
-    final followSnap = await db
-        .collection("LEADS")
-        .where("FOLLOW_UP_STATUS", isEqualTo: "FOLLOW_UP")
-        .count()
-        .get();
-    print("follow snap finished ${followSnap.count!}");
+      DateTime start = DateTime(now.year, now.month, now.day);
 
-    DateTime now = DateTime.now();
-    DateTime start = DateTime(now.year, now.month, now.day);
-    DateTime end = start.add(Duration(days: 1));
+      DateTime end = start.add(const Duration(days: 1));
 
-    final todaySnap = await db
-        .collection("LEADS")
-        .where("FOLLOW_UP_DATE", isGreaterThanOrEqualTo: start)
-        .where("FOLLOW_UP_DATE", isLessThan: end)
-        .count()
-        .get();
-    print("today snap finished");
+      final totalSnap = await db.collection("LEADS").count().get();
 
-    final overdueSnap = await db
-        .collection("LEADS")
-        .where("FOLLOW_UP_DATE", isLessThan: start)
-        .where("FOLLOW_UP_STATUS", isEqualTo: "FOLLOW_UP")
-        .count()
-        .get();
-    print("overdue finished");
+      final followSnap = await db
+          .collection("LEADS")
+          .where("FOLLOW_UP_STATUS", isEqualTo: "FOLLOW_UP")
+          .where(
+            "FOLLOW_UP_DATE",
+            isGreaterThanOrEqualTo: Timestamp.fromDate(start),
+          )
+          .where("FOLLOW_UP_DATE", isLessThan: Timestamp.fromDate(end))
+          .count()
+          .get();
 
-    totalLeads = totalSnap.count!;
-    followUps = followSnap.count!;
-    todayCalls = todaySnap.count!;
-    overdue = overdueSnap.count!;
+      print("follow snap finished ${followSnap.count!}");
 
-    notifyListeners();
+      final todaySnap = await db
+          .collection("LEADS")
+          .where(
+            "LAST_CONTACTED_DATE",
+            isGreaterThanOrEqualTo: Timestamp.fromDate(start),
+          )
+          .where("LAST_CONTACTED_DATE", isLessThan: Timestamp.fromDate(end))
+          .count()
+          .get();
+      print("today snap finished");
+
+      final overdueSnap = await db
+          .collection("LEADS")
+          .where("FOLLOW_UP_DATE", isLessThan: Timestamp.fromDate(start))
+          .where("FOLLOW_UP_STATUS", isEqualTo: "FOLLOW_UP")
+          .count()
+          .get();
+      print("overdue finished");
+
+      totalLeads = totalSnap.count ?? 0;
+      followUps = followSnap.count ?? 0;
+      todayCalls = todaySnap.count ?? 0;
+      overdue = overdueSnap.count ?? 0;
+
+      notifyListeners();
+    } catch (e) {
+      print("Dashboard Count Error: $e");
+    }
   }
 
   void changeLeadStage(String s) {}

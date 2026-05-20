@@ -42,16 +42,51 @@ class _LeadProfileScreenState extends State<LeadProfileScreen> {
           ),
         ),
         actions: [
-          TextButton.icon(
-            onPressed: () {
-              context.read<LeadProvider>().getCallStatusList();
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => ReminderPage(leadId: widget.leadData["LEAD_ID"] ?? "")),
-              );
-            },
-            icon: const Icon(Icons.history_rounded, size: 18, color: AppColors.themeColor),
-            label: const Text("Follow up", style: TextStyle(color: AppColors.themeColor, fontWeight: FontWeight.bold)),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+            child: ElevatedButton.icon(
+              onPressed: () async {
+                final pro = context.read<LeadProvider>();
+                try {
+                  pro.setLoading(true);
+
+                  await pro.getCallStatusList();
+
+
+                  // context.read<LeadProvider>().getCallStatusList();
+
+
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder:
+                          (context) =>
+                      const ReminderPage(
+                        leadId: '',
+                      ),
+                    ),
+                  );
+                } catch (e) {
+                  debugPrint(e.toString());
+                } finally {
+                  pro.setLoading(false);
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.themeColor,
+                foregroundColor: Colors.white,
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+              ),
+              icon: Padding(
+                padding: const EdgeInsets.all(0.0),
+                child: const Icon(Icons.notifications_active, size: 16),
+              ),
+              label: const Text("Follow up", style: TextStyle(fontSize: 11)),
+            ),
           ),
           IconButton(
             icon: Icon(Icons.edit_outlined, color: Theme.of(context).iconTheme.color),
@@ -59,16 +94,23 @@ class _LeadProfileScreenState extends State<LeadProfileScreen> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // --- QUICK ACTIONS ---
-            Row(
+      body: Consumer<LeadProvider>(
+        builder: (context, pro, child) {
+          if (pro.isLoading) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          return SingleChildScrollView(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  child: _buildActionBtn(Icons.phone, "Call", Colors.blue, () => makePhoneCall(widget.leadData["PHONE"] ?? "")),
+                // --- QUICK ACTIONS ---
+                Row(
+                  children: [
+                    Expanded(
+                      child: _buildActionBtn(Icons.phone, "Call", Colors.blue, () => makePhoneCall(widget.leadData["PHONE"] ?? "")),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -78,9 +120,9 @@ class _LeadProfileScreenState extends State<LeadProfileScreen> {
             ),
             const SizedBox(height: 24),
 
-            // --- LEAD INFO SECTION ---
+                // --- LEAD INFO SECTION ---
             _buildHeader("Lead Details"),
-            Container(
+                Container(
               decoration: _boxDecoration(isDark),
               child: Column(
                 children: [
@@ -97,7 +139,7 @@ class _LeadProfileScreenState extends State<LeadProfileScreen> {
               ),
             ),
 
-            // --- ADDITIONAL DETAILS ---
+                // --- ADDITIONAL DETAILS ---
             if (extra.isNotEmpty) ...[
               const SizedBox(height: 24),
               _buildHeader("Additional Details"),
@@ -116,8 +158,8 @@ class _LeadProfileScreenState extends State<LeadProfileScreen> {
               ),
             ],
 
-            const SizedBox(height: 24),
-            _buildHeader("Follow Up History"),
+                const SizedBox(height: 24),
+                _buildHeader("Follow Up History"),
 
             StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
