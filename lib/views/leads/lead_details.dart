@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dialo/views/leads/addlead.dart';
 import 'package:dialo/views/reminderpage.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -7,6 +8,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../constants/app_colors.dart';
 import '../../providers/leadProvider.dart';
 import 'package:flutter/services.dart';
+// import 'package:dialo/views/new_lead_page.dart';
 
 class LeadProfileScreen extends StatefulWidget {
   final Map<String, dynamic> leadData;
@@ -95,7 +97,16 @@ class _LeadProfileScreenState extends State<LeadProfileScreen> {
           ),
           IconButton(
             icon:  Icon(Icons.edit_square, color:Theme.of(context).iconTheme.color),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => NewLeadPage(
+                    leadData: widget.leadData,
+                  ),
+                ),
+              );
+            },
           ),
         ],
         bottom: PreferredSize(

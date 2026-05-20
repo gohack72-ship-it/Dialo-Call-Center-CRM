@@ -31,6 +31,18 @@ class LeadProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void clearLeadControllers(){
+    nameController.clear();
+    placeController.clear();
+    phoneController.clear();
+    emailController.clear();
+    sourceController.clear();
+    selectedStatus = null;
+
+    selectedLeadsFilters.clear();
+    notifyListeners();
+  }
+
 
    TextEditingController searchController = TextEditingController();
    String searchText = "";String? selectedLeadStage;
@@ -447,6 +459,26 @@ class LeadProvider extends ChangeNotifier {
     } else {
       throw 'Could not launch $url';
     }
+  }
+
+  Future<void> updateLead(String id) async {
+    await FirebaseFirestore.instance
+        .collection("LEADS")
+        .doc(id)
+        .update({
+
+      "NAME": nameController.text,
+      "PLACE": placeController.text,
+      "PHONE": phoneController.text,
+      "EMAIL": emailController.text,
+      "SOURCE": sourceController.text,
+      "LEAD_STATUS": selectedStatus,
+
+      "ADDITIONAL_LEAD_DETAILS": selectedLeadsFilters,
+
+      "UPDATED_AT": FieldValue.serverTimestamp(),
+    });
+    clearLeadControllers();
   }
 
   Future<void> loadDashboardCounts() async {
