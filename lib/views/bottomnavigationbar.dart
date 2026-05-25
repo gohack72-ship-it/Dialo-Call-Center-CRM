@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dialo/views/dashboard.dart';
 import 'package:dialo/views/repots/reportpage.dart';
 import 'package:flutter/material.dart';
@@ -40,7 +42,7 @@ class _BottomnavPageState extends State<BottomnavPage> {
         type: BottomNavigationBarType.fixed,
         selectedItemColor: Theme.of(context).brightness == Brightness.dark
                          ? Colors.black
-                         : AppColors.whitetext,
+                         : Colors.black,
         unselectedItemColor: Theme.of(context).brightness == Brightness.dark
                          ? Colors.white
                          : AppColors.themeColor,
@@ -63,6 +65,11 @@ class _BottomnavPageState extends State<BottomnavPage> {
             context.read<LeadProvider>().getCallStatusList();
             context.read<LeadProvider>().getLeadStatus();
             context.read<LeadProvider>().fetchCallStatusCounts();
+            Future.delayed( Duration(seconds: 1), () {
+
+            context.read<LeadProvider>().getStatusCounts();
+            log("Report Page: Fetched call status counts");
+            });
           }
         },
         items: const [

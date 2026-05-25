@@ -23,14 +23,17 @@ class _LeadsScreenState extends State<LeadsScreen> {
   // STEP 1: Create a variable to hold the currently selected filter
   String selectedStatus = "All";
 
-  void _refreshLeads(BuildContext context) {
+  void _refreshLeads(BuildContext context){
     final pro = Provider.of<LeadProvider>(context, listen: false);
+    pro.setLoading(true);
     pro.selectedLeadsFilters.clear();
     setState(() {
       selectedStatus = "All";
     });
+
     pro.notifyListeners();
     pro.fetchAdditionalLeadDetails();
+    pro.setLoading(false);
   }
 
   @override
@@ -83,203 +86,234 @@ class _LeadsScreenState extends State<LeadsScreen> {
           const SizedBox(width: 10),
         ],
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    onChanged: (value) {
-                      pro.searchText = value.trim();
-                      pro.notifyListeners();
-                      setState(() {});
-                    },
-                    decoration: InputDecoration(
-                      hintText: "Search Leads",
-                      // hintStyle: TextStyle(
-                      //   color: Theme.of(context).textTheme.bodyLarge?.color,
-                      // ),
-                      prefixIcon: const Icon(Icons.search),
-                      filled: true,
-                      fillColor: Theme.of(context).brightness == Brightness.dark
-                               ? Colors.grey.shade800
-                               : Colors.white,
-                      contentPadding: const EdgeInsets.symmetric(vertical: 0),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
-                        borderSide: BorderSide.none,
+      body: Consumer<LeadProvider>(
+        builder: (context, val, child) {
+          if (pro.isLoading) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+
+          return Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        onChanged: (value) {
+                          pro.searchText = value.trim();
+                          pro.notifyListeners();
+                          setState(() {});
+                        },
+                        decoration: InputDecoration(
+                          hintText: "Search Leads",
+                          // hintStyle: TextStyle(
+                          //   color: Theme.of(context).textTheme.bodyLarge?.color,
+                          // ),
+                          prefixIcon: const Icon(Icons.search),
+                          filled: true,
+                          fillColor: Theme
+                              .of(context)
+                              .brightness == Brightness.dark
+                              ? Colors.grey.shade800
+                              : Colors.white,
+                          contentPadding: const EdgeInsets.symmetric(
+                              vertical: 0),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                ),
-                IconButton(
-                  icon:  Icon(
-                      Icons.refresh,
-                    color: Theme.of(context).iconTheme.color,
-                  ),
-                  onPressed: () {
-                    _refreshLeads(context);
-                  },
-                ),
-                Builder(
-                  builder: (context) => IconButton(
-                    icon:  Icon(Icons.tune,color: Theme.of(context).iconTheme.color,),
-                    onPressed: () {
-                      Provider.of<LeadProvider>(
-                        context,
-                        listen: false,
-                      ).fetchAdditionalLeadDetails();
-                      Scaffold.of(context).openEndDrawer();
-                    },
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          const SizedBox(height: 10),
-
-          // STEP 2: Update the Chips to react to taps
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
-              children: [
-                StatusChip(
-                  text: "ALL",
-                  isSelected: selectedStatus == "All",
-                  onTap: () => setState(() => selectedStatus = "All"),
-                ),
-                StatusChip(
-                  text: "NEW",
-                  isSelected: selectedStatus == "New",
-                  onTap: () => setState(() => selectedStatus = "New"),
-                ),
-                StatusChip(
-                  text: "FOLLOW UP",
-                  isSelected: selectedStatus == "Follow_Up",
-                  onTap: () => setState(() => selectedStatus = "Follow_Up"),
-                ),
-                StatusChip(
-                  text: "CONVERTED",
-                  isSelected: selectedStatus == "Converted",
-                  onTap: () => setState(() => selectedStatus = "Converted"),
-                ),
-                StatusChip(
-                  text: "REJECTED",
-                  isSelected: selectedStatus == "Rejected",
-                  onTap: () => setState(() => selectedStatus = "Rejected"),
-                ),
-              ],
-            ),
-          ),
-
-          const SizedBox(height: 10),
-
-          // 📋 LIST
-          Expanded(
-            child: StreamBuilder<QuerySnapshot>(
-              stream: (() {
-                Query query = FirebaseFirestore.instance.collection("LEADS");
-
-                // ✅ Status filter
-                print("selectedStatus IS $selectedStatus");
-                if (selectedStatus != "All") {
-                  query = query.where("LEAD_STATUS", isEqualTo: selectedStatus);
-                }
-
-                log("${pro.selectedLeadsFilters}");
-                // ✅ Drawer filters
-                pro.selectedLeadsFilters.forEach((key, value) {
-                  if (value != null) {
-                    query = query.where(key, isEqualTo: value);
-                  }
-                });
-
-                final subquery = query;
-                print("${subquery.snapshots().length}");
-
-                // ✅ Order
-                query = query.orderBy("ADDED_TIME", descending: true);
-                return query.snapshots();
-              })(),
-
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  print(snapshot.error);
-                  return Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Text(
-                        "Something went wrong! Contact your service team.",
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(color: Colors.red),
+                    IconButton(
+                      icon: Icon(
+                        Icons.refresh,
+                        color: Theme
+                            .of(context)
+                            .iconTheme
+                            .color,
                       ),
+                      onPressed: () {
+                        _refreshLeads(context);
+                      },
                     ),
-                  );
-                }
+                    Builder(
+                      builder: (context) =>
+                          IconButton(
+                            icon: Icon(Icons.tune, color: Theme
+                                .of(context)
+                                .iconTheme
+                                .color,),
+                            onPressed: () {
+                              Provider.of<LeadProvider>(
+                                context,
+                                listen: false,
+                              ).fetchAdditionalLeadDetails();
+                              Scaffold.of(context).openEndDrawer();
+                            },
+                          ),
+                    ),
+                  ],
+                ),
+              ),
 
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
+              const SizedBox(height: 10),
 
-                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return const Center(child: Text("No Leads Found"));
-                }
+              // STEP 2: Update the Chips to react to taps
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Row(
+                  children: [
+                    StatusChip(
+                      text: "ALL",
+                      isSelected: selectedStatus == "All",
+                      onTap: () => setState(() => selectedStatus = "All"),
+                    ),
+                    StatusChip(
+                      text: "NEW",
+                      isSelected: selectedStatus == "New",
+                      onTap: () => setState(() => selectedStatus = "New"),
+                    ),
+                    StatusChip(
+                      text: "FOLLOW UP",
+                      isSelected: selectedStatus == "Follow_Up",
+                      onTap: () => setState(() => selectedStatus = "Follow_Up"),
+                    ),
+                    StatusChip(
+                      text: "CONVERTED",
+                      isSelected: selectedStatus == "Converted",
+                      onTap: () => setState(() => selectedStatus = "Converted"),
+                    ),
+                    StatusChip(
+                      text: "REJECTED",
+                      isSelected: selectedStatus == "Rejected",
+                      onTap: () => setState(() => selectedStatus = "Rejected"),
+                    ),
+                  ],
+                ),
+              ),
 
-                final leads = snapshot.data!.docs.where((doc) {
-                  var data = doc.data() as Map<String, dynamic>;
+              const SizedBox(height: 10),
 
-                  final name = (data["NAME"] ?? "").toString().toLowerCase();
-                  final phone = (data["PHONE"] ?? "").toString();
-                  final place = (data["PLACE"] ?? "").toString().toLowerCase();
-                  final search = pro.searchText.toLowerCase();
-                  print("name $name");
-                  print("phone $phone");
-                  print("place $place");
-                  print("search $search");
-                  if (search.isEmpty) return true;
-                  return name.contains(search) ||
-                      phone.contains(search) ||
-                      place.contains(search);
-                }).toList();
+              // 📋 LIST
+              Expanded(
+                child: StreamBuilder<QuerySnapshot>(
+                  stream: (() {
+                    Query query = FirebaseFirestore.instance.collection(
+                        "LEADS");
 
-                return RefreshIndicator(
-                  onRefresh: () async {
-                    _refreshLeads(context);
-                  },
+                    // ✅ Status filter
+                    print("selectedStatus IS $selectedStatus");
+                    if (selectedStatus != "All") {
+                      query =
+                          query.where("LEAD_STATUS", isEqualTo: selectedStatus);
+                    }
 
-                  child: ListView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    itemCount: leads.length,
-                    itemBuilder: (context, index) {
-                      var data = leads[index].data() as Map<String, dynamic>;
+                    log("${pro.selectedLeadsFilters}");
+                    // ✅ Drawer filters
+                    pro.selectedLeadsFilters.forEach((key, value) {
+                      if (value != null) {
+                        query = query.where(key, isEqualTo: value);
+                      }
+                    });
 
-                      return GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => LeadProfileScreen(leadData: data),
+                    final subquery = query;
+                    print("${subquery
+                        .snapshots()
+                        .length}");
+
+                    // ✅ Order
+                    query = query.orderBy("ADDED_TIME", descending: true);
+                    return query.snapshots();
+                  })(),
+
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError) {
+                      print(snapshot.error);
+                      return Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Text(
+                            "Something went wrong! Contact your service team.",
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(color: Colors.red),
+                          ),
+                        ),
+                      );
+                    }
+
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+
+                    if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                      return const Center(child: Text("No Leads Found"));
+                    }
+
+                    final leads = snapshot.data!.docs.where((doc) {
+                      var data = doc.data() as Map<String, dynamic>;
+
+                      final name = (data["NAME"] ?? "")
+                          .toString()
+                          .toLowerCase();
+                      final phone = (data["PHONE"] ?? "").toString();
+                      final place = (data["PLACE"] ?? "")
+                          .toString()
+                          .toLowerCase();
+                      final search = pro.searchText.toLowerCase();
+                      print("name $name");
+                      print("phone $phone");
+                      print("place $place");
+                      print("search $search");
+                      if (search.isEmpty) return true;
+                      return name.contains(search) ||
+                          phone.contains(search) ||
+                          place.contains(search);
+                    }).toList();
+
+                    return RefreshIndicator(
+                      onRefresh: () async {
+                        _refreshLeads(context);
+                      },
+
+                      child: ListView.builder(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        itemCount: leads.length,
+                        itemBuilder: (context, index) {
+                          var data = leads[index].data() as Map<String,
+                              dynamic>;
+
+                          return GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) =>
+                                      LeadProfileScreen(leadData: data),
+                                ),
+                              );
+                            },
+                            child: LeadCard(
+                              name: data["NAME"] ?? "",
+                              phone: data["PHONE"] ?? "",
+                              city: data["PLACE"] ?? "",
+                              status: data["LEAD_STATUS"] ?? "New",
                             ),
                           );
                         },
-                        child: LeadCard(
-                          name: data["NAME"] ?? "",
-                          phone: data["PHONE"] ?? "",
-                          city: data["PLACE"] ?? "",
-                          status: data["LEAD_STATUS"] ?? "New",
-                        ),
-                      );
-                    },
-                  ),
-                );
-              },
-            ),
-          ),
-        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+
+          );
+        }
       ),
     );
   }
