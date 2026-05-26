@@ -196,7 +196,7 @@ void initState() {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) =>
-                                        BottomnavPage(changeTheme: widget.changeTheme),
+                                        BottomnavPage(changeTheme: widget.changeTheme, initialIndex: 0,),
                                   ),
                                 );
                               } else {

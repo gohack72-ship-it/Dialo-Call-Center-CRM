@@ -1,3 +1,5 @@
+import 'package:dialo/views/bottomnavigationbar.dart';
+import 'package:dialo/views/leads/leads_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -252,6 +254,7 @@ class _NewLeadPageState extends State<NewLeadPage> {
 
                                   if (widget.leadData == null){
                                     await pro.addNewLead();
+                                    await pro.getLeads();
                                   } else {
                                     await pro.updateLead(widget.leadData!['LEAD_ID']);
                                   }
@@ -269,10 +272,10 @@ class _NewLeadPageState extends State<NewLeadPage> {
                                   ),
                                    ),
                                 );
-
-
+                                pro.refreshLeads(context);
                                 // Automatically go back to the leads list
-                                Navigator.pop(context);
+                                // Navigator.pop(context);
+                                Navigator.push(context, MaterialPageRoute(builder: (_)=>BottomnavPage(changeTheme: (bool p1) {  }, initialIndex: 1,)));
                               } catch (e) {
                                   debugPrint(e.toString());
                                   ScaffoldMessenger.of(context).showSnackBar(

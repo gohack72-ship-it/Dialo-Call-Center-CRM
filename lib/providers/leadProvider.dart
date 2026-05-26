@@ -185,6 +185,7 @@ log("Lead Status: ${leadStatusCountMap.length}");
 
 
     clearData();
+    await getLeads();
     notifyListeners();
   }
 
@@ -547,4 +548,25 @@ log("Lead Status: ${leadStatusCountMap.length}");
   }
 
   void changeLeadStage(String s) {}
+
+  String selectedFilterStatus = "All";
+
+  void refreshLeads(BuildContext context){
+    
+    setLoading(true);
+  selectedLeadsFilters.clear();
+    
+      selectedFilterStatus = "All";
+
+
+  fetchAdditionalLeadDetails();
+    setLoading(false);
+    
+    notifyListeners();
+  }
+
+  void changeStatusFilter(String status) {
+    selectedFilterStatus = status;
+    notifyListeners();
+  }
 }
