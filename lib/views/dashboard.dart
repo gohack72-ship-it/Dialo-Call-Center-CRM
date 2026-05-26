@@ -76,15 +76,13 @@ class _DbState extends State<Dashboard> {
                 print("This week is selected");
               } else if (value == "month") {
                 print("This month is selected");
-              } else if (value == "overdue") {
-                print("Overdue is selected");
               }
             },
             itemBuilder: (context) => [
               const PopupMenuItem(value: "today", child: Text("Today")),
               const PopupMenuItem(value: "week", child: Text("This Week")),
               const PopupMenuItem(value: "month", child: Text("This Month")),
-              const PopupMenuItem(value: "overdue", child: Text("Over Due")),
+              
             ],
           ),
         ],
@@ -179,6 +177,7 @@ class _DbState extends State<Dashboard> {
                   return ListView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
+                    
                     itemCount: provider.leadList.length,
 
                     itemBuilder: (context, index) {
