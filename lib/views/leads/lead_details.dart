@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dialo/views/leads/addlead.dart';
 import 'package:dialo/views/reminderpage.dart';
@@ -346,6 +348,7 @@ class _LeadProfileScreenState extends State<LeadProfileScreen> {
   }
 
   Future<void> openWhatsApp(String phone) async {
+    log("jhvjhvhjb");
     final url = Uri.parse("https://wa.me/$phone");
     if (await canLaunchUrl(url)) await launchUrl(url);
   }

@@ -254,7 +254,7 @@ class _NewLeadPageState extends State<NewLeadPage> {
 
                                   if (widget.leadData == null){
                                     await pro.addNewLead();
-                                    await pro.getLeads();
+                                    pro.getLeads();
                                   } else {
                                     await pro.updateLead(widget.leadData!['LEAD_ID']);
                                   }

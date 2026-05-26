@@ -19,8 +19,9 @@ class LeadProvider extends ChangeNotifier {
   final TextEditingController noteController = TextEditingController();
   final TextEditingController sourceController = TextEditingController();
   final TextEditingController followUpNoteController = TextEditingController();
-  final TextEditingController calledDateController = TextEditingController(text: DateFormat('dd/MM/yyyy hh:mm a')
-        .format(DateTime.now()),);
+  final TextEditingController calledDateController = TextEditingController(
+    text: DateFormat('dd/MM/yyyy hh:mm a').format(DateTime.now()),
+  );
 
   int dueToday = 0;
   int thisWeek = 0;
@@ -64,6 +65,7 @@ class LeadProvider extends ChangeNotifier {
   int followUps = 0;
   int todayCalls = 0;
   int overdue = 0;
+  
 
   LeadProvider() {
     getLeadStatus();
@@ -94,23 +96,44 @@ log("Lead Status: ${leadStatusCountMap.length}");
   }
 
   List<Map<String, dynamic>> leadList = [];
-  Future<void> getLeads() async {
-    final snapshot = await FirebaseFirestore.instance.collection("LEADS").get();
 
-    leadList = snapshot.docs.map((doc) {
-      return {
-        "name": doc["NAME"],
-        "phone": doc["PHONE"],
-        "status": doc["LEAD_STATUS"],
-        "staff": doc["ASSIGNED_AGENT_ID"],
+  void getLeads() {
+    DateTime now = DateTime.now();
 
-        "statusColor": Colors.green.shade100,
-        "statusText": Colors.green,
-      };
-    }).toList();
+    DateTime startOfDay = DateTime(now.year, now.month, now.day);
+    DateTime endOfDay = startOfDay.add(const Duration(days: 1));
 
-    notifyListeners();
-  }
+    FirebaseFirestore.instance
+        .collection("LEADS")
+        .where("FOLLOW_UP_STATUS", isEqualTo: "FOLLOW_UP")
+        .where(
+          "FOLLOW_UP_DATE",
+          isGreaterThanOrEqualTo: Timestamp.fromDate(startOfDay),
+        )
+        // .where("FOLLOW_UP_DATE", isLessThan: Timestamp.fromDate(endOfDay))
+        .orderBy("FOLLOW_UP_DATE")
+        .limit(3)
+        .snapshots()
+        .listen((snapshot) {
+          leadList = snapshot.docs.map((doc) {
+            final data = doc.data();
+
+            return {
+              "id": doc.id,
+              "name": data["NAME"] ?? "",
+              "phone": data["PHONE"] ?? "",
+              "status": data["LEAD_STATUS"] ?? "",
+              "staff": data["ASSIGNED_AGENT_ID"] ?? "",
+              "followDate": data["FOLLOW_UP_DATE"],
+
+              "statusColor": Colors.green.shade100,
+              "statusText": Colors.green,
+            };
+          }).toList();
+
+          notifyListeners();
+        });
+         }
 
   Map<String, int> statusCounts = {};
 
@@ -129,10 +152,6 @@ log("Lead Status: ${leadStatusCountMap.length}");
     print(statusCounts);
     notifyListeners();
   }
-
-
-
-
 
   Future<void> addNewLead() async {
     DateTime now = DateTime.now();
@@ -183,30 +202,32 @@ log("Lead Status: ${leadStatusCountMap.length}");
 
     await fdb.collection("LEADS").doc(id).set(lead);
 
-
     clearData();
-    await getLeads();
+   getLeads();
     notifyListeners();
   }
 
-  void addFollowUp (String leadId){
+  void addFollowUp(String leadId) {
     print("Lead ID: $leadId");
     DateTime now = DateTime.now();
     String id = now.millisecondsSinceEpoch.toString();
-    DateTime calledDate =
-    DateFormat('d/MM/yyyy HH:mm')
-        .parse(calledDateController.text);
+    DateTime calledDate = DateFormat(
+      'd/MM/yyyy HH:mm',
+    ).parse(calledDateController.text);
     Map<String, dynamic> followUp = {
-    "CALL_STATUS": selectedCallStatus,
-      "CALL_DATE":calledDate ,
+      "CALL_STATUS": selectedCallStatus,
+      "CALL_DATE": calledDate,
       "LEAD_STATUS": selectedLeadStage,
       "TIME": "${selectedTime?.hour}:${selectedTime?.minute}",
       "DATE": selectedDate,
       "NOTE": followUpNoteController.text,
-
     };
-     fdb.collection("LEADS").doc(leadId).collection("FOLLOW_UPS").doc(id).set(followUp) ;
-
+    fdb
+        .collection("LEADS")
+        .doc(leadId)
+        .collection("FOLLOW_UPS")
+        .doc(id)
+        .set(followUp);
   }
 
   DateTime? selectedDate;
@@ -216,7 +237,6 @@ log("Lead Status: ${leadStatusCountMap.length}");
   String? selectedLeadStatus;
 
   get leadStatusList => null;
-
 
   // 📅 Pick Date
   Future<void> pickDate(BuildContext context) async {
@@ -232,8 +252,8 @@ log("Lead Status: ${leadStatusCountMap.length}");
     }
     notifyListeners();
   }
-  void clearReminderForm() {
 
+  void clearReminderForm() {
     followUpNoteController.clear();
 
     selectedCallStatus = null;
