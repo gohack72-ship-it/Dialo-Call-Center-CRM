@@ -2,10 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dialo/providers/leadProvider.dart';
 import 'package:dialo/views/settingspage.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../constants/app_colors.dart';
 import '../constants/app_textstyle.dart';
-
 
 class Dashboard extends StatefulWidget {
   final Function(bool) changeTheme;
@@ -22,17 +22,17 @@ class _DbState extends State<Dashboard> {
   void initState() {
     super.initState();
 
-
     Future.microtask(() async {
       final pro = Provider.of<LeadProvider>(context, listen: false);
       pro.setLoading(true);
 
       // Provider.of<LeadProvider>(context, listen: false).
-     await pro.loadDashboardCounts();
+      await pro.loadDashboardCounts();
       // Provider.of<LeadProvider>(context, listen: false).
       await pro.getLeadStatus();
       // Provider.of<LeadProvider>(context, listen: false).
-     await pro.getStatusCounts();
+      await pro.getStatusCounts();
+      pro.getLeads();
 
       pro.setLoading(false);
     });
@@ -90,7 +90,6 @@ class _DbState extends State<Dashboard> {
               const PopupMenuItem(value: "today", child: Text("Today")),
               const PopupMenuItem(value: "week", child: Text("This Week")),
               const PopupMenuItem(value: "month", child: Text("This Month")),
-              
             ],
           ),
         ],
@@ -101,146 +100,146 @@ class _DbState extends State<Dashboard> {
           if (pro.isLoading) {
             return const Center(child: CircularProgressIndicator());
           }
-      return SingleChildScrollView(
-        child: Container(
-          width: MediaQuery.of(context).size.width,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Consumer<LeadProvider>(
-                builder: (context1, provider, child) {
-                  return GridView.count(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 20,
-                    mainAxisSpacing: 20,
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    childAspectRatio: 1.3,
-                    children: [
-                      DashboardCard(
-                        title: "TOTAL LEADS",
-                        value: provider.totalLeads.toString(),
-                        color: AppColors.totalLeads,
-                      ),
-                      DashboardCard(
-                        title: "FOLLOW-UPS",
-                        value: provider.followUps.toString(),
-                        color: AppColors.followUps,
-                      ),
-                      DashboardCard(
-                        title: "TODAY'S CALLS",
-                        value: provider.todayCalls.toString(),
-                        color: AppColors.todayCalls,
-                      ),
-                      DashboardCard(
-                        title: "OVERDUE",
-                        value: provider.overdue.toString(),
-                        color: AppColors.overdue,
-                      ),
-                    ],
-                  );
-
-                },
-              ),
-
-              const SizedBox(height: 20),
-              Text(
-                "Lead Summary",
-                style: Theme.of(context).textTheme.titleLarge,
-                // AppTextstyle.SubTitle
-              ),
-              const SizedBox(height: 05),
-              Consumer<LeadProvider>(
-                builder: (context, value, child) {
-                  return Container(
-                    height: MediaQuery.of(context).size.height / 2.5,
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey.shade300),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: ListView.separated(
-                      itemCount: value.statusList.length,
-                      itemBuilder: (context, index) {
-                        var status = value.statusList[index];
-                        print(status);
-                        return SummaryRow(
-                          title: status,
-                          value: (value.statusCountMap[status] ?? 0).toString(),
-                        );
-                      },
-
-                      separatorBuilder: (context, index) {
-                        return Divider(color: Color(0xffEAEAEA));
-                      },
-                    ),
-                  );
-                },
-              ),
-
-              const SizedBox(height: 20),
-              Text(
-                "Upcoming Follow-ups",
-                style: Theme.of(context).textTheme.titleLarge,
-                // AppTextstyle.SubTitle
-              ),
-              const SizedBox(height: 15),
-              Consumer<LeadProvider>(
-                builder: (context, provider, child) {
-                  return ListView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    
-                    itemCount: provider.leadList.length,
-
-                    itemBuilder: (context, index) {
-                      return LeadListCard(lead: provider.leadList[index]);
+          return SingleChildScrollView(
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Consumer<LeadProvider>(
+                    builder: (context1, provider, child) {
+                      return GridView.count(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 20,
+                        mainAxisSpacing: 20,
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        childAspectRatio: 1.3,
+                        children: [
+                          DashboardCard(
+                            title: "TOTAL LEADS",
+                            value: provider.totalLeads.toString(),
+                            color: AppColors.totalLeads,
+                          ),
+                          DashboardCard(
+                            title: "FOLLOW-UPS",
+                            value: provider.followUps.toString(),
+                            color: AppColors.followUps,
+                          ),
+                          DashboardCard(
+                            title: "TODAY'S CALLS",
+                            value: provider.todayCalls.toString(),
+                            color: AppColors.todayCalls,
+                          ),
+                          DashboardCard(
+                            title: "OVERDUE",
+                            value: provider.overdue.toString(),
+                            color: AppColors.overdue,
+                          ),
+                        ],
+                      );
                     },
-                  );
-                },
+                  ),
+
+                  const SizedBox(height: 20),
+                  Text(
+                    "Lead Summary",
+                    style: Theme.of(context).textTheme.titleLarge,
+                    // AppTextstyle.SubTitle
+                  ),
+                  const SizedBox(height: 05),
+                  Consumer<LeadProvider>(
+                    builder: (context, value, child) {
+                      return Container(
+                        height: MediaQuery.of(context).size.height / 2.5,
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey.shade300),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: ListView.separated(
+                          itemCount: value.statusList.length,
+                          itemBuilder: (context, index) {
+                            var status = value.statusList[index];
+                            print(status);
+                            return SummaryRow(
+                              title: status,
+                              value: (value.statusCountMap[status] ?? 0)
+                                  .toString(),
+                            );
+                          },
+
+                          separatorBuilder: (context, index) {
+                            return Divider(color: Color(0xffEAEAEA));
+                          },
+                        ),
+                      );
+                    },
+                  ),
+
+                  const SizedBox(height: 20),
+                  Text(
+                    "Upcoming Follow-ups",
+                    style: Theme.of(context).textTheme.titleLarge,
+                    // AppTextstyle.SubTitle
+                  ),
+                  const SizedBox(height: 15),
+                  Consumer<LeadProvider>(
+                    builder: (context, provider, child) {
+                      return ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+
+                        itemCount: provider.leadList.length,
+
+                        itemBuilder: (context, index) {
+                          return LeadListCard(lead: provider.leadList[index]);
+                        },
+                      );
+                    },
+                  ),
+
+                  //         const Spacer(),
+
+                  //         Container(
+                  //           padding: const EdgeInsets.symmetric(
+                  //             horizontal: 12,
+                  //             vertical: 6,
+                  //           ),
+                  //           decoration: BoxDecoration(
+                  //             color: lead["statusColor"] as Color,
+                  //             borderRadius: BorderRadius.circular(12),
+                  //           ),
+                  //           child: Text(
+                  //             lead["status"].toString(),
+                  //             style: TextStyle(
+                  //               color: lead["statusText"] as Color,
+                  //               fontWeight: FontWeight.w600,
+                  //             ),
+                  //           ),
+                  //         ),
+                  //       ],
+                  //     ),
+                  //     const SizedBox(height: 15),
+
+                  //     Row(
+                  //       children: [
+                  //         const Icon(Icons.phone, color: Colors.blueGrey),
+                  //         const SizedBox(width: 10),
+
+                  //         Text(
+                  //           lead["phone"].toString(),
+                  //           style: const TextStyle(fontSize: 18),
+                  //         ),
+                  //       ],
+                  //     ),
+
+                  // ),
+                ],
               ),
-
-              //         const Spacer(),
-
-              //         Container(
-              //           padding: const EdgeInsets.symmetric(
-              //             horizontal: 12,
-              //             vertical: 6,
-              //           ),
-              //           decoration: BoxDecoration(
-              //             color: lead["statusColor"] as Color,
-              //             borderRadius: BorderRadius.circular(12),
-              //           ),
-              //           child: Text(
-              //             lead["status"].toString(),
-              //             style: TextStyle(
-              //               color: lead["statusText"] as Color,
-              //               fontWeight: FontWeight.w600,
-              //             ),
-              //           ),
-              //         ),
-              //       ],
-              //     ),
-              //     const SizedBox(height: 15),
-
-              //     Row(
-              //       children: [
-              //         const Icon(Icons.phone, color: Colors.blueGrey),
-              //         const SizedBox(width: 10),
-
-              //         Text(
-              //           lead["phone"].toString(),
-              //           style: const TextStyle(fontSize: 18),
-              //         ),
-              //       ],
-              //     ),
-
-              // ),
-            ],
-          ),
-        ),
-        );
+            ),
+          );
         },
       ),
     );
@@ -447,6 +446,7 @@ class LeadListCard extends StatelessWidget {
               ),
             ],
           ),
+          
 
           const SizedBox(height: 15),
 
@@ -480,9 +480,40 @@ class LeadListCard extends StatelessWidget {
               ),
             ],
           ),
-        ],
+          const SizedBox(height: 12),
+
+Row(
+  children: [
+    const Icon(
+      Icons.calendar_month,
+      color: Colors.orange,
+      size: 20,
+    ),
+
+    const SizedBox(width: 8),
+
+    Text(
+      lead["followDate"] != null
+          ? DateFormat(
+              'dd MMM yyyy',
+            ).format(
+              (lead["followDate"] as Timestamp).toDate(),
+            )
+          : "No Follow-up Date",
+
+      style: const TextStyle(
+        fontSize: 15,
+         fontWeight: FontWeight.w500,
+        color: Colors.black,
       ),
+    ),
+  ],
+),
+        ]
+      )
     );
+         
+            
   }
 }
 

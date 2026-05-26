@@ -65,11 +65,6 @@ Future<auth.User?> signInWithGoogle() async {
 
         SharedPreferences prefs = await SharedPreferences.getInstance();
 
-
-
-
-
-
         print("Login Success: ${emailController.text}");
 
         await prefs.setBool('remember', isChecked);

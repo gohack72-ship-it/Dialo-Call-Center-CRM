@@ -7,6 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 // import 'package:provider/provider.dart';
 
@@ -32,7 +33,7 @@ class LeadProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void clearLeadControllers(){
+  void clearLeadControllers() {
     nameController.clear();
     placeController.clear();
     phoneController.clear();
@@ -44,9 +45,9 @@ class LeadProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-
-   TextEditingController searchController = TextEditingController();
-   String searchText = "";String? selectedLeadStage;
+  TextEditingController searchController = TextEditingController();
+  String searchText = "";
+  String? selectedLeadStage;
 
   Map<String, int> statusCountMap = {};
   List<String> statusList = [];
@@ -64,7 +65,6 @@ class LeadProvider extends ChangeNotifier {
   int followUps = 0;
   int todayCalls = 0;
   int overdue = 0;
-  
 
   LeadProvider() {
     getLeadStatus();
@@ -117,7 +117,7 @@ class LeadProvider extends ChangeNotifier {
               "name": data["NAME"] ?? "",
               "phone": data["PHONE"] ?? "",
               "status": data["LEAD_STATUS"] ?? "",
-              "staff": data["ASSIGNED_AGENT_ID"] ?? "",
+              "staff": data["ASSIGNED_AGENT_NAME"] ?? "",
               "followDate": data["FOLLOW_UP_DATE"],
 
               "statusColor": Colors.green.shade100,
@@ -127,7 +127,7 @@ class LeadProvider extends ChangeNotifier {
 
           notifyListeners();
         });
-         }
+  }
 
   Map<String, int> statusCounts = {};
 
@@ -151,23 +151,10 @@ class LeadProvider extends ChangeNotifier {
     DateTime now = DateTime.now();
     String id = now.millisecondsSinceEpoch.toString();
 
-    String tempAgentId = "";
+    final prefs = await SharedPreferences.getInstance();
 
-
-    try {
-      final agentSnapshot = await fdb.collection("AGENT").get();
-
-      final leadsSnapshot = await fdb.collection("LEADS").get();
-      int leadCount = leadsSnapshot.docs.length;
-
-      if (agentSnapshot.docs.isNotEmpty) {
-        int index = (leadCount ~/ 2) % agentSnapshot.docs.length;
-
-        tempAgentId = agentSnapshot.docs[index].id;
-      }
-    } catch (e) {
-      print("Agent fetch error: $e");
-    }
+    String assignedAgentId = prefs.getString("employeeid") ?? "";
+    String assignedAgentName = prefs.getString("name") ?? "";
 
     final lead = {
       "NAME": nameController.text,
@@ -176,9 +163,9 @@ class LeadProvider extends ChangeNotifier {
       "EMAIL": emailController.text,
       "LEAD_ID": id,
 
-      "ADDED_BY_ID": tempAgentId,
-      "ASSIGNED_AGENT_ID": tempAgentId,
-      "ASSIGNED_AGENT_NAME": "NAME",
+      "ADDED_BY_ID": assignedAgentId,
+      "ASSIGNED_AGENT_ID": assignedAgentId,
+      "ASSIGNED_AGENT_NAME": assignedAgentName,
       "ADDED_TIME": Timestamp.fromDate(now),
       "LEAD_STATUS": selectedStatus ?? "New",
       "LEAD_CATEGORY": "",
@@ -360,7 +347,7 @@ class LeadProvider extends ChangeNotifier {
     });
   }
 
- Future<void> getLeadStatus() async {
+  Future<void> getLeadStatus() async {
     await fdb.collection("LEAD_SETTINGS").doc("lead_status").get().then((
       value,
     ) {
@@ -483,11 +470,7 @@ class LeadProvider extends ChangeNotifier {
   }
 
   Future<void> updateLead(String id) async {
-    await FirebaseFirestore.instance
-        .collection("LEADS")
-        .doc(id)
-        .update({
-
+    await FirebaseFirestore.instance.collection("LEADS").doc(id).update({
       "NAME": nameController.text,
       "PLACE": placeController.text,
       "PHONE": phoneController.text,

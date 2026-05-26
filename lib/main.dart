@@ -107,7 +107,7 @@ class _MyAppState extends State<MyApp> {
             foregroundColor: Colors.white,
           )
         ),
-        home: BottomnavPage(changeTheme: changeTheme,)
+        home: Loginpage(changeTheme: changeTheme,)
       ),
     );
   }
