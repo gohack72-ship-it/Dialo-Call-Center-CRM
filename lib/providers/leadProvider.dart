@@ -25,9 +25,28 @@ class LeadProvider extends ChangeNotifier {
   int dueToday = 0;
   int thisWeek = 0;
 
-  TextEditingController searchController = TextEditingController();
-  String searchText = "";
-  String? selectedLeadStage;
+  bool isLoading = false;
+
+  void setLoading(bool value) {
+    isLoading = value;
+    notifyListeners();
+  }
+
+  void clearLeadControllers(){
+    nameController.clear();
+    placeController.clear();
+    phoneController.clear();
+    emailController.clear();
+    sourceController.clear();
+    selectedStatus = null;
+
+    selectedLeadsFilters.clear();
+    notifyListeners();
+  }
+
+
+   TextEditingController searchController = TextEditingController();
+   String searchText = "";String? selectedLeadStage;
 
   Map<String, int> statusCountMap = {};
   List<String> statusList = [];
@@ -134,6 +153,7 @@ class LeadProvider extends ChangeNotifier {
 
     String tempAgentId = "";
 
+
     try {
       final agentSnapshot = await fdb.collection("AGENT").get();
 
@@ -158,7 +178,7 @@ class LeadProvider extends ChangeNotifier {
 
       "ADDED_BY_ID": tempAgentId,
       "ASSIGNED_AGENT_ID": tempAgentId,
-
+      "ASSIGNED_AGENT_NAME": "NAME",
       "ADDED_TIME": Timestamp.fromDate(now),
       "LEAD_STATUS": selectedStatus ?? "New",
       "LEAD_CATEGORY": "",
@@ -327,7 +347,7 @@ class LeadProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void getCallStatusList() async {
+  Future<void> getCallStatusList() async {
     fdb.collection("LEAD_SETTINGS").doc("call_status").get().then((value) {
       callStatusList.clear();
       if (value.exists) {
@@ -340,7 +360,7 @@ class LeadProvider extends ChangeNotifier {
     });
   }
 
-  void getLeadStatus() async {
+ Future<void> getLeadStatus() async {
     await fdb.collection("LEAD_SETTINGS").doc("lead_status").get().then((
       value,
     ) {
@@ -460,6 +480,26 @@ class LeadProvider extends ChangeNotifier {
     } else {
       throw 'Could not launch $url';
     }
+  }
+
+  Future<void> updateLead(String id) async {
+    await FirebaseFirestore.instance
+        .collection("LEADS")
+        .doc(id)
+        .update({
+
+      "NAME": nameController.text,
+      "PLACE": placeController.text,
+      "PHONE": phoneController.text,
+      "EMAIL": emailController.text,
+      "SOURCE": sourceController.text,
+      "LEAD_STATUS": selectedStatus,
+
+      "ADDITIONAL_LEAD_DETAILS": selectedLeadsFilters,
+
+      "UPDATED_AT": FieldValue.serverTimestamp(),
+    });
+    clearLeadControllers();
   }
 
   Future<void> loadDashboardCounts() async {

@@ -40,7 +40,7 @@ class _BottomnavPageState extends State<BottomnavPage> {
         type: BottomNavigationBarType.fixed,
         selectedItemColor: Theme.of(context).brightness == Brightness.dark
                          ? Colors.black
-                         : AppColors.whitetext,
+                         : Colors.black,
         unselectedItemColor: Theme.of(context).brightness == Brightness.dark
                          ? Colors.white
                          : AppColors.themeColor,

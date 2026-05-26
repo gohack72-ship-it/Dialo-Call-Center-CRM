@@ -5,12 +5,18 @@ import 'package:provider/provider.dart';
 import '../../constants/app_textstyle.dart';
 import '../../providers/leadProvider.dart';
 
+
 class NewLeadPage extends StatefulWidget {
 
+final Map<String, dynamic>? leadData;
 
+const NewLeadPage({
+  super.key,
+  this.leadData,
+});
 
   
-  const NewLeadPage({super.key});
+  // const NewLeadPage({super.key});
 
   @override
   State<NewLeadPage> createState() => _NewLeadPageState();
@@ -24,8 +30,28 @@ class _NewLeadPageState extends State<NewLeadPage> {
     super.initState();
 
     // ✅ LOAD DROPDOWN DATA
-    Future.microtask(() {
-      
+    Future.microtask(() async{
+      final pro = context.read<LeadProvider>();
+
+      try {
+        pro.setLoading(true);
+
+        await pro.getLeadStatus();
+
+        if (widget.leadData != null) {
+          pro.nameController.text = widget.leadData?["NAME"] ?? "";
+          pro.placeController.text = widget.leadData?["PLACE"] ?? "";
+          pro.emailController.text = widget.leadData?["EMAIL"] ?? "";
+          pro.phoneController.text = widget.leadData?["PHONE"] ?? "";
+          pro.sourceController.text = widget.leadData?["SOURCE"] ?? "";
+          pro.selectedStatus = widget.leadData?["LEAD_STATUS"] ?? "";
+        }
+        // await pro.getAdditionalLeadDetails();
+      } catch (e) {
+        debugPrint(e.toString());
+      } finally {
+        pro.setLoading(false);
+      }
     });
   }
 
@@ -35,7 +61,15 @@ class _NewLeadPageState extends State<NewLeadPage> {
       canPop: true, // Changed to true so the back button works
       child: Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        body: SafeArea(
+        body: Consumer<LeadProvider>(
+        builder: (context, pro, child) {
+
+          if(pro.isLoading){
+            return const Center(child: CircularProgressIndicator());
+
+        }
+
+        return SafeArea(
           child: Column(
             children: [
               Container(
@@ -135,7 +169,7 @@ class _NewLeadPageState extends State<NewLeadPage> {
                                 status.changeStatus(st!);
                               },
                             );
-                            
+
                           },
                         ),
 
@@ -207,19 +241,47 @@ class _NewLeadPageState extends State<NewLeadPage> {
                           width: double.infinity,
                           height: 48,
                           child: ElevatedButton(
-                            onPressed: () {
+                            onPressed: () async {
                               if (_formKey.currentState!.validate()) {
-                                context.read<LeadProvider>().addNewLead();
+                                final pro = context.read<LeadProvider>();
+
+                                try{
+                                  pro.setLoading(true);
+
+
+
+                                  if (widget.leadData == null){
+                                    await pro.addNewLead();
+                                  } else {
+                                    await pro.updateLead(widget.leadData!['LEAD_ID']);
+                                  }
+
+
+                                // context.read<LeadProvider>().addNewLead();
 
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Lead Created Successfully'),
+                                   SnackBar(
+                                    content: Text(
+                                      widget.leadData == null
+                                        ? 'Lead Created Successfully'
+                                        : 'Lead Updated Successfully',
+
                                   ),
+                                   ),
                                 );
-                                
+
+
                                 // Automatically go back to the leads list
                                 Navigator.pop(context);
-                              }
+                              } catch (e) {
+                                  debugPrint(e.toString());
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text("Failed to create lead"))
+                                  );
+                              } finally {
+                                  pro.setLoading(false);
+                                }
+          }
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: const Color(0xFF3F5FBF),
@@ -227,8 +289,10 @@ class _NewLeadPageState extends State<NewLeadPage> {
                                 borderRadius: BorderRadius.circular(10),
                               ),
                             ),
-                            child: const Text(
-                              'Create Lead',
+                            child:  Text(
+                              widget.leadData == null
+                               ? 'Create Lead'
+                               : 'Update Lead',
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
@@ -244,16 +308,23 @@ class _NewLeadPageState extends State<NewLeadPage> {
               ),
             ],
           ),
+        );
+            },
         ),
       ),
     );
   }
 
   /// 🔹 LABEL
-  static Widget _label(String text) {
+   Widget _label(String text) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 6),
-      child: Text(text, style: const TextStyle(fontSize: 14)),
+      child: Text(
+          text,
+          style:  TextStyle(
+              fontSize: 14,
+            color: Theme.of(context).textTheme.bodyLarge?.color,
+          )),
     );
   }
 
@@ -262,10 +333,15 @@ class _NewLeadPageState extends State<NewLeadPage> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 14),
       child: TextFormField(
-        style: AppTextstyle.normalText,
+        style: TextStyle(
+          color: Theme.of(context).textTheme.bodyLarge?.color,
+        ),
         controller: controller,
         decoration: InputDecoration(
           hintText: hint,
+          hintStyle: TextStyle(
+            color: Theme.of(context).hintColor,
+          ),
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 12,
@@ -287,7 +363,9 @@ class _NewLeadPageState extends State<NewLeadPage> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 14),
       child: TextFormField(
-        style: AppTextstyle.normalText,
+        style: TextStyle(
+          color: Theme.of(context).textTheme.bodyLarge?.color,
+        ),
         controller: context.read<LeadProvider>().phoneController,
         keyboardType: TextInputType.phone,
         inputFormatters: [
@@ -296,6 +374,9 @@ class _NewLeadPageState extends State<NewLeadPage> {
         ],
         decoration: InputDecoration(
           hintText: 'Enter Phone Number',
+          hintStyle: TextStyle(
+            color: Theme.of(context).hintColor
+          ),
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 12,
