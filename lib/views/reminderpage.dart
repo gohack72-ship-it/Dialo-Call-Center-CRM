@@ -194,7 +194,7 @@ class _ReminderPageState extends State<ReminderPage> {
                           return DropdownMenuItem<String>(value: status, child: Text(status));
                         }).toList(),
                         onChanged: (value) {
-                          val.selectedCallStatus = value;
+                          val.selectedLeadStatus = value;
                           val.notifyListeners();
                         },
                       );

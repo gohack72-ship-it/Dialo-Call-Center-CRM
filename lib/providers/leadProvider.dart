@@ -1,4 +1,5 @@
 import 'dart:core';
+import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dialo/models/lead_details_Model.dart';
@@ -49,7 +50,7 @@ class LeadProvider extends ChangeNotifier {
   String searchText = "";
   String? selectedLeadStage;
 
-  Map<String, int> statusCountMap = {};
+  Map<String, int> leadStatusCountMap = {};
   List<String> statusList = [];
   List<String> callStatusList = [];
 
@@ -74,7 +75,9 @@ class LeadProvider extends ChangeNotifier {
   }
 
   Future<void> getStatusCounts() async {
-    statusCountMap = {};
+    log("Fetching lead status counts... ${statusList.length} statuses found");
+    leadStatusCountMap = {};
+    try{
     for (var status in statusList) {
       final snap = await fdb
           .collection("LEADS")
@@ -83,9 +86,12 @@ class LeadProvider extends ChangeNotifier {
           .get();
 
       int count = snap.count ?? 0;
-      statusCountMap[status] = count;
+      leadStatusCountMap[status] = count;
     }
-
+    } catch (e) {
+      log("Error fetching lead status counts: $e");
+    }
+log("Lead Status: ${leadStatusCountMap.length}");
     notifyListeners();
   }
 
@@ -184,6 +190,7 @@ class LeadProvider extends ChangeNotifier {
     await fdb.collection("LEADS").doc(id).set(lead);
 
     clearData();
+   getLeads();
     notifyListeners();
   }
 
@@ -214,6 +221,9 @@ class LeadProvider extends ChangeNotifier {
   TimeOfDay? selectedTime;
 
   String? selectedCallStatus;
+  String? selectedLeadStatus;
+
+  get leadStatusList => null;
 
   // 📅 Pick Date
   Future<void> pickDate(BuildContext context) async {
@@ -541,4 +551,25 @@ class LeadProvider extends ChangeNotifier {
   }
 
   void changeLeadStage(String s) {}
+
+  String selectedFilterStatus = "All";
+
+  void refreshLeads(BuildContext context){
+    
+    setLoading(true);
+  selectedLeadsFilters.clear();
+    
+      selectedFilterStatus = "All";
+
+
+  fetchAdditionalLeadDetails();
+    setLoading(false);
+    
+    notifyListeners();
+  }
+
+  void changeStatusFilter(String status) {
+    selectedFilterStatus = status;
+    notifyListeners();
+  }
 }

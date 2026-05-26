@@ -21,20 +21,7 @@ class LeadsScreen extends StatefulWidget {
 class _LeadsScreenState extends State<LeadsScreen> {
   int currentIndex = 1;
   // STEP 1: Create a variable to hold the currently selected filter
-  String selectedStatus = "All";
-
-  void _refreshLeads(BuildContext context){
-    final pro = Provider.of<LeadProvider>(context, listen: false);
-    pro.setLoading(true);
-    pro.selectedLeadsFilters.clear();
-    setState(() {
-      selectedStatus = "All";
-    });
-
-    pro.notifyListeners();
-    pro.fetchAdditionalLeadDetails();
-    pro.setLoading(false);
-  }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -137,7 +124,7 @@ class _LeadsScreenState extends State<LeadsScreen> {
                             .color,
                       ),
                       onPressed: () {
-                        _refreshLeads(context);
+                        pro.refreshLeads(context);
                       },
                     ),
                     Builder(
@@ -170,28 +157,28 @@ class _LeadsScreenState extends State<LeadsScreen> {
                   children: [
                     StatusChip(
                       text: "ALL",
-                      isSelected: selectedStatus == "All",
-                      onTap: () => setState(() => selectedStatus = "All"),
+                      isSelected: pro.selectedFilterStatus == "All",
+                      onTap: () => setState(() => pro.selectedFilterStatus = "All"),
                     ),
                     StatusChip(
                       text: "NEW",
-                      isSelected: selectedStatus == "New",
-                      onTap: () => setState(() => selectedStatus = "New"),
+                      isSelected: pro.selectedFilterStatus == "New",
+                      onTap: () => setState(() => pro.selectedFilterStatus = "New"),
                     ),
                     StatusChip(
                       text: "FOLLOW UP",
-                      isSelected: selectedStatus == "Follow_Up",
-                      onTap: () => setState(() => selectedStatus = "Follow_Up"),
+                      isSelected: pro.selectedFilterStatus == "Follow_Up",
+                      onTap: () => pro.changeStatusFilter("Follow_Up"),
                     ),
                     StatusChip(
                       text: "CONVERTED",
-                      isSelected: selectedStatus == "Converted",
-                      onTap: () => setState(() => selectedStatus = "Converted"),
+                      isSelected: pro.selectedFilterStatus == "Converted",
+                      onTap: () => pro.changeStatusFilter("Converted"),
                     ),
                     StatusChip(
                       text: "REJECTED",
-                      isSelected: selectedStatus == "Rejected",
-                      onTap: () => setState(() => selectedStatus = "Rejected"),
+                      isSelected: pro.selectedFilterStatus == "Rejected",
+                      onTap: () => pro.changeStatusFilter("Rejected"),
                     ),
                   ],
                 ),
@@ -207,13 +194,13 @@ class _LeadsScreenState extends State<LeadsScreen> {
                         "LEADS");
 
                     // ✅ Status filter
-                    print("selectedStatus IS $selectedStatus");
-                    if (selectedStatus != "All") {
+                    print("selectedFilterStatus IS $pro.selectedFilterStatus");
+                    if (pro.selectedFilterStatus != "All") {
                       query =
-                          query.where("LEAD_STATUS", isEqualTo: selectedStatus);
+                          query.where("LEAD_STATUS", isEqualTo: pro.selectedFilterStatus);
                     }
 
-                    log("${pro.selectedLeadsFilters}");
+                    log("cccccccccccc ${pro.selectedLeadsFilters}");
                     // ✅ Drawer filters
                     pro.selectedLeadsFilters.forEach((key, value) {
                       if (value != null) {
@@ -277,7 +264,7 @@ class _LeadsScreenState extends State<LeadsScreen> {
 
                     return RefreshIndicator(
                       onRefresh: () async {
-                        _refreshLeads(context);
+                        pro.refreshLeads(context);
                       },
 
                       child: ListView.builder(

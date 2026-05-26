@@ -142,33 +142,32 @@ class _DbState extends State<Dashboard> {
                     },
                   ),
 
-                  const SizedBox(height: 20),
-                  Text(
-                    "Lead Summary",
-                    style: Theme.of(context).textTheme.titleLarge,
-                    // AppTextstyle.SubTitle
-                  ),
-                  const SizedBox(height: 05),
-                  Consumer<LeadProvider>(
-                    builder: (context, value, child) {
-                      return Container(
-                        height: MediaQuery.of(context).size.height / 2.5,
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey.shade300),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: ListView.separated(
-                          itemCount: value.statusList.length,
-                          itemBuilder: (context, index) {
-                            var status = value.statusList[index];
-                            print(status);
-                            return SummaryRow(
-                              title: status,
-                              value: (value.statusCountMap[status] ?? 0)
-                                  .toString(),
-                            );
-                          },
+              const SizedBox(height: 20),
+              Text(
+                "Lead Summary",
+                style: Theme.of(context).textTheme.titleLarge,
+                // AppTextstyle.SubTitle
+              ),
+              const SizedBox(height: 05),
+              Consumer<LeadProvider>(
+                builder: (context, value, child) {
+                  return Container(
+                    height: MediaQuery.of(context).size.height / 2.5,
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey.shade300),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: ListView.separated(
+                      itemCount: value.statusList.length,
+                      itemBuilder: (context, index) {
+                        var status = value.statusList[index];
+                        print(status);
+                        return SummaryRow(
+                          title: status,
+                          value: (value.leadStatusCountMap[status] ?? 0).toString(),
+                        );
+                      },
 
                           separatorBuilder: (context, index) {
                             return Divider(color: Color(0xffEAEAEA));

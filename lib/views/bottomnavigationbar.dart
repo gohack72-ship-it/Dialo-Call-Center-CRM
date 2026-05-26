@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dialo/views/dashboard.dart';
 import 'package:dialo/views/repots/reportpage.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +11,8 @@ import 'leads/leads_screen.dart';
 
 class BottomnavPage extends StatefulWidget {
   final Function(bool) changeTheme;
-  const BottomnavPage({super.key, required this.changeTheme});
+  final int initialIndex;
+  const BottomnavPage({super.key, required this.changeTheme, required this.initialIndex});
 
   @override
   State<BottomnavPage> createState() => _BottomnavPageState();
@@ -22,6 +25,7 @@ class _BottomnavPageState extends State<BottomnavPage> {
   @override
   void initState() {
     super.initState();
+    _currentIndex = widget.initialIndex;
     _pages = [
       Dashboard(changeTheme: widget.changeTheme),
       LeadsScreen(changeTheme: widget.changeTheme),
@@ -59,10 +63,19 @@ class _BottomnavPageState extends State<BottomnavPage> {
             context.read<LeadProvider>().getStatusCounts();
             });
           }
+          if(index == 1){
+            context.read<LeadProvider>().getLeads();
+            context.read<LeadProvider>().fetchAdditionalLeadDetails();
+          }
           if (index == 3) {
             context.read<LeadProvider>().getCallStatusList();
             context.read<LeadProvider>().getLeadStatus();
             context.read<LeadProvider>().fetchCallStatusCounts();
+            Future.delayed( Duration(seconds: 1), () {
+
+            context.read<LeadProvider>().getStatusCounts();
+            log("Report Page: Fetched call status counts");
+            });
           }
         },
         items: const [

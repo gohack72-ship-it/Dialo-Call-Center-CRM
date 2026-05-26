@@ -26,7 +26,7 @@ class _SplashscreenState extends State<Splashscreen> {
     // print("ggggggggggggggg");
     context.read<LeadProvider>().loadDashboardCounts();
   Future.delayed(Duration(seconds: 3),(){
-                  Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => BottomnavPage(changeTheme: widget.changeTheme),));
+                  Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => BottomnavPage(changeTheme: widget.changeTheme, initialIndex: 0,),));
                 });
 
   }
