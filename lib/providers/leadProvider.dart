@@ -67,6 +67,7 @@ class LeadProvider extends ChangeNotifier {
   int followUps = 0;
   int todayCalls = 0;
   int overdue = 0;
+  String selectedFilter = "today";
 
   LeadProvider() {
     getLeadStatus();
@@ -583,61 +584,179 @@ log("Lead Status: ${leadStatusCountMap.length}");
     clearLeadControllers();
   }
 
-  Future<void> loadDashboardCounts() async {
-    try {
-      final db = FirebaseFirestore.instance;
+  // Future<void> loadDashboardCounts() async {
+  //   try {
+  //     final db = FirebaseFirestore.instance;
 
-      DateTime now = DateTime.now();
+  //     DateTime now = DateTime.now();
 
-      DateTime start = DateTime(now.year, now.month, now.day);
+  //     DateTime start = DateTime(now.year, now.month, now.day);
 
-      DateTime end = start.add(const Duration(days: 1));
+  //     DateTime end = start.add(const Duration(days: 1));
 
-      final totalSnap = await db.collection("LEADS").count().get();
+  //     final totalSnap = await db.collection("LEADS").count().get();
 
-      final followSnap = await db
-          .collection("LEADS")
-          .where("FOLLOW_UP_STATUS", isEqualTo: "FOLLOW_UP")
-          .where(
-            "FOLLOW_UP_DATE",
-            isGreaterThanOrEqualTo: Timestamp.fromDate(start),
-          )
-          .where("FOLLOW_UP_DATE", isLessThan: Timestamp.fromDate(end))
-          .count()
-          .get();
+  //     final followSnap = await db
+  //         .collection("LEADS")
+  //         .where("FOLLOW_UP_STATUS", isEqualTo: "FOLLOW_UP")
+  //         .where(
+  //           "FOLLOW_UP_DATE",
+  //           isGreaterThanOrEqualTo: Timestamp.fromDate(start),
+  //         )
+  //         .where("FOLLOW_UP_DATE", isLessThan: Timestamp.fromDate(end))
+  //         .count()
+  //         .get();
 
-      print("follow snap finished ${followSnap.count!}");
+  //     print("follow snap finished ${followSnap.count!}");
 
-      final todaySnap = await db
-          .collection("LEADS")
-          .where(
-            "LAST_CONTACTED_DATE",
-            isGreaterThanOrEqualTo: Timestamp.fromDate(start),
-          )
-          .where("LAST_CONTACTED_DATE", isLessThan: Timestamp.fromDate(end))
-          .count()
-          .get();
-      print("today snap finished");
+  //     final todaySnap = await db
+  //         .collection("LEADS")
+  //         .where(
+  //           "LAST_CONTACTED_DATE",
+  //           isGreaterThanOrEqualTo: Timestamp.fromDate(start),
+  //         )
+  //         .where("LAST_CONTACTED_DATE", isLessThan: Timestamp.fromDate(end))
+  //         .count()
+  //         .get();
+  //     print("today snap finished");
 
-      final overdueSnap = await db
-          .collection("LEADS")
-          .where("FOLLOW_UP_DATE", isLessThan: Timestamp.fromDate(start))
-          .where("FOLLOW_UP_STATUS", isEqualTo: "FOLLOW_UP")
-          .count()
-          .get();
-      print("overdue finished");
+  //     final overdueSnap = await db
+  //         .collection("LEADS")
+  //         .where("FOLLOW_UP_DATE", isLessThan: Timestamp.fromDate(start))
+  //         .where("FOLLOW_UP_STATUS", isEqualTo: "FOLLOW_UP")
+  //         .count()
+  //         .get();
+  //     print("overdue finished");
 
-      totalLeads = totalSnap.count ?? 0;
-      followUps = followSnap.count ?? 0;
-      todayCalls = todaySnap.count ?? 0;
-      overdue = overdueSnap.count ?? 0;
+  //     totalLeads = totalSnap.count ?? 0;
+  //     followUps = followSnap.count ?? 0;
+  //     todayCalls = todaySnap.count ?? 0;
+  //     overdue = overdueSnap.count ?? 0;
 
-      notifyListeners();
-    } catch (e) {
-      print("Dashboard Count Error: $e");
+  //     notifyListeners();
+  //   } catch (e) {
+  //     print("Dashboard Count Error: $e");
+  //   }
+  // }
+Future<void> loadDashboardCounts({String filter = "today"}) async {
+  try {
+    selectedFilter = filter;
+
+    final db = FirebaseFirestore.instance;
+
+    DateTime now = DateTime.now();
+
+    DateTime start;
+    DateTime end;
+
+    // TODAY
+    if (filter == "today") {
+      start = DateTime(now.year, now.month, now.day);
+      end = start.add(const Duration(days: 1));
     }
-  }
 
+    // THIS WEEK
+    else if (filter == "week") {
+      start = now.subtract(Duration(days: now.weekday - 1));
+      start = DateTime(start.year, start.month, start.day);
+
+      end = start.add(const Duration(days: 7));
+    }
+
+    // THIS MONTH
+    else {
+      start = DateTime(now.year, now.month, 1);
+
+      end = DateTime(now.year, now.month + 1, 1);
+    }
+
+    // TOTAL LEADS
+    final totalSnap = await db
+        .collection("LEADS")
+        .where(
+          "ADDED_TIME",
+          isGreaterThanOrEqualTo: Timestamp.fromDate(start),
+        )
+        .where(
+          "ADDED_TIME",
+          isLessThan: Timestamp.fromDate(end),
+        )
+        .count()
+        .get();
+
+    // FOLLOW UPS
+    final followSnap = await db
+        .collection("LEADS")
+        .where("FOLLOW_UP_STATUS", isEqualTo: "FOLLOW_UP")
+        .where(
+          "FOLLOW_UP_DATE",
+          isGreaterThanOrEqualTo: Timestamp.fromDate(start),
+        )
+        .where(
+          "FOLLOW_UP_DATE",
+          isLessThan: Timestamp.fromDate(end),
+        )
+        .count()
+        .get();
+
+    // TODAY CALLS
+    final todaySnap = await db
+        .collection("LEADS")
+        .where(
+          "LAST_CONTACTED_DATE",
+          isGreaterThanOrEqualTo: Timestamp.fromDate(start),
+        )
+        .where(
+          "LAST_CONTACTED_DATE",
+          isLessThan: Timestamp.fromDate(end),
+        )
+        .count()
+        .get();
+
+    // OVERDUE
+    final overdueSnap = await db
+        .collection("LEADS")
+        .where(
+          "FOLLOW_UP_DATE",
+          isLessThan: Timestamp.fromDate(start),
+        )
+        .where("FOLLOW_UP_STATUS", isEqualTo: "FOLLOW_UP")
+        .count()
+        .get();
+
+    totalLeads = totalSnap.count ?? 0;
+    followUps = followSnap.count ?? 0;
+    todayCalls = todaySnap.count ?? 0;
+    overdue = overdueSnap.count ?? 0;
+
+    // LEAD SUMMARY
+    leadStatusCountMap.clear();
+
+    final summarySnap = await db
+        .collection("LEADS")
+        .where(
+          "ADDED_TIME",
+          isGreaterThanOrEqualTo: Timestamp.fromDate(start),
+        )
+        .where(
+          "ADDED_TIME",
+          isLessThan: Timestamp.fromDate(end),
+        )
+        .get();
+
+    for (var status in statusList) {
+      int count = summarySnap.docs
+          .where((doc) => doc["LEAD_STATUS"] == status)
+          .length;
+
+      leadStatusCountMap[status] = count;
+    }
+
+    notifyListeners();
+  } catch (e) {
+    print("Dashboard Count Error: $e");
+  }
+}
   void changeLeadStage(String s) {}
 
   String selectedFilterStatus = "All";

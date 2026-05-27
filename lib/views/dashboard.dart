@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dialo/providers/leadProvider.dart';
 import 'package:dialo/views/settingspage.dart';
-//import 'package:dialo/views/leads/leadprofilescreen.dart'; // Import to your official lead details screen
+// Import to your official lead details screen
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -63,15 +63,15 @@ class _DbState extends State<Dashboard> {
               color: Theme.of(context).iconTheme.color,
               size: 25,
             ),
-            onSelected: (value) {
-              if (value == "today") {
-                print("Today selected");
-              } else if (value == "week") {
-                print("This week is selected");
-              } else if (value == "month") {
-                print("This month is selected");
-              }
-            },
+           onSelected: (value) {
+  final pro = Provider.of<LeadProvider>(context, listen: false);
+  
+  pro.setLoading(true);
+  
+  pro.loadDashboardCounts(filter: value).then((_) {
+    pro.setLoading(false);
+  });
+},
             itemBuilder: (context) => [
               const PopupMenuItem(value: "today", child: Text("Today")),
               const PopupMenuItem(value: "week", child: Text("This Week")),
