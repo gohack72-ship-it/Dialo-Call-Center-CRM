@@ -73,8 +73,8 @@ Future.microtask(() async {
               Text(
                 title,
                 style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w400,
                 ),
               ),
 
@@ -89,7 +89,7 @@ Future.microtask(() async {
             ],
           ),
 
-          const SizedBox(height: 10),
+          // const SizedBox(height: 5),
 
           ClipRRect(
             borderRadius: BorderRadius.circular(20),
