@@ -28,7 +28,8 @@ class LeadProvider extends ChangeNotifier {
   int thisWeek = 0;
 
   bool isLoading = false;
-
+ List<String> sourcesList = [];
+ String? selectedSource;
   void setLoading(bool value) {
     isLoading = value;
     notifyListeners();
@@ -74,22 +75,31 @@ class LeadProvider extends ChangeNotifier {
     });
   }
 
-  Future<void> getStatusCounts() async {
+  Future<int> getStatusCounts() async {
     log("Fetching lead status counts... ${statusList.length} statuses found");
     leadStatusCountMap = {};
-    try{
-    for (var status in statusList) {
-      final snap = await fdb
-          .collection("LEADS")
-          .where("LEAD_STATUS", isEqualTo: status)
-          .count()
-          .get();
+    int totalCount = 0;
+    try {
+      for (var status in statusList) {
+        final snap = await fdb
+            .collection("LEADS")
+            .where("LEAD_STATUS", isEqualTo: status)
+            .count()
+            .get();
 
-      int count = snap.count ?? 0;
-      leadStatusCountMap[status] = count;
-    }
+        int count = snap.count ?? 0;
+        leadStatusCountMap[status] = count;
+
+        totalLeads += count;
+      }
+      log("Total Leads Count; $totalCount");
+
+      notifyListeners();
+
+      return totalCount;
     } catch (e) {
       log("Error fetching lead status counts: $e");
+      return 0;
     }
 log("Lead Status: ${leadStatusCountMap.length}");
     notifyListeners();
@@ -415,6 +425,28 @@ log("Lead Status: ${leadStatusCountMap.length}");
       notifyListeners();
     } catch (e) {
       print("Workload error: $e");
+    }
+  }
+  
+  Future<void> fetchSources() async {
+    try{
+      final doc = await fdb
+          .collection("LEAD_SETTINGS")
+          .doc('lead_source')
+          .get();
+
+      sourcesList.clear();
+
+      if (doc.exists){
+        final data = doc.data() as Map<String, dynamic>;
+
+        List<dynamic> dynamicList = data['leadSourceList']?? [];
+
+        sourcesList = dynamicList.map((e) => e.toString()).toList();
+      }
+      notifyListeners();
+    }catch (e){
+      debugPrint("Fetch Sources Error: $e");
     }
   }
 

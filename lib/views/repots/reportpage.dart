@@ -526,7 +526,7 @@ Future.microtask(() async {
                                   borderRadius: BorderRadius.circular(20),
                                 ),
                                 child: Text(
-                                  "Total: 0",
+                                  "Total: ${pro.statusCounts.values.fold(0, (sum, item) => sum + item)}",
                                   style: TextStyle(
                                     color: AppColors.themeColor,
                                     fontWeight: FontWeight.bold,
@@ -752,7 +752,7 @@ Container(
               borderRadius: BorderRadius.circular(20),
             ),
             child: Text(
-              "Total Leads: ${allLeads.length}",
+              "Total: ${pro.leadStatusCountMap.values.fold(0,(sum, item) => sum + item)}",
               style: TextStyle(
                 color: Colors.green,
                 fontWeight: FontWeight.bold,

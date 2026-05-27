@@ -39,12 +39,14 @@ class _NewLeadPageState extends State<NewLeadPage> {
         pro.setLoading(true);
 
         await pro.getLeadStatus();
+        await pro.fetchSources();
 
         if (widget.leadData != null) {
           pro.nameController.text = widget.leadData?["NAME"] ?? "";
           pro.placeController.text = widget.leadData?["PLACE"] ?? "";
           pro.emailController.text = widget.leadData?["EMAIL"] ?? "";
           pro.phoneController.text = widget.leadData?["PHONE"] ?? "";
+          pro.selectedSource = widget.leadData?["SOURCE"];
           pro.sourceController.text = widget.leadData?["SOURCE"] ?? "";
           pro.selectedStatus = widget.leadData?["LEAD_STATUS"] ?? "";
         }
@@ -137,10 +139,22 @@ class _NewLeadPageState extends State<NewLeadPage> {
                         _phoneField(),
 
                         _label("Source"),
-                        _input(
-                          "Source",
-                          context.read<LeadProvider>().sourceController,
+                        // Consumer<LeadProvider>(
+                        //   builder: (context, pro, child) {
+                             _dropdown(
+                              hint: "Select Source",
+                                items: pro.sourcesList,
+                                value: pro.selectedSource,
+                                onChanged:  (value) {
+                                pro.selectedSource = value;
+
+                                pro.sourceController.text = value ?? "";
+
+                                pro.notifyListeners();
+                                }
+
                         ),
+
 
                         const SizedBox(height: 10),
 
