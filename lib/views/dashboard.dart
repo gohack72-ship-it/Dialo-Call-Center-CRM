@@ -1,11 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dialo/providers/leadProvider.dart';
 import 'package:dialo/views/settingspage.dart';
+//import 'package:dialo/views/leads/leadprofilescreen.dart'; // Import to your official lead details screen
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../constants/app_colors.dart';
 import '../constants/app_textstyle.dart';
+import 'leads/lead_details.dart';
 
 class Dashboard extends StatefulWidget {
   final Function(bool) changeTheme;
@@ -26,11 +28,8 @@ class _DbState extends State<Dashboard> {
       final pro = Provider.of<LeadProvider>(context, listen: false);
       pro.setLoading(true);
 
-      // Provider.of<LeadProvider>(context, listen: false).
       await pro.loadDashboardCounts();
-      // Provider.of<LeadProvider>(context, listen: false).
       await pro.getLeadStatus();
-      // Provider.of<LeadProvider>(context, listen: false).
       await pro.getStatusCounts();
       pro.getLeads();
 
@@ -50,7 +49,6 @@ class _DbState extends State<Dashboard> {
             icon: Icon(
               Icons.menu,
               color: Theme.of(context).iconTheme.color,
-              // color: Colors.black,
               size: 30,
             ),
             onPressed: () {
@@ -58,18 +56,6 @@ class _DbState extends State<Dashboard> {
             },
           ),
         ),
-
-        // title: Align(
-        //   alignment: Alignment.centerRight,
-        //   child: const Text(
-        //     "HOME PAGE",
-        //     style: TextStyle(
-        //       color: Colors.black,
-        //       fontWeight: FontWeight.bold,
-        //       fontSize: 18,
-        //     ),
-        //   ),
-        // ),
         actions: [
           PopupMenuButton<String>(
             icon: Icon(
@@ -141,100 +127,123 @@ class _DbState extends State<Dashboard> {
                       );
                     },
                   ),
-
-              const SizedBox(height: 20),
-              Text(
-                "Lead Summary",
-                style: Theme.of(context).textTheme.titleLarge,
-                // AppTextstyle.SubTitle
-              ),
-              const SizedBox(height: 05),
-              Consumer<LeadProvider>(
-                builder: (context, value, child) {
-                  return Container(
-                    height: MediaQuery.of(context).size.height / 2.5,
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey.shade300),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: ListView.separated(
-                      itemCount: value.statusList.length,
-                      itemBuilder: (context, index) {
-                        var status = value.statusList[index];
-                        print(status);
-                        return SummaryRow(
-                          title: status,
-                          value: (value.leadStatusCountMap[status] ?? 0).toString(),
-                        );
-                      },
-
+                  const SizedBox(height: 20),
+                  Text(
+                    "Lead Summary",
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                  const SizedBox(height: 5),
+                  Consumer<LeadProvider>(
+                    builder: (context, value, child) {
+                      return Container(
+                        height: MediaQuery.of(context).size.height / 2.5,
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey.shade300),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: ListView.separated(
+                          itemCount: value.statusList.length,
+                          itemBuilder: (context, index) {
+                            var status = value.statusList[index];
+                            return SummaryRow(
+                              title: status,
+                              value: (value.leadStatusCountMap[status] ?? 0).toString(),
+                            );
+                          },
                           separatorBuilder: (context, index) {
-                            return Divider(color: Color(0xffEAEAEA));
+                            return const Divider(color: Color(0xffEAEAEA));
                           },
                         ),
                       );
                     },
                   ),
-
                   const SizedBox(height: 20),
                   Text(
                     "Upcoming Follow-ups",
                     style: Theme.of(context).textTheme.titleLarge,
-                    // AppTextstyle.SubTitle
                   ),
                   const SizedBox(height: 15),
                   Consumer<LeadProvider>(
                     builder: (context, provider, child) {
+                      // Takes only the top 3 elements
+                      final displayLeads = provider.leadList.take(3).toList();
+
+                      if (displayLeads.isEmpty) {
+                        return const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 10),
+                          child: Text("No Upcoming Follow-ups found", style: TextStyle(color: Colors.grey)),
+                        );
+                      }
+
                       return ListView.builder(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
-
-                        itemCount: provider.leadList.length,
-
+                        itemCount: displayLeads.length,
                         itemBuilder: (context, index) {
-                          return LeadListCard(lead: provider.leadList[index]);
+                          final currentLead = displayLeads[index];
+                          
+                          return InkWell(
+                            onTap: () async {
+                              // Show a loading dialog spinner while fetching full record
+                              showDialog(
+                                context: context,
+                                barrierDismissible: false,
+                                builder: (context) => const Center(child: CircularProgressIndicator()),
+                              );
+
+                              try {
+                                String leadId = (currentLead["LEAD_ID"] ?? currentLead["leadId"] ?? currentLead["id"] ?? "").toString();
+
+                                // Backup strategy: If direct ID is missing in memory, resolve document via Phone query
+                                if (leadId.isEmpty) {
+                                  String phone = (currentLead["PHONE"] ?? currentLead["phone"] ?? "").toString();
+                                  if (phone.isNotEmpty) {
+                                    var query = await FirebaseFirestore.instance.collection("LEADS").where("PHONE", isEqualTo: phone).get();
+                                    if (query.docs.isNotEmpty) {
+                                      leadId = query.docs.first.id;
+                                    }
+                                  }
+                                }
+
+                                // Pull fresh, unmodified data payload straight from collection database
+                                var docSnapshot = await FirebaseFirestore.instance.collection("LEADS").doc(leadId).get();
+                                
+                                // Close the processing spinner dialog
+                                if (context.mounted) Navigator.pop(context); 
+
+                                if (docSnapshot.exists) {
+                                  Map<String, dynamic> fullFirestoreData = docSnapshot.data() as Map<String, dynamic>;
+                                  
+                                  // Re-inject upper-case structural ID elements required by profile sub-routing
+                                  fullFirestoreData["LEAD_ID"] = docSnapshot.id;
+
+                                  if (context.mounted) {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => LeadProfileScreen(leadData: fullFirestoreData),
+                                      ),
+                                    );
+                                  }
+                                } else {
+                                  if (context.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(content: Text("Error: Unable to locate lead profile details.")),
+                                    );
+                                  }
+                                }
+                              } catch (e) {
+                                if (context.mounted) Navigator.pop(context); // Fail-safe pop spinner
+                                print("Firestore Fetch Exception: $e");
+                              }
+                            },
+                            child: LeadListCard(lead: currentLead),
+                          );
                         },
                       );
                     },
                   ),
-
-                  //         const Spacer(),
-
-                  //         Container(
-                  //           padding: const EdgeInsets.symmetric(
-                  //             horizontal: 12,
-                  //             vertical: 6,
-                  //           ),
-                  //           decoration: BoxDecoration(
-                  //             color: lead["statusColor"] as Color,
-                  //             borderRadius: BorderRadius.circular(12),
-                  //           ),
-                  //           child: Text(
-                  //             lead["status"].toString(),
-                  //             style: TextStyle(
-                  //               color: lead["statusText"] as Color,
-                  //               fontWeight: FontWeight.w600,
-                  //             ),
-                  //           ),
-                  //         ),
-                  //       ],
-                  //     ),
-                  //     const SizedBox(height: 15),
-
-                  //     Row(
-                  //       children: [
-                  //         const Icon(Icons.phone, color: Colors.blueGrey),
-                  //         const SizedBox(width: 10),
-
-                  //         Text(
-                  //           lead["phone"].toString(),
-                  //           style: const TextStyle(fontSize: 18),
-                  //         ),
-                  //       ],
-                  //     ),
-
-                  // ),
                 ],
               ),
             ),
@@ -243,33 +252,6 @@ class _DbState extends State<Dashboard> {
       ),
     );
   }
-
-  // bottomNavigationBar: BottomNavigationBar(
-  //   currentIndex: _currentIndex,
-  //   type: BottomNavigationBarType.fixed,
-  //   selectedItemColor: AppColors.textColor,
-  //   unselectedItemColor: AppColors.themeColor,
-  //   selectedLabelStyle: const TextStyle(color: AppColors.textColor),
-  //   unselectedLabelStyle: const TextStyle(color: AppColors.themeColor),
-  //   onTap: (index) {
-  //     setState(() {
-
-  //       _currentIndex = index;
-  //     });
-  //   },
-  //   items: const [
-  //     BottomNavigationBarItem(icon: Icon(Icons.home), label: "Dashboard"),
-  //     BottomNavigationBarItem(
-  //       icon: Icon(Icons.groups_outlined),
-  //       label: "Leads",
-  //     ),
-  //     BottomNavigationBarItem(icon: Icon(Icons.add), label: "Add Lead"),
-  //     BottomNavigationBarItem(
-  //       icon: Icon(Icons.receipt_outlined),
-  //       label: "Report",
-  //     ),
-  //   ],
-  // ),
 }
 
 class DashboardCard extends StatelessWidget {
@@ -304,7 +286,7 @@ class DashboardCard extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Row(children: [Text(value, style: AppTextstyle.dashBoardCardNo)]),
-          Padding(
+          const Padding(
             padding: EdgeInsets.only(left: 90),
             child: Icon(Icons.trending_up, color: Colors.black),
           ),
@@ -323,7 +305,7 @@ class SummaryRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(8),
+      padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -332,14 +314,12 @@ class SummaryRow extends StatelessWidget {
             title,
             style: TextStyle(
               color: Theme.of(context).textTheme.bodyLarge?.color,
-              // AppTextstyle.normalText
             ),
           ),
           Text(
             value,
             style: TextStyle(
               color: Theme.of(context).textTheme.bodyLarge?.color,
-              // AppTextstyle.normalText
             ),
           ),
         ],
@@ -348,47 +328,28 @@ class SummaryRow extends StatelessWidget {
   }
 }
 
-// class FollowUpCard extends StatelessWidget {
-//   final int index;
-
-//   const FollowUpCard({super.key, required this.index});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return InkWell(
-//       onTap: () {
-//         Navigator.push(
-//           context,
-//           MaterialPageRoute(
-//             builder: (context) => LeadProfileScreen(leadData: {}),
-//           ),
-//         );
-//       },
-//       child: Container(
-//         width: double.infinity,
-//         margin: const EdgeInsets.only(bottom: 12),
-//         padding: const EdgeInsets.all(16),
-//         decoration: BoxDecoration(
-//           borderRadius: BorderRadius.circular(12),
-//           border: Border.all(color: Colors.grey.shade300),
-//         ),
-//       ),
-//     );
-//   }
-// }
-
 class LeadListCard extends StatelessWidget {
   final Map<String, dynamic> lead;
   const LeadListCard({super.key, required this.lead});
 
   @override
   Widget build(BuildContext context) {
+    // Flexible mapping lookups to build local card parameters accurately
+    final String leadName = (lead["NAME"] ?? lead["name"] ?? "Unknown Lead").toString();
+    final String leadStatus = (lead["LEAD_STATUS"] ?? lead["status"] ?? "New").toString();
+    final String leadPhone = (lead["PHONE"] ?? lead["phone"] ?? "N/A").toString();
+    final String leadPlace = (lead["PLACE"] ?? lead["place"] ?? lead["staff"] ?? "N/A").toString();
+
     return Container(
       margin: const EdgeInsets.only(bottom: 15),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: Colors.grey.shade300,
+          width: 1,
+        ),
         boxShadow: [
           BoxShadow(
             color: Colors.grey.withOpacity(0.1),
@@ -397,7 +358,6 @@ class LeadListCard extends StatelessWidget {
           ),
         ],
       ),
-
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -411,208 +371,108 @@ class LeadListCard extends StatelessWidget {
                   shape: BoxShape.circle,
                 ),
               ),
-
               const SizedBox(width: 10),
-
-              Text(
-                lead["name"].toString(),
-                style: const TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-
-              const Spacer(),
-
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 6,
-                ),
-
-                decoration: BoxDecoration(
-                  color: lead["statusColor"],
-                  borderRadius: BorderRadius.circular(12),
-                ),
-
+              Expanded(
                 child: Text(
-                  lead["status"].toString(),
-                  style: TextStyle(
-                    color: lead["statusText"],
-                    fontWeight: FontWeight.w600,
+                  leadName,
+                  style: const TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w500,
                   ),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
+              const Spacer(),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: lead["statusColor"] ?? _getStaticStatusColor(leadStatus),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      leadStatus.isNotEmpty ? leadStatus[0] + leadStatus.substring(1).toLowerCase() : leadStatus,
+                      style: TextStyle(
+                        color: lead["statusText"] ?? Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
+              )
             ],
           ),
-          
-
           const SizedBox(height: 15),
-
           Row(
             children: [
               const Icon(Icons.phone, color: Colors.blueGrey),
-
               const SizedBox(width: 10),
-
               Text(
-                lead["phone"].toString(),
-                style: const TextStyle(fontSize: 18),
+                leadPhone,
+                style: const TextStyle(fontSize: 15),
               ),
             ],
           ),
-
           const SizedBox(height: 10),
-
           Row(
             children: [
-              const Icon(Icons.person_outline, color: Colors.blueGrey),
-
+              const Icon(Icons.location_on, color: Colors.blueGrey),
               const SizedBox(width: 6),
-
               Text(
-                lead["staff"].toString(),
+                leadPlace,
                 style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w400,
                 ),
               ),
             ],
           ),
           const SizedBox(height: 12),
-
-Row(
-  children: [
-    const Icon(
-      Icons.calendar_month,
-      color: Colors.orange,
-      size: 20,
-    ),
-
-    const SizedBox(width: 8),
-
-    Text(
-      lead["followDate"] != null
-          ? DateFormat(
-              'dd MMM yyyy',
-            ).format(
-              (lead["followDate"] as Timestamp).toDate(),
-            )
-          : "No Follow-up Date",
-
-      style: const TextStyle(
-        fontSize: 15,
-         fontWeight: FontWeight.w500,
-        color: Colors.black,
+          Row(
+            children: [
+              const Icon(
+                Icons.calendar_month,
+                color: Colors.orange,
+                size: 20,
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  (lead["followDate"] ?? lead["ADDED_TIME"] ?? lead["DATE"]) != null
+                      ? "Follow up date : ${DateFormat('dd MMM yyyy').format(((lead["followDate"] ?? lead["ADDED_TIME"] ?? lead["DATE"]) as Timestamp).toDate())}"
+                      : "No Follow-up Date",
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w400,
+                    color: Colors.black,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
-    ),
-  ],
-),
-        ]
-      )
     );
-         
-            
+  }
+
+  Color _getStaticStatusColor(String currentStatus) {
+    switch (currentStatus.toUpperCase()) {
+      case "CONVERTED":
+        return Colors.green;
+      case "FOLLOW UP":
+      case "FOLLOW_UP":
+        return Colors.blue;
+      case "REJECTED":
+        return Colors.red;
+      case "NEW":
+        return Colors.orange;
+      default:
+        return Colors.grey;
+    }
   }
 }
-
-// class SettingsDrawer extends StatefulWidget {
-//   final Function(bool)changeTheme;
-//   const SettingsDrawer({super.key,required this.changeTheme});
-//   @override
-//   State<SettingsDrawer> createState() => _SettingsDrawerState();
-
-//   static Widget _item(String title, IconData icon) {
-//     return ListTile(
-//       leading: Icon(icon, size: 22, color: AppColors.textColor),
-//       title: Text(title),
-//       onTap: () {},
-//     );
-//   }
-// }
-
-// class _SettingsDrawerState extends State<SettingsDrawer> {
-//   bool isDarkMode = false;
-
-//   @override
-//   void initState(){
-//     super.initState();
-//     loadTheme();
-//   }
-
-//   void loadTheme()async{
-//     SharedPreferences prefs = await SharedPreferences.getInstance();
-//     setState(() {
-//       isDarkMode = prefs.getBool('isDarkMode') ?? false;
-//     });
-//   }
-
-//   void saveTheme(bool value)async {
-//     SharedPreferences prefs = await SharedPreferences.getInstance();
-//     prefs.setBool("darkMode", value);
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Drawer(
-//       child: SafeArea(
-//         child: Column(
-//           crossAxisAlignment: CrossAxisAlignment.start,
-//           children: [
-//             Padding(
-//               padding: const EdgeInsets.symmetric(vertical: 8),
-//               child: Row(
-//                 children: [
-//                   IconButton(
-//                     icon: const Icon(Icons.arrow_back, color: Colors.black),
-//                     onPressed: () => Navigator.pop(context),
-//                   ),
-//                   SizedBox(width: 8),
-//                   const Text(
-//                     "Settings",
-//                     style: TextStyle(fontWeight: FontWeight.w600, fontSize: 24),
-//                   ),
-//                 ],
-//               ),
-//             ),
-//             SizedBox(height: 20),
-//             const ListTile(
-//               leading: CircleAvatar(
-//                 radius: 24,
-//                 backgroundColor: AppColors.themeColor,
-//                 child: Icon(
-//                   Icons.person_outline,
-//                   color:AppColors.textColor ,
-//                   size: 28,
-//                 ),
-//               ),
-
-//               title: Text(
-//                 "Profile",
-//                 style: TextStyle(fontWeight: FontWeight.w600, fontSize: 22),
-//               ),
-//             ),
-//             SizedBox(height: 10),
-//             const Divider(),
-//             SettingsDrawer._item("Notifications", Icons.notifications),
-//            ListTile(
-//              leading: const Icon(Icons.dark_mode,
-//                  size: 22,color: AppColors.textColor,),
-//              title: const Text("Mode Change"),
-//              trailing: Switch(value: isDarkMode,
-//                  activeColor: AppColors.themeColor,
-//                  onChanged: (value){
-//                setState((){
-//                  isDarkMode=value;
-//                });
-//                widget.changeTheme(value);
-//                  }),
-//            ),
-//             SettingsDrawer._item("Help & About", Icons.help),
-//             SettingsDrawer._item("Logout", Icons.logout),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
