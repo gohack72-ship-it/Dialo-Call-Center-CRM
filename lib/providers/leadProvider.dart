@@ -28,7 +28,8 @@ class LeadProvider extends ChangeNotifier {
   int thisWeek = 0;
 
   bool isLoading = false;
-
+ List<String> sourcesList = [];
+ String? selectedSource;
   void setLoading(bool value) {
     isLoading = value;
     notifyListeners();
@@ -74,22 +75,31 @@ class LeadProvider extends ChangeNotifier {
     });
   }
 
-  Future<void> getStatusCounts() async {
+  Future<int> getStatusCounts() async {
     log("Fetching lead status counts... ${statusList.length} statuses found");
     leadStatusCountMap = {};
-    try{
-    for (var status in statusList) {
-      final snap = await fdb
-          .collection("LEADS")
-          .where("LEAD_STATUS", isEqualTo: status)
-          .count()
-          .get();
+     totalLeads = 0;
+    try {
+      for (var status in statusList) {
+        final snap = await fdb
+            .collection("LEADS")
+            .where("LEAD_STATUS", isEqualTo: status)
+            .count()
+            .get();
 
-      int count = snap.count ?? 0;
-      leadStatusCountMap[status] = count;
-    }
+        int count = snap.count ?? 0;
+        leadStatusCountMap[status] = count;
+
+        totalLeads += count;
+      }
+      log("Total Leads Count; $totalLeads");
+
+      notifyListeners();
+
+      return totalLeads;
     } catch (e) {
       log("Error fetching lead status counts: $e");
+      return 0;
     }
 log("Lead Status: ${leadStatusCountMap.length}");
     notifyListeners();
@@ -415,6 +425,84 @@ log("Lead Status: ${leadStatusCountMap.length}");
       notifyListeners();
     } catch (e) {
       print("Workload error: $e");
+    }
+  }
+  Future<void> loadReportData(String type) async {
+    try{
+      statusCounts.clear();
+      leadStatusCountMap.clear();
+
+      DateTime now = DateTime.now();
+
+      DateTime startDate;
+      DateTime endDate;
+
+      if(type == "Today's data"){
+        startDate = DateTime(now.year, now.month, now.day);
+        endDate = startDate.add(const Duration(days: 1));
+      }else if(type == "Weekly data"){
+        startDate = now.subtract(Duration(days: now.weekday - 1));
+        endDate = startDate.add(const Duration(days: 7));
+      }
+      else{
+        startDate = DateTime(now.year, now.month, 1);
+        endDate = DateTime(now.year, now.month + 1, 1);
+      }
+
+      final snapshot = await FirebaseFirestore.instance
+               .collection("LEADS")
+               .where(
+                   "ADDED_TIME",
+                    isGreaterThanOrEqualTo: Timestamp.fromDate(startDate),
+      )
+      .where(
+          "ADDED_TIME",
+        isLessThan: Timestamp.fromDate(endDate),
+      )
+        .get();
+
+      statusCounts.clear();
+
+      for (var status in callStatusList) {
+        final count = snapshot.docs
+            .where((doc) => doc['CALL_STATUS'] == status)
+            .length;
+
+        statusCounts[status] = count;
+      }
+      leadStatusCountMap.clear();
+      for (var status in statusList) {
+        int count = snapshot.docs
+            .where((doc) => doc['LEAD_STATUS'] == status)
+            .length;
+
+        leadStatusCountMap[status] = count;
+      }
+      notifyListeners();
+    }catch(e){
+      debugPrint("Report Data Error: $e");
+    }
+  }
+  
+  Future<void> fetchSources() async {
+    try{
+      final doc = await fdb
+          .collection("LEAD_SETTINGS")
+          .doc('lead_source')
+          .get();
+
+      sourcesList.clear();
+
+      if (doc.exists){
+        final data = doc.data() as Map<String, dynamic>;
+
+        List<dynamic> dynamicList = data['leadSourceList']?? [];
+
+        sourcesList = dynamicList.map((e) => e.toString()).toList();
+      }
+      notifyListeners();
+    }catch (e){
+      debugPrint("Fetch Sources Error: $e");
     }
   }
 

@@ -45,8 +45,12 @@ Future.microtask(() async {
   try {
     pro.setLoading(true);
 
-    await pro.getStatusCounts();
-    await pro.loadDashboardCounts();
+    await pro.getCallStatusList();
+    await pro.getLeadStatus();
+    await pro.loadReportData(selectedReportType);
+    //
+    // await pro.getStatusCounts();
+    // await pro.loadDashboardCounts();
   } catch (e) {
     debugPrint(e.toString());
   } finally {
@@ -73,8 +77,8 @@ Future.microtask(() async {
               Text(
                 title,
                 style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w400,
                 ),
               ),
 
@@ -89,7 +93,7 @@ Future.microtask(() async {
             ],
           ),
 
-          const SizedBox(height: 10),
+          // const SizedBox(height: 5),
 
           ClipRRect(
             borderRadius: BorderRadius.circular(20),
@@ -371,7 +375,7 @@ Future.microtask(() async {
                                   children: [
 
                                     Text(
-                                      "Call Status Report",
+                                      "Call Status",
                                       style: TextStyle(
                                         fontSize: 22,
                                         fontWeight: FontWeight.bold,
@@ -415,15 +419,18 @@ Future.microtask(() async {
                                 ),
                               ),
 
-                              const SizedBox(width: 10),
+                              // const SizedBox(width: 10),
 
                               Column(
                                 children: [
                                   PopupMenuButton<String>(
-                                    onSelected: (value) {
+                                    onSelected: (value) async {
                                       setState(() {
                                         selectedReportType = value;
                                       });
+
+                                      await context.read<LeadProvider>()
+                                          .loadReportData(value);
                                     },
 
                                     itemBuilder: (context) =>
@@ -456,7 +463,7 @@ Future.microtask(() async {
                                   ),
 
 
-                                  const SizedBox(height: 15),
+                                  // const SizedBox(height: 15),
 
 
                                 ],
@@ -470,7 +477,7 @@ Future.microtask(() async {
                         ],
                       ),
                     ),
-                    const SizedBox(height: 20),
+                    // const SizedBox(height: 20),
 
 
                     Container(
@@ -526,7 +533,7 @@ Future.microtask(() async {
                                   borderRadius: BorderRadius.circular(20),
                                 ),
                                 child: Text(
-                                  "Total: 0",
+                                  "Total: ${pro.statusCounts.values.fold(0, (sum, item) => sum + item)}",
                                   style: TextStyle(
                                     color: AppColors.themeColor,
                                     fontWeight: FontWeight.bold,
@@ -536,7 +543,7 @@ Future.microtask(() async {
                             ],
                           ),
 
-                          const SizedBox(height: 30),
+                          const SizedBox(height: 20),
 
 
                           SizedBox(
@@ -622,7 +629,7 @@ Container(
               children: [
 
                 Text(
-                  "Lead Status Report",
+                  "Lead Status",
                   style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
@@ -658,12 +665,12 @@ Container(
                   ],
                 ),
 
-                const SizedBox(height: 8),
+                // const SizedBox(height: 8),
               ],
             ),
           ),
 
-          const SizedBox(width: 10),
+          // const SizedBox(width: 10),
 
           PopupMenuButton<String>(
             onSelected: (value) {
@@ -705,7 +712,7 @@ Container(
   ),
 ),
 
-const SizedBox(height: 20),
+// const SizedBox(height: 20),
 
 Container(
   width: double.infinity,
@@ -752,7 +759,7 @@ Container(
               borderRadius: BorderRadius.circular(20),
             ),
             child: Text(
-              "Total Leads: ${allLeads.length}",
+              "Total: ${pro.leadStatusCountMap.values.fold(0,(sum, item) => sum + item)}",
               style: TextStyle(
                 color: Colors.green,
                 fontWeight: FontWeight.bold,
