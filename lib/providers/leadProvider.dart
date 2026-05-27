@@ -427,6 +427,62 @@ log("Lead Status: ${leadStatusCountMap.length}");
       print("Workload error: $e");
     }
   }
+  Future<void> loadReportData(String type) async {
+    try{
+      statusCounts.clear();
+      leadStatusCountMap.clear();
+
+      DateTime now = DateTime.now();
+
+      DateTime startDate;
+      DateTime endDate;
+
+      if(type == "Today's data"){
+        startDate = DateTime(now.year, now.month, now.day);
+        endDate = startDate.add(const Duration(days: 1));
+      }else if(type == "Weekly data"){
+        startDate = now.subtract(Duration(days: now.weekday - 1));
+        endDate = startDate.add(const Duration(days: 7));
+      }
+      else{
+        startDate = DateTime(now.year, now.month, 1);
+        endDate = DateTime(now.year, now.month + 1, 1);
+      }
+
+      final snapshot = await FirebaseFirestore.instance
+               .collection("LEADS")
+               .where(
+                   "ADDED_TIME",
+                    isGreaterThanOrEqualTo: Timestamp.fromDate(startDate),
+      )
+      .where(
+          "ADDED_TIME",
+        isLessThan: Timestamp.fromDate(endDate),
+      )
+        .get();
+
+      statusCounts.clear();
+
+      for (var status in callStatusList) {
+        final count = snapshot.docs
+            .where((doc) => doc['CALL_STATUS'] == status)
+            .length;
+
+        statusCounts[status] = count;
+      }
+      leadStatusCountMap.clear();
+      for (var status in statusList) {
+        int count = snapshot.docs
+            .where((doc) => doc['LEAD_STATUS'] == status)
+            .length;
+
+        leadStatusCountMap[status] = count;
+      }
+      notifyListeners();
+    }catch(e){
+      debugPrint("Report Data Error: $e");
+    }
+  }
   
   Future<void> fetchSources() async {
     try{
